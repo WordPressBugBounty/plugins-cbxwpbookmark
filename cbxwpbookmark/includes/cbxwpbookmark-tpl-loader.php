@@ -71,7 +71,7 @@ function cbxwpbookmark_get_template( $template_name, $args = [], $template_path 
 
 	if ( ! file_exists( $located ) ) {
 		/* translators: %s template */
-		_doing_it_wrong( __FUNCTION__, sprintf( esc_html__( '%s does not exist.', 'cbxwpbookmark' ), '<code>' . esc_attr($located) . '</code>' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, sprintf( esc_html__( '%s does not exist.', 'cbxwpbookmark' ), '<code>' . esc_attr( $located ) . '</code>' ), '1.0.0' );
 
 		return;
 	}

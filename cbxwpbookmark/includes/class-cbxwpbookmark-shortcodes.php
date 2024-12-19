@@ -155,6 +155,9 @@ class CBXWPBookmark_Shortcodes {
 	 * @return string
 	 */
 	public function mybookmark_shortcode( $attr ) {
+		$delete_svg = cbxwpbookmarks_load_svg( 'icon_delete' );
+		$share_svg  = cbxwpbookmarks_load_svg( 'icon_share' );
+
 		$attr = array_change_key_case( (array) $attr, CASE_LOWER );
 
 		// Checking Available Parameter
@@ -218,8 +221,8 @@ class CBXWPBookmark_Shortcodes {
 		$attr['order'] = $order;
 
 		//if the url has cat id (cbxbmcatid get param) thenm use it or try it from shortcode
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$attr['catid'] = ( isset( $_GET['cbxbmcatid'] ) && $_GET['cbxbmcatid'] != null ) ? absint( sanitize_text_field( $_GET['cbxbmcatid'] ) ) : esc_attr( $attr['catid'] );
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$attr['catid'] = ( isset( $_GET['cbxbmcatid'] ) && $_GET['cbxbmcatid'] != null ) ? absint( sanitize_text_field( wp_unslash( $_GET['cbxbmcatid'] ) ) ) : esc_attr( $attr['catid'] );
 
 		if ( absint( $attr['catid'] ) == 0 || $attr['catid'] == '0' ) {
 			$attr['catid'] = '';
@@ -271,7 +274,7 @@ class CBXWPBookmark_Shortcodes {
 
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['userid'] ) ) {
-			$userid_temp = wp_unslash( $_GET['userid'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$userid_temp = wp_unslash( $_GET['userid'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( is_numeric( $userid_temp ) ) {
 				//if user id is used
@@ -320,7 +323,7 @@ class CBXWPBookmark_Shortcodes {
 		$attr['allowdeleteall'] = $allow_delete_all = absint( $attr['allowdeleteall'] );
 		if ( $allow_delete_all && is_user_logged_in() && $attr['userid'] == $current_user_id ) {
 			//$allow_delete_all      = 1;
-			$allow_delete_all_html = '<a title="'.esc_attr__('Click to delete all', 'cbxwpbookmark').'" role="button" data-list="1" data-busy="0" class="cbxbookmark-btn cbxwpbookmark_deleteall cbxwpbookmark_deleteall_list ld-ext-right" href="#">' . esc_html__( 'Delete All', 'cbxwpbookmark' ) . '<i class="cbx-icon cbx-icon-15 cbx-icon-delete"></i><i class="ld ld-ring ld-spin"></i></a>';
+			$allow_delete_all_html = '<a title="' . esc_attr__( 'Click to delete all', 'cbxwpbookmark' ) . '" role="button" data-list="1" data-busy="0" class="cbxbookmark-btn cbxwpbookmark_deleteall cbxwpbookmark_deleteall_list no-underline icon icon-right ld-ext-right" href="#"><i class="cbx-icon cbx-icon-15">' . $delete_svg . '</i><i class="button-label">' . esc_html__( 'Delete All', 'cbxwpbookmark' ) . '</i><i class="ld ld-ring ld-spin"></i></a>';
 		}
 
 
@@ -401,8 +404,8 @@ class CBXWPBookmark_Shortcodes {
 
 		$extra_css_class = '';
 		if ( $attr['loadmore'] == 1 && $total_page > 1 ) {
-			$extra_css_class    = 'cbxwpbookmark-mylist-sc-more';
-			$offset             += $limit;
+			$extra_css_class = 'cbxwpbookmark-mylist-sc-more';
+			$offset          += $limit;
 
 			$show_loadmore_html = '<p class="cbxbookmark-more-wrap"><a data-busy="0" href="#" class="cbxbookmark-more ld-ext-right" data-cattitle="' . esc_attr( $cattitle ) . '" data-order="' . esc_attr( $order ) . '" data-orderby="' . esc_attr( $order_by ) . '"  data-userid="' . absint( $userid ) . '" data-limit="' . absint( $limit ) . '" data-offset="' . absint( $offset ) . '" data-catid="' . implode( ',', $catid ) . '" data-type="' . implode( ',',
 					$type ) . '" data-totalpage="' . absint( $total_page ) . '" data-currpage="1" data-allowdelete="' . absint( $allowdelete ) . '">' . esc_html__( 'Load More', 'cbxwpbookmark' ) . '<i class="ld ld-ring ld-spin"></i></a></p>';
@@ -431,7 +434,7 @@ class CBXWPBookmark_Shortcodes {
 
 		if ( $attr['showshareurl'] ) {
 			$share_url      = CBXWPBookmarkHelper::myBookmarksShareUrl( $attr );
-			$share_url_html = '<a title="'.esc_attr__('Share bookmarks with others', 'cbxwpbookmark').'" class="cbxbookmark-btn cbxwpbookmark_share no-underline" href="' . esc_url( $share_url ) . '">' . esc_html__( 'Share', 'cbxwpbookmark' ) . '<i class="cbx-icon cbx-icon-15 cbx-icon-share-white"></i></a>';
+			$share_url_html = '<a title="' . esc_attr__( 'Share bookmarks with others', 'cbxwpbookmark' ) . '" class="cbxbookmark-btn cbxwpbookmark_share no-underline icon icon-right" href="' . esc_url( $share_url ) . '"><i class="cbx-icon cbx-icon-15">' . $share_svg . '</i><i class="button-label">' . esc_html__( 'Share', 'cbxwpbookmark' ) . '</i></a>';
 		}
 
 
@@ -490,7 +493,7 @@ class CBXWPBookmark_Shortcodes {
 		$attr['show_bookmarks'] = absint( $attr['show_bookmarks'] );
 		$attr['base_url']       = esc_url( $attr['base_url'] );
 
-		$order   = strtoupper( trim( esc_attr( $attr['order'] ) ) );
+		$order    = strtoupper( trim( esc_attr( $attr['order'] ) ) );
 		$order_by = trim( esc_attr( $attr['orderby'] ) );
 
 		$orders_allowed = CBXWPBookmarkHelper::get_order_keys();
@@ -540,7 +543,7 @@ class CBXWPBookmark_Shortcodes {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['userid'] ) ) {
-			$userid_temp = $_GET['userid']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$userid_temp = wp_unslash( $_GET['userid'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			if ( is_numeric( $userid_temp ) ) {
 				//if user id is used
@@ -644,7 +647,7 @@ class CBXWPBookmark_Shortcodes {
 		$show_count = absint( $attr['show_count'] );
 		$show_thumb = absint( $attr['show_thumb'] );
 
-		$order   = strtoupper( trim( esc_attr( $attr['order'] ) ) );
+		$order    = strtoupper( trim( esc_attr( $attr['order'] ) ) );
 		$order_by = trim( esc_attr( $attr['orderby'] ) );
 
 		$orders_allowed = CBXWPBookmarkHelper::get_order_keys();

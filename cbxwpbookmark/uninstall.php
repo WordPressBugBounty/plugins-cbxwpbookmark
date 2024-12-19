@@ -27,5 +27,5 @@ function uninstall_cbxwpbookmark() {
 }//end function uninstall_cbxwpbookmark
 
 if ( ! defined( 'CBXWPBOOKMARK_PLUGIN_NAME' ) ) {
-    uninstall_cbxwpbookmark();
+	uninstall_cbxwpbookmark();
 }

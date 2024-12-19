@@ -225,7 +225,7 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 		// security check!
 		if ( isset( $_POST['_wpnonce'] ) && ! empty( $_POST['_wpnonce'] ) ) {
 			//$nonce  = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING );
-			$nonce  = CBXWPBookmarkHelper::filter_string_polyfill( $_POST['_wpnonce'] ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$nonce  = CBXWPBookmarkHelper::filter_string_polyfill( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$action = 'bulk-' . $this->_args['plural'];
 
 			if ( ! wp_verify_nonce( $nonce, $action ) ) {
@@ -248,11 +248,11 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 			$category_table = $wpdb->prefix . 'cbxwpbookmarkcat';
 			$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
-			$results = $_REQUEST['cbxwpbookmarkcat'];
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$results = isset( $_REQUEST['cbxwpbookmarkcat'] ) ? wp_unslash( $_REQUEST['cbxwpbookmarkcat'] ) : [];
 			foreach ( $results as $id ) {
 
-				$id = intval( $id );
-
+				$id              = absint( $id );
 				$single_category = CBXWPBookmarkHelper::singleCategory( $id );
 
 
@@ -271,7 +271,7 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 
 						if ( $bookmarks_by_category != null ) {
 							foreach ( $bookmarks_by_category as $single_bookmark ) {
-								cbxwpbookmarks_delete_bookmark($single_bookmark['id'], $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type']);
+								cbxwpbookmarks_delete_bookmark( $single_bookmark['id'], $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type'] );
 
 								/*do_action( 'cbxbookmark_bookmark_removed_before', $single_bookmark['id'], $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type'] );
 
@@ -305,10 +305,10 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 
 		$option_name = $screen->get_option( 'per_page', 'option' ); //the core class name is WP_Screen
 
-		$perpage = intval( get_user_meta( $user, $option_name, true ) );
+		$per_page = intval( get_user_meta( $user, $option_name, true ) );
 
-		if ( $perpage == 0 ) {
-			$perpage = intval( $screen->get_option( 'per_page', 'default' ) );
+		if ( $per_page == 0 ) {
+			$per_page = intval( $screen->get_option( 'per_page', 'default' ) );
 		}
 
 		$columns  = $this->get_columns();
@@ -350,7 +350,7 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 		//end take care the order and order by
 
 
-		$data = $this->getLogData( $search, $id, $user_id, $privacy, $order_by, $order, $perpage, $current_page );
+		$data = $this->getLogData( $search, $id, $user_id, $privacy, $order_by, $order, $per_page, $current_page );
 
 		$total_items = intval( $this->getLogDataCount( $search, $id, $user_id, $privacy ) );
 
@@ -360,9 +360,9 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 		 * REQUIRED. We also have to register our pagination options & calculations.
 		 */
 		$this->set_pagination_args( [
-			'total_items' => $total_items,                     //WE have to calculate the total number of items
-			'per_page'    => $perpage,                         //WE have to determine how many items to show on a page
-			'total_pages' => ceil( $total_items / $perpage )   //WE have to calculate the total number of pages
+			'total_items' => $total_items,                      //WE have to calculate the total number of items
+			'per_page'    => $per_page,                         //WE have to determine how many items to show on a page
+			'total_pages' => ceil( $total_items / $per_page )   //WE have to calculate the total number of pages
 		] );
 
 	}
@@ -376,12 +376,12 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 	 * @param  string  $privacy
 	 * @param  string  $order_by
 	 * @param  string  $order
-	 * @param  int  $perpage
+	 * @param  int  $per_page
 	 * @param  int  $page
 	 *
 	 * @return array|null|object
 	 */
-	public function getLogData( $search = '', $id = 0, $user_id = 0, $privacy = '', $order_by = 'logs.id', $order = 'DESC', $perpage = 20, $page = 1 ) {
+	public function getLogData( $search = '', $id = 0, $user_id = 0, $privacy = '', $order_by = 'logs.id', $order = 'DESC', $per_page = 20, $page = 1 ) {
 		global $wpdb;
 
 		$sortable_keys = array_values( $this->get_sortable_keys() );
@@ -397,18 +397,18 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 			$order = 'DESC';
 		}
 
-		$perpage = absint( $perpage );
-		$page    = absint( $page );
+		$per_page = absint( $per_page );
+		$page     = absint( $page );
 
 		$category_table = $wpdb->prefix . 'cbxwpbookmarkcat';
 
 		$sql_select = "logs.*";
 
-		$sql_select = apply_filters( 'cbxwpbookmark_category_admin_select', $sql_select, $search, $id, $user_id, $privacy, $order_by, $order, $perpage, $page );
+		$sql_select = apply_filters( 'cbxwpbookmark_category_admin_select', $sql_select, $search, $id, $user_id, $privacy, $order_by, $order, $per_page, $page );
 
 		$join = $where_sql = '';
 
-		$join = apply_filters( 'cbxwpbookmark_category_admin_join', $join, $search, $id, $user_id, $privacy, $order_by, $order, $perpage, $page );
+		$join = apply_filters( 'cbxwpbookmark_category_admin_join', $join, $search, $id, $user_id, $privacy, $order_by, $order, $per_page, $page );
 
 		if ( $search != '' ) {
 			if ( $where_sql != '' ) {
@@ -435,16 +435,16 @@ class CBXWPBookmark_Category_Table extends WP_List_Table {
 			$where_sql .= ( ( $where_sql != '' ) ? ' AND ' : '' ) . $wpdb->prepare( 'logs.privacy=%s', intval( $privacy ) );
 		}
 
-		$where_sql = apply_filters( 'cbxwpbookmark_category_admin_where', $where_sql, $search, $id, $user_id, $privacy, $order_by, $order, $perpage, $page );
+		$where_sql = apply_filters( 'cbxwpbookmark_category_admin_where', $where_sql, $search, $id, $user_id, $privacy, $order_by, $order, $per_page, $page );
 
 		if ( $where_sql == '' ) {
 			$where_sql = '1';
 		}
 
-		$start_point = ( $page * $perpage ) - $perpage;
+		$start_point = ( $page * $per_page ) - $per_page;
 		$limit_sql   = "LIMIT";
 		$limit_sql   .= ' ' . $start_point . ',';
-		$limit_sql   .= ' ' . $perpage;
+		$limit_sql   .= ' ' . $per_page;
 
 		$sortingOrder = " ORDER BY $order_by $order ";
 

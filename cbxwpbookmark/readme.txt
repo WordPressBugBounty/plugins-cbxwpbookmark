@@ -2,8 +2,8 @@
 Contributors: codeboxr, manchumahara
 Tags: bookmark,favorite,collection,user collection,user bookmark
 Requires at least: 5.3
-Tested up to: 6.6.2
-Stable tag: 1.8.8
+Tested up to: 6.7.1
+Stable tag: 1.8.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -169,6 +169,15 @@ How to install the plugin and get it working.
 == Screenshots ==
 
 == Changelog ==
+= 1.8.9 =
+* [improvement] Login form/url improved
+* [improvement] Login form/url improved
+* [fixed] Visual composer param php error fixed
+* [updated] Pro addon plugin new version(1.4.4) released
+* [updated] myCred addon plugin new version(1.0.5) released
+* [improvement] Plugin check latest check
+* [added] Added new method for plugin update checker
+
 = 1.8.8 =
 * [fixed] PHP error fixed for login form
 
@@ -187,18 +196,3 @@ How to install the plugin and get it working.
 * [new] Fresh new icons
 * [improvement] Accessibility improvement
 * [updated] Pro addon new version(1.4.2) released
-
-= 1.8.2 =
-* [new] New hook 'cbxwpbookmark_user_bookmark_allow' added
-* [updated] Dashboard style improvement
-* [updated] Setting js tab loading logic improved
-* [updated] Pro addon new version(1.4.1) released
-
-= 1.8.1 =
-* [fixed] Select2 loading issue solved
-
-= 1.8.0 =
-* [update] Setting dashboard updated
-* [new] Ultimate member plugin support for profile page
-* [new] UsersWP plugin support for profile page
-* [fixed] Fixed buddypress activity bookmark button not showing. Need to update pro addon to V1.4.0

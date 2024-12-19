@@ -35,7 +35,7 @@ class CBXWPBookmarkMyBookmark_Widget extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 			$this->get_widget_slug(), esc_html__( 'CBX My Bookmarked Posts', "cbxwpbookmark" ), [
-				'classname'   => 'cbxwpbookmark-mylist-wrap cbxwpbookmark-mylist-wrap-widget ' . esc_attr($this->get_widget_slug()) . '-class',
+				'classname'   => 'cbxwpbookmark-mylist-wrap cbxwpbookmark-mylist-wrap-widget ' . esc_attr( $this->get_widget_slug() ) . '-class',
 				'description' => esc_html__( 'This widget shows bookmarked posts from a user', "cbxwpbookmark" )
 			]
 		);
@@ -118,10 +118,10 @@ class CBXWPBookmarkMyBookmark_Widget extends WP_Widget {
 
 
 		$attr['title']          = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
-		$attr['order']          = isset( $instance['order'] ) ? strtoupper(esc_attr($instance['order'])) : 'DESC';
+		$attr['order']          = isset( $instance['order'] ) ? strtoupper( esc_attr( $instance['order'] ) ) : 'DESC';
 		$attr['orderby']        = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'id';
 		$attr['limit']          = isset( $instance['limit'] ) ? absint( $instance['limit'] ) : 10;
-		$attr['type']           = esc_attr($type);
+		$attr['type']           = esc_attr( $type );
 		$attr['catid']          = isset( $instance['catid'] ) ? esc_attr( $instance['catid'] ) : '';
 		$attr['loadmore']       = isset( $instance['loadmore'] ) ? absint( $instance['loadmore'] ) : 1;
 		$attr['cattitle']       = isset( $instance['cattitle'] ) ? absint( $instance['cattitle'] ) : 1;
@@ -132,15 +132,19 @@ class CBXWPBookmarkMyBookmark_Widget extends WP_Widget {
 		$attr['base_url']       = isset( $instance['base_url'] ) ? esc_url( $instance['base_url'] ) : cbxwpbookmarks_mybookmark_page_url();
 
 		//take care some fields
-		$order = $attr['order'];
+		$order    = $attr['order'];
 		$order_by = $attr['orderby'];
 
 		$order_keys = cbxwpbookmarks_get_order_keys();
-		if(!in_array($order, $order_keys)) $order = 'DESC';
+		if ( ! in_array( $order, $order_keys ) ) {
+			$order = 'DESC';
+		}
 		$attr['order'] = $order;
 
 		$bookmark_sortable_keys = cbxwpbookmarks_bookmark_sortable_keys();
-		if(!in_array($order_by, $bookmark_sortable_keys)) $order_by = 'id';
+		if ( ! in_array( $order_by, $bookmark_sortable_keys ) ) {
+			$order_by = 'id';
+		}
 		$attr['orderby'] = $order_by;
 
 		$attr = apply_filters( 'cbxwpbookmark_widget_shortcode_builder_attr', $attr, $instance, 'cbxwpbookmark' );
@@ -149,7 +153,7 @@ class CBXWPBookmarkMyBookmark_Widget extends WP_Widget {
 		$attr_html = '';
 
 		foreach ( $attr as $key => $value ) {
-			$attr_html .= ' ' . $key . '="' . esc_attr($value) . '" ';
+			$attr_html .= ' ' . $key . '="' . esc_attr( $value ) . '" ';
 		}
 
 		$widget_string .= do_shortcode( '[cbxwpbookmark ' . $attr_html . ']' );
@@ -179,7 +183,7 @@ class CBXWPBookmarkMyBookmark_Widget extends WP_Widget {
 		$instance['allowdelete']    = isset( $new_instance['allowdelete'] ) ? absint( $new_instance['allowdelete'] ) : 0;
 		$instance['allowdeleteall'] = isset( $new_instance['allowdeleteall'] ) ? absint( $new_instance['allowdeleteall'] ) : 0;
 		$instance['showshareurl']   = isset( $new_instance['showshareurl'] ) ? absint( $new_instance['showshareurl'] ) : 1;
-		$instance['honorauthor']    = isset( $new_instance['honorauthor'] ) ? absint( $new_instance['honorauthor'] ) : 0;                               //extra in widget
+		$instance['honorauthor']    = isset( $new_instance['honorauthor'] ) ? absint( $new_instance['honorauthor'] ) : 0;                                          //extra in widget
 		$instance['base_url']       = isset( $new_instance['base_url'] ) ? sanitize_text_field( $new_instance['base_url'] ) : cbxwpbookmarks_mybookmark_page_url();//extra in widget
 
 		$type = isset( $new_instance['type'] ) ? wp_unslash( $new_instance['type'] ) : [];  //object type: post, page, custom any post type or custom object type  ->  can be introduced in future
@@ -221,8 +225,8 @@ class CBXWPBookmarkMyBookmark_Widget extends WP_Widget {
 		);
 
 		$title          = isset( $instance['title'] ) ? $instance['title'] : '';
-		$order          = isset( $instance['order'] ) ? strtoupper(esc_attr($instance['order'])) : 'DESC';   //desc, asc
-		$order_by        = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'id'; //id, object_id, object_type
+		$order          = isset( $instance['order'] ) ? strtoupper( esc_attr( $instance['order'] ) ) : 'DESC';   //desc, asc
+		$order_by       = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'id';               //id, object_id, object_type
 		$limit          = isset( $instance['limit'] ) ? absint( $instance['limit'] ) : 10;
 		$catid          = isset( $instance['catid'] ) ? esc_attr( $instance['catid'] ) : '';
 		$loadmore       = isset( $instance['loadmore'] ) ? absint( $instance['loadmore'] ) : 1;

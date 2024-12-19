@@ -80,7 +80,7 @@ class CBXWPBookmark_Admin {
 	 * @since    1.0.0
 	 *
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name = '', $version = '' ) {
 
 		$this->cbxwpbookmark = $plugin_name;
 		$this->plugin_name   = $plugin_name;
@@ -103,6 +103,30 @@ class CBXWPBookmark_Admin {
 		//initialize settings
 		$this->settings_api->admin_init();
 	}//end setting_init
+
+	/**
+	 * Add less important sections
+	 *
+	 * @param $sections
+	 *
+	 * @return array
+	 * @since 1.8.9
+	 *
+	 */
+	public function extend_sections( $sections ) {
+		$extra_sections = [
+			[
+				'id'    => 'cbxwpbookmark_tools',
+				'title' => esc_html__( 'Tools', 'cbxwpbookmark' ),
+			],
+			/*[
+				'id'    => 'cbxwpbookmark_licences',
+				'title' => esc_html__( 'Pro Licences', 'cbxwpbookmark' ),
+			]*/
+		];
+
+		return array_merge( $sections, $extra_sections );
+	}//end method extend_sections
 
 	/**
 	 * Tab Defination
@@ -142,15 +166,15 @@ class CBXWPBookmark_Admin {
 	/**
 	 * On any object delete delete bookmarks
 	 *
-	 * @param int $object_id
-	 * @param object $post
+	 * @param  int  $object_id
+	 * @param  object  $post
 	 *
 	 * @return void
 	 */
-	public function on_delete_object_delete_bookmarks($object_id, $post) {
+	public function on_delete_object_delete_bookmarks( $object_id, $post ) {
 		$object_type = $post->post_type;
 
-		cbxwpbookmarks_delete_bookmarks($object_id, $object_type);
+		cbxwpbookmarks_delete_bookmarks( $object_id, $object_type );
 	}//end method on_delete_object_delete_bookmarks
 
 	/**
@@ -162,7 +186,7 @@ class CBXWPBookmark_Admin {
 		global $post_type, $post;
 
 		$version = $this->version;
-		$page    = isset( $_GET['page'] ) ? esc_attr( wp_unslash( $_GET['page'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 
 		$css_url_part     = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
@@ -225,7 +249,7 @@ class CBXWPBookmark_Admin {
 		global $post_type, $post;
 
 		$version = $this->version;
-		$page    = isset( $_GET['page'] ) ? esc_attr( wp_unslash( $_GET['page'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$admin_pages = CBXWPBookmarkHelper::admin_page_slugs();
 		$all_pages   = array_merge( $admin_pages, [ 'cbxwpbookmark_settings' ] );
@@ -329,16 +353,17 @@ class CBXWPBookmark_Admin {
 			];
 
 
+		$footer    = true;
+		$in_footer = [ 'in_footer' => $footer ];
+
 		if ( $page == 'cbxwpbookmark_settings' ) {
-
-
-			wp_register_script( 'awesome-notifications', $vendors_url_part . 'awesome-notifications/script.js', [], $version, true );
-			wp_register_script( 'pickr', $vendors_url_part . 'pickr/pickr.min.js', [], $version, true );
+			wp_register_script( 'awesome-notifications', $vendors_url_part . 'awesome-notifications/script.js', [], $version, $in_footer );
+			wp_register_script( 'pickr', $vendors_url_part . 'pickr/pickr.min.js', [], $version, $in_footer );
 
 			wp_enqueue_script( 'jquery' );
 			wp_enqueue_media();
 
-			wp_register_script( 'select2', $vendors_url_part . 'select2/select2.min.js', [ 'jquery' ], $version, true );
+			wp_register_script( 'select2', $vendors_url_part . 'select2/select2.min.js', [ 'jquery' ], $version, $in_footer );
 			wp_register_script( 'cbxwpbookmark-setting', $js_url_part . 'cbxwpbookmark-setting.js',
 				[
 					'jquery',
@@ -346,7 +371,7 @@ class CBXWPBookmark_Admin {
 					'pickr',
 					'awesome-notifications'
 				],
-				$version, true );
+				$version, $in_footer );
 
 
 			wp_localize_script( 'cbxwpbookmark-setting', 'cbxwpbookmark_setting', apply_filters( 'cbxwpbookmark_setting_vars', $translation_placeholder ) );
@@ -359,6 +384,13 @@ class CBXWPBookmark_Admin {
 			wp_enqueue_script( 'cbxwpbookmark-setting' );
 		}
 
+
+		if ( $page == 'cbxwpbookmark' || $page == 'cbxwpbookmarkcats' ) {
+			wp_register_script( 'cbxwpbookmark-admin-listing', $js_url_part . 'cbxwpbookmark-admin-listing.js',
+				[ 'jquery' ], $version, $in_footer );
+
+			wp_enqueue_script( 'cbxwpbookmark-admin-listing' );
+		}
 	}//end enqueue_scripts
 
 	/**
@@ -371,7 +403,7 @@ class CBXWPBookmark_Admin {
 
 		//review listing page
 		$bookmark_list_page_hook = add_menu_page( esc_html__( 'CBX WP Bookmark Dashboard', 'cbxwpbookmark' ),
-			esc_html__( 'Bookmarks', 'cbxwpbookmark' ),
+			esc_html__( 'CBX Bookmarks', 'cbxwpbookmark' ),
 			'manage_options',
 			'cbxwpbookmarkdash',
 			[ $this, 'display_admin_bookmark_dash_page' ],
@@ -379,7 +411,7 @@ class CBXWPBookmark_Admin {
 
 		//review listing page
 		$bookmark_list_page_hook = add_submenu_page( 'cbxwpbookmarkdash', esc_html__( 'CBX WP Bookmark Listing', 'cbxwpbookmark' ),
-			esc_html__( 'User Bookmarks', 'cbxwpbookmark' ),
+			esc_html__( 'Bookmarks', 'cbxwpbookmark' ),
 			'manage_options',
 			'cbxwpbookmark',
 			[ $this, 'display_admin_bookmark_list_page' ] );
@@ -393,7 +425,7 @@ class CBXWPBookmark_Admin {
 
 		//Add menu for bookmark category listing
 		$bookmark_category_page_hook = add_submenu_page( 'cbxwpbookmarkdash', esc_html__( 'CBX WP Bookmark Category Listing', 'cbxwpbookmark' ),
-			esc_html__( 'Bookmark Categories', 'cbxwpbookmark' ),
+			esc_html__( 'Categories', 'cbxwpbookmark' ),
 			'manage_options',
 			'cbxwpbookmarkcats',
 			[ $this, 'display_admin_bookmark_category_page' ]
@@ -422,7 +454,7 @@ class CBXWPBookmark_Admin {
 
 
 		if ( isset( $submenu['cbxwpbookmarkdash'][0][0] ) ) {
-			$submenu['cbxwpbookmarkdash'][0][0] = esc_html__( 'Bookmarks Dashboard', 'cbxwpbookmark' );
+			$submenu['cbxwpbookmarkdash'][0][0] = esc_html__( 'Dashboard', 'cbxwpbookmark' );
 		}
 	}//end add_plugin_admin_menu
 
@@ -482,7 +514,7 @@ class CBXWPBookmark_Admin {
 
 		//$plugin_data = get_plugin_data( plugin_dir_path( __DIR__ ) . '/../' . $this->plugin_basename );
 
-		$view = isset( $_GET['view'] ) ? sanitize_text_field( $_GET['view'] ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$view = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( $view == 'edit' ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -561,12 +593,13 @@ class CBXWPBookmark_Admin {
 			$validation['error'] = false;
 			$validation['field'] = [];
 
-			//phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$submit_data = isset( $_POST['cbxwpbookmark_form'] ) ? $_POST['cbxwpbookmark_form'] : [];
+			//phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$submit_data = isset( $_POST['cbxwpbookmark_form'] ) ? wp_unslash( $_POST['cbxwpbookmark_form'] ) : [];
 			$isAjax      = isset( $submit_data['ajax'] ) ? intval( $submit_data['ajax'] ) : 0;
 
 			//verify nonce field
-			if ( wp_verify_nonce( $_POST['cbxwpbookmark_cat_nonce'], 'cbxwpbookmark_cat_addedit' ) ) {
+			//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( isset( $_POST['cbxwpbookmark_cat_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['cbxwpbookmark_cat_nonce'] ), 'cbxwpbookmark_cat_addedit' ) ) {
 
 				$log_id   = isset( $submit_data['id'] ) ? absint( $submit_data['id'] ) : 0;
 				$privacy  = isset( $submit_data['privacy'] ) ? absint( $submit_data['privacy'] ) : 0;
@@ -585,7 +618,7 @@ class CBXWPBookmark_Admin {
 					$form_validated        = false;
 					$validation['error']   = true;
 					$validation['field'][] = 'title';
-					$validation['msg']     = esc_html__( 'The title field character limit must be between 3 to 250.', 'cbxwpsimpleaccounting' );
+					$validation['msg']     = esc_html__( 'The title field character limit must be between 3 to 250.', 'cbxwpbookmark' );
 				}
 
 
@@ -593,7 +626,6 @@ class CBXWPBookmark_Admin {
 				if ( $form_validated ) {
 					//edit mode
 					if ( $log_id > 0 ) {
-
 
 						$col_data['modyfied_date'] = current_time( 'mysql' );
 
@@ -646,10 +678,7 @@ class CBXWPBookmark_Admin {
 
 							do_action( 'cbxbookmark_category_added', $log_id, $user_id, $cat_name );
 
-							$msg = esc_html__( 'Category created successfully.', 'cbxwpsimpleaccounting' );
-//							$msg .= ' <a  href="' . admin_url( $redirect_url . '&id=' . $log_id ) . '" class="button">';
-//							$msg .= esc_html__( 'Edit', 'cbxwpbookmark' );
-//							$msg .= '</a>';
+							$msg = esc_html__( 'Category created successfully.', 'cbxwpbookmark' );
 
 							$validation['error']            = false;
 							$validation['msg']              = $msg;
@@ -726,7 +755,7 @@ class CBXWPBookmark_Admin {
 				set_transient( 'cbxwpbookmark_upgraded_notice', 1 );
 			}
 		}
-	}
+	}//end method upgrader_post_install
 
 
 	/**
@@ -748,7 +777,6 @@ class CBXWPBookmark_Admin {
 				}
 			}
 		}
-
 	}//end plugin_upgrader_process_complete
 
 	/**
@@ -763,7 +791,7 @@ class CBXWPBookmark_Admin {
 			echo '<p>' . sprintf( wp_kses( __( 'Thanks for installing/deactivating <strong>CBX Bookmark</strong> V%s - Codeboxr Team', 'cbxwpbookmark' ), [ 'strong' => [] ] ), esc_attr( CBXWPBOOKMARK_PLUGIN_VERSION ) ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 			/* translators: 1. Plugin setting url 2. Documentation link */
-			echo '<p>' . sprintf( wp_kses( __( 'Check <a style="color:#005ae0 !important; font-weight: bold;" href="%1$s">Plugin Setting</a> | <a style="color:#005ae0 !important; font-weight: bold;" href="%2$s" target="_blank">Documentation</a>', 'cbxwpbookmark' ), [ 'a' => [ 'href' => [], 'style' => [], 'target' => [] ] ] ), esc_url(admin_url( 'admin.php?page=cbxwpbookmark_settings' )),
+			echo '<p>' . sprintf( wp_kses( __( 'Check <a style="color:#005ae0 !important; font-weight: bold;" href="%1$s">Plugin Setting</a> | <a style="color:#005ae0 !important; font-weight: bold;" href="%2$s" target="_blank">Documentation</a>', 'cbxwpbookmark' ), [ 'a' => [ 'href' => [], 'style' => [], 'target' => [] ] ] ), esc_url( admin_url( 'admin.php?page=cbxwpbookmark_settings' ) ),
 					'https://codeboxr.com/product/cbx-wordpress-bookmark/' ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo '</div>';
 			// Delete the transient so we don't keep displaying the activation message
@@ -789,10 +817,85 @@ class CBXWPBookmark_Admin {
 	}//end plugin_activate_upgrade_notices
 
 	/**
+	 * Show plugin update
+	 *
+	 * @param $plugin_file
+	 * @param $plugin_data
+	 *
+	 * @return void
+	 */
+	public function custom_message_after_plugin_row_proaddon($plugin_file, $plugin_data){
+		if ( $plugin_file !== 'cbxwpbookmarkaddon/cbxwpbookmarkaddon.php' ) {
+			return;
+		}
+
+		if(defined('CBXWPBOOKMARKADDON_PLUGIN_NAME')) return;
+
+		$pro_addon_version = CBXWPBookmarkHelper::get_any_plugin_version('cbxwpbookmarkaddon/cbxwpbookmarkaddon.php');
+
+
+		if($pro_addon_version != '' && version_compare( $pro_addon_version, '1.4.4', '<' ) ){
+			// Custom message to display
+
+			//$plugin_setting_url = admin_url( 'admin.php?page=cbxwpbookmark_settings#cbxwpbookmark_licences' );
+			$plugin_manual_update = 'https://codeboxr.com/manual-update-pro-addon/';
+
+			/* translators:translators: %s: plugin setting url for licence */
+			$custom_message     = wp_kses(sprintf( __( '<strong>Note:</strong> CBX Bookmark & Favorite Pro Addon is custom plugin. This plugin can not be auto update from dashboard/plugin manager. For manual update please check <a target="_blank" href="%1$s">documentation</a>. <strong style="color: red;">It seems this plugin\'s current version is older than 1.4.4. To get the latest pro addon features, this plugin needs to upgrade to 1.4.4 or later.</strong>', 'cbxwpbookmark' ), esc_url( $plugin_manual_update ) ), ['strong' => ['style' => []],'a' => ['href' => [], 'target' => []]]);
+
+			// Output a row with custom content
+			echo '<tr class="plugin-update-tr">
+            <td colspan="3" class="plugin-update colspanchange">
+                <div class="notice notice-warning inline">
+                    ' . wp_kses_post( $custom_message ) . '
+                </div>
+            </td>
+          </tr>';
+		}
+	}//end method custom_message_after_plugin_row_proaddon
+
+	/**
+	 * Show plugin update
+	 *
+	 * @param $plugin_file
+	 * @param $plugin_data
+	 *
+	 * @return void
+	 */
+	public function custom_message_after_plugin_row_mycredaddon($plugin_file, $plugin_data){
+		if ( $plugin_file !== 'cbxwpbookmarkmycred/cbxwpbookmarkmycred.php' ) {
+			return;
+		}
+
+		if(defined('CBXWPBOOKMARKMYCRED_PLUGIN_NAME')) return;
+
+		$pro_addon_version = CBXWPBookmarkHelper::get_any_plugin_version('cbxwpbookmarkmycred/cbxwpbookmarkmycred.php');
+
+
+		if($pro_addon_version != '' && version_compare( $pro_addon_version, '1.0.5', '<' ) ){
+			// Custom message to display
+
+			//$plugin_setting_url = admin_url( 'admin.php?page=cbxwpbookmark_settings#cbxwpbookmark_licences' );
+			$plugin_manual_update = 'https://codeboxr.com/manual-update-pro-addon/';
+
+			/* translators: %s: register url */
+			$custom_message     = wp_kses(sprintf( __( '<strong>Note:</strong> CBX Bookmark & Favorite myCred Addon is custom plugin. This plugin can not be auto update from dashboard/plugin manager. For manual update please check <a target="_blank" href="%1$s">documentation</a>. <strong style="color: red;">It seems this plugin\'s current version is older than 1.0.5. To get the latest pro addon features, this plugin needs to upgrade to 1.0.5 or later.</strong>', 'cbxwpbookmark' ), esc_url( $plugin_manual_update ) ), ['strong' => ['style' => []],'a' => ['href' => [], 'target' => []]]);
+
+			// Output a row with custom content
+			echo '<tr class="plugin-update-tr">
+            <td colspan="3" class="plugin-update colspanchange">
+                <div class="notice notice-warning inline">
+                    ' . wp_kses_post( $custom_message ) . '
+                </div>
+            </td>
+          </tr>';
+		}
+	}//end method custom_message_after_plugin_row_mycredaddon
+
+	/**
 	 * Check plugin compatibility and pro addon install campaign
 	 */
 	public function pro_addon_compatibility_campaign() {
-
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		}
@@ -806,7 +909,7 @@ class CBXWPBookmark_Admin {
 
 			if ( version_compare( $pro_plugin_version, '1.1.10', '<' ) ) {
 				/* translators: %s: bookmark pro plugin version */
-				echo '<div style="border-left-color: #005ae0;" class="notice notice-success is-dismissible"><p>' . sprintf( esc_html__( 'CBX Bookmark Pro Addon V%s or any previous version is not 100%% compatible with CBX Bookmark Core V1.5.3 or later. Please update CBX Bookmark Pro Addon to version 1.1.10 or latest. - Codeboxr Team', 'cbxmcratingreview' ), $pro_plugin_version ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo '<div style="border-left-color: #005ae0;" class="notice notice-success is-dismissible"><p>' . sprintf( esc_html__( 'CBX Bookmark Pro Addon V%s or any previous version is not 100%% compatible with CBX Bookmark Core V1.5.3 or later. Please update CBX Bookmark Pro Addon to version 1.1.10 or latest. - Codeboxr Team', 'cbxwpbookmark' ), $pro_plugin_version ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 
 
@@ -880,96 +983,8 @@ class CBXWPBookmark_Admin {
 		return $links_array;
 	}//end plugin_row_meta
 
-	/**
-	 * Add our self-hosted autoupdate plugin to the filter transient
-	 *
-	 * @param $transient
-	 *
-	 * @return object $ transient
-	 */
-	public function pre_set_site_transient_update_plugins_pro_addon( $transient ) {
-		// Extra check for 3rd plugins
-		if ( isset( $transient->response['cbxwpbookmarkaddon/cbxwpbookmarkaddon.php'] ) ) {
-			return $transient;
-		}
-
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$plugin_info = [];
-		$all_plugins = get_plugins();
-		if ( ! isset( $all_plugins['cbxwpbookmarkaddon/cbxwpbookmarkaddon.php'] ) ) {
-			return $transient;
-		} else {
-			$plugin_info = $all_plugins['cbxwpbookmarkaddon/cbxwpbookmarkaddon.php'];
-		}
-
-		$remote_version = '1.4.3'; //current pro addon version
-
-		if ( version_compare( $plugin_info['Version'], $remote_version, '<' ) ) {
-			$obj                                                              = new stdClass();
-			$obj->slug                                                        = 'cbxwpbookmarkaddon';
-			$obj->new_version                                                 = $remote_version;
-			$obj->plugin                                                      = 'cbxwpbookmarkaddon/cbxwpbookmarkaddon.php';
-			$obj->url                                                         = '';
-			$obj->package                                                     = false;
-			$obj->name                                                        = 'CBX Bookmark & Favorite Pro Addon';
-			$transient->response['cbxwpbookmarkaddon/cbxwpbookmarkaddon.php'] = $obj;
-		}
-
-		return $transient;
-	}//end pre_set_site_transient_update_plugins_pro_addons
-
-	/**
-	 * Add our self-hosted autoupdate plugin to the filter transient
-	 *
-	 * @param $transient
-	 *
-	 * @return object $transient
-	 */
-	public function pre_set_site_transient_update_plugins_mycred_addon( $transient ) {
-		// Extra check for 3rd plugins
-		if ( isset( $transient->response['cbxwpbookmarkmycred/cbxwpbookmarkmycred.php'] ) ) {
-			return $transient;
-		}
-
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$plugin_info = [];
-		$all_plugins = get_plugins();
-		if ( ! isset( $all_plugins['cbxwpbookmarkmycred/cbxwpbookmarkmycred.php'] ) ) {
-			return $transient;
-		} else {
-			$plugin_info = $all_plugins['cbxwpbookmarkmycred/cbxwpbookmarkmycred.php'];
-		}
 
 
-		$remote_version = '1.0.4';
-
-		if ( version_compare( $plugin_info['Version'], $remote_version, '<' ) ) {
-			$obj                                                                = new stdClass();
-			$obj->slug                                                          = 'cbxwpbookmarkmycred';
-			$obj->new_version                                                   = $remote_version;
-			$obj->plugin                                                        = 'cbxwpbookmarkmycred/cbxwpbookmarkmycred.php';
-			$obj->url                                                           = '';
-			$obj->package                                                       = false;
-			$obj->name                                                          = 'CBX Bookmark & Favorite myCred Addon';
-			$transient->response['cbxwpbookmarkmycred/cbxwpbookmarkmycred.php'] = $obj;
-		}
-
-		return $transient;
-	}//end pre_set_site_transient_update_plugins_pro_addons
-
-	/**
-	 * Pro Addon update message
-	 */
-	public function plugin_update_message_pro_addons() {
-		/* translators: 1. Link to codeboxr.com site 2. Link to codeboxr.com site */
-		echo ' ' . sprintf( wp_kses( __( 'Check how to <a style="color:#005ae0 !important; font-weight: bold;" href="%1$s"><strong>Update manually</strong></a> , download latest version from <a style="color:#005ae0 !important; font-weight: bold;" href="%2$s"><strong>My Account</strong></a> section of Codeboxr.com', 'cbxwpbookmark' ), [ 'a' => [ 'href' => [], 'style' => [], 'target' => [] ] ] ), 'https://codeboxr.com/manual-update-pro-addon/', 'https://codeboxr.com/my-account/' );
-	}//end plugin_update_message_pro_addons
 
 	/**
 	 * User's bookmarks listing screen option columns
@@ -1085,14 +1100,14 @@ class CBXWPBookmark_Admin {
 		$table_names  = ( is_array( $reset_tables ) && sizeof( $reset_tables ) > 0 ) ? array_values( $reset_tables ) : array_values( CBXWPBookmarkHelper::getAllDBTablesList() );
 
 
-		if ( is_array( $table_names ) && count( $table_names )) {
+		if ( is_array( $table_names ) && count( $table_names ) ) {
 			do_action( 'cbxwpbookmark_plugin_tables_delete_before', $table_names );
 
 			global $wpdb;
 
-			foreach ($table_names as $table_name){
+			foreach ( $table_names as $table_name ) {
 				//phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$query_result = $wpdb->query(  "DROP TABLE IF EXISTS {$table_name}");
+				$query_result = $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
 			}
 
 			do_action( 'cbxwpbookmark_plugin_tables_deleted_after', $table_names );

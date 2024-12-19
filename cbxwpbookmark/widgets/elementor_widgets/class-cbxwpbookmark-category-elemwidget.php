@@ -236,7 +236,7 @@ class CBXWPBookmarkCategory_ElemWidget extends \Elementor\Widget_Base {
 		$attr = [];
 
 		$attr['title']          = esc_attr( $settings['title'] );
-		$attr['order']          = strtoupper(esc_attr( $settings['order'] ));
+		$attr['order']          = strtoupper( esc_attr( $settings['order'] ) );
 		$attr['orderby']        = esc_attr( $settings['orderby'] );
 		$attr['privacy']        = absint( $settings['privacy'] );
 		$attr['display']        = absint( $settings['display'] );
@@ -247,7 +247,7 @@ class CBXWPBookmarkCategory_ElemWidget extends \Elementor\Widget_Base {
 
 
 		//take care some fields
-		$order   = $attr['order'];
+		$order    = $attr['order'];
 		$order_by = $attr['orderby'];
 
 		$order_keys = cbxwpbookmarks_get_order_keys();
@@ -267,7 +267,7 @@ class CBXWPBookmarkCategory_ElemWidget extends \Elementor\Widget_Base {
 		$attr_html = '';
 
 		foreach ( $attr as $key => $value ) {
-			$attr_html .= ' ' . $key . '="' . esc_attr($value) . '" ';
+			$attr_html .= ' ' . $key . '="' . esc_attr( $value ) . '" ';
 		}
 
 		echo do_shortcode( '[cbxwpbookmark-mycat ' . $attr_html . ']' );

@@ -179,6 +179,7 @@ class CBXWPBookmark {
 		//adding the setting action
 		add_action( 'admin_init', [ $plugin_admin, 'setting_init' ] );
 		add_action( 'admin_init', [ $plugin_admin, 'on_bookmarkpost_delete' ] );
+		add_filter( 'cbxwpbookmark_setting_sections', [ $plugin_admin, 'extend_sections' ], 10 );
 
 
 		//plugin notices, active, upgrade, deactivation
@@ -186,15 +187,11 @@ class CBXWPBookmark {
 		add_filter( 'plugin_row_meta', [ $plugin_admin, 'plugin_row_meta' ], 10, 4 );
 		add_action( 'upgrader_process_complete', [ $plugin_admin, 'plugin_upgrader_process_complete' ], 10, 2 );
 		add_action( 'admin_notices', [ $plugin_admin, 'plugin_activate_upgrade_notices' ] );
+		add_action( 'after_plugin_row_cbxwpbookmarkaddon/cbxwpbookmarkaddon.php', [ $plugin_admin, 'custom_message_after_plugin_row_proaddon' ], 10, 2 );
+		add_action( 'after_plugin_row_cbxwpbookmarkmycred/cbxwpbookmarkmycred.php', [ $plugin_admin, 'custom_message_after_plugin_row_mycredaddon' ], 10, 2 );
 
 		//page auto created
 		add_action( 'wp_ajax_cbxwpbookmark_autocreate_page', [ $plugin_admin, 'cbxwpbookmark_autocreate_page' ] );
-
-		//update manager
-		add_filter( 'pre_set_site_transient_update_plugins', [ $plugin_admin, 'pre_set_site_transient_update_plugins_pro_addon' ] );
-		add_filter( 'pre_set_site_transient_update_plugins', [ $plugin_admin, 'pre_set_site_transient_update_plugins_mycred_addon' ] );
-		add_action( 'in_plugin_update_message-' . 'cbxwpbookmarkaddon/cbxwpbookmarkaddon.php', [ $plugin_admin, 'plugin_update_message_pro_addons' ] );
-		add_action( 'in_plugin_update_message-' . 'cbxwpbookmarkmycred/cbxwpbookmarkmycred.php', [ $plugin_admin, 'plugin_update_message_pro_addons' ] );
 
 		//for bookmark log listing screens
 		add_filter( 'manage_cbx-bookmark_page_cbxwpbookmark_columns', [ $plugin_admin, 'log_listing_screen_cols' ] );
@@ -215,7 +212,6 @@ class CBXWPBookmark {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-
 		$plugin_public = new CBXWPbookmark_Public( $this->get_plugin_name(), $this->get_version() );
 
 		add_action( 'wp_enqueue_scripts', [ $plugin_public, 'enqueue_styles' ] );

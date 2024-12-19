@@ -220,7 +220,7 @@ class CBXWPBookmarkCategory_Block {
 		$arr['show_bookmarks'] = ( $arr['show_bookmarks'] == 'true' ) ? 1 : 0;
 
 		//take care some fields
-		$order   = $attr['order'];
+		$order    = $attr['order'];
 		$order_by = $attr['orderby'];
 
 		$order_keys = cbxwpbookmarks_get_order_keys();

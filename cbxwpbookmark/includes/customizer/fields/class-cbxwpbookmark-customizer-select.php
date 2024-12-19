@@ -39,7 +39,7 @@ class CBXWPBookmark_Customizer_Control_Select2 extends WP_Customize_Control {
 			$this->placeholder = $this->input_attrs['placeholder'];
 		}
 
-        $this->placeholder = esc_html__('Please select...', 'cbxwpbookmark');
+		$this->placeholder = esc_html__( 'Please select...', 'cbxwpbookmark' );
 	}//end method construction
 
 	/**
@@ -68,7 +68,7 @@ class CBXWPBookmark_Customizer_Control_Select2 extends WP_Customize_Control {
                    name="<?php echo esc_attr( $this->id ); ?>" <?php $this->link(); ?> /> <select
                     name="select2-list-<?php echo( $this->multiselect ? 'multi[]' : 'single' ); ?>"
                     class="cbxwpbookmark-customize-control-select2"
-                    data-placeholder="<?php echo esc_attr($this->placeholder); ?>" <?php echo( $this->multiselect ? 'multiple="multiple" ' : '' ); ?>>
+                    data-placeholder="<?php echo esc_attr( $this->placeholder ); ?>" <?php echo( $this->multiselect ? 'multiple="multiple" ' : '' ); ?>>
 				<?php
 
 				if ( ! $this->multiselect ) {

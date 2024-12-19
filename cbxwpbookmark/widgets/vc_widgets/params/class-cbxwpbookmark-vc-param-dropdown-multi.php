@@ -6,24 +6,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class CBXWPBookmark_VCParam_DropDownMulti {
 	/**
+	 * The version of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string $version The current version of this plugin.
+	 */
+	private $version;
+
+	/**
 	 * Initiator.
 	 */
 	public function __construct() {
-		$version = $this->version;
+		$this->version = CBXWPBOOKMARK_PLUGIN_VERSION;
+		$version       = $this->version;
 
-		$css_url_part     = CBXWPBOOKMARK_ROOT_URL.'assets/css/';
-		$js_url_part      = CBXWPBOOKMARK_ROOT_URL.'assets/js/';
-		$vendors_url_part = CBXWPBOOKMARK_ROOT_URL.'assets/vendors/';
+		$css_url_part     = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
+		$js_url_part      = CBXWPBOOKMARK_ROOT_URL . 'assets/js/';
+		$vendors_url_part = CBXWPBOOKMARK_ROOT_URL . 'assets/vendors/';
 
-		$css_path_part     = CBXWPBOOKMARK_ROOT_PATH.'assets/css/';
-		$js_path_part      = CBXWPBOOKMARK_ROOT_PATH.'assets/js/';
-		$vendors_path_part = CBXWPBOOKMARK_ROOT_PATH.'assets/vendors/';
+		$css_path_part     = CBXWPBOOKMARK_ROOT_PATH . 'assets/css/';
+		$js_path_part      = CBXWPBOOKMARK_ROOT_PATH . 'assets/js/';
+		$vendors_path_part = CBXWPBOOKMARK_ROOT_PATH . 'assets/vendors/';
 
 		if ( defined( 'WPB_VC_VERSION' ) && version_compare( WPB_VC_VERSION, 4.8 ) >= 0 ) {
 			if ( function_exists( 'vc_add_shortcode_param' ) ) {
 
-				wp_register_style( 'select2', $vendors_url_part. 'select2/select2.min.css', [], CBXWPBOOKMARK_PLUGIN_VERSION ); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-				wp_register_script( 'select2', $vendors_url_part. 'select2/select2.min.js', [ 'jquery' ], CBXWPBOOKMARK_PLUGIN_VERSION ); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+				wp_register_style( 'select2', $vendors_url_part . 'select2/select2.min.css', [], $version );           //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+				wp_register_script( 'select2', $vendors_url_part . 'select2/select2.min.js', [ 'jquery' ], $version ); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
 
 				wp_enqueue_style( 'select2' );
 				wp_enqueue_script( 'jquery' );
@@ -34,8 +44,8 @@ class CBXWPBookmark_VCParam_DropDownMulti {
 		} else {
 			if ( function_exists( 'add_shortcode_param' ) ) {
 
-				wp_register_style( 'select2', $vendors_url_part . 'select2/select2.min.css', [], CBXWPBOOKMARK_PLUGIN_VERSION ); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-				wp_register_script( 'select2', $vendors_url_part . 'select2/select2.min.js', [ 'jquery' ], CBXWPBOOKMARK_PLUGIN_VERSION ); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+				wp_register_style( 'select2', $vendors_url_part . 'select2/select2.min.css', [], $version );           //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+				wp_register_script( 'select2', $vendors_url_part . 'select2/select2.min.js', [ 'jquery' ], $version ); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
 
 				wp_enqueue_style( 'select2' );
 				wp_enqueue_script( 'jquery' );
@@ -89,7 +99,7 @@ class CBXWPBookmark_VCParam_DropDownMulti {
 				$selected = ' selected="selected"';
 			}
 
-			$output .= '<option class="cbxwpbookmarkdownmulti-' . esc_attr($val) . '" value="' . esc_attr($val) . '"' . $selected . '>' . $text_val . '</option>';
+			$output .= '<option class="cbxwpbookmarkdownmulti-' . esc_attr( $val ) . '" value="' . esc_attr( $val ) . '"' . $selected . '>' . $text_val . '</option>';
 		};
 		$output .= '</select>';
 

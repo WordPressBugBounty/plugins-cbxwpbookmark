@@ -187,7 +187,7 @@ class CBXWPBookmarkMost_ElemWidget extends \Elementor\Widget_Base {
 	/**
 	 * Convert yes/no to boolean on/off
 	 *
-	 * @param string $value
+	 * @param  string  $value
 	 *
 	 * @return string
 	 */
@@ -202,7 +202,7 @@ class CBXWPBookmarkMost_ElemWidget extends \Elementor\Widget_Base {
 	/**
 	 * Convert yes/no switch to boolean 1/0
 	 *
-	 * @param string $value
+	 * @param  string  $value
 	 *
 	 * @return int
 	 */
@@ -246,7 +246,7 @@ class CBXWPBookmarkMost_ElemWidget extends \Elementor\Widget_Base {
 
 
 		//take care some fields
-		$order   = $attr['order'];
+		$order    = $attr['order'];
 		$order_by = $attr['orderby'];
 
 		$order_keys = cbxwpbookmarks_get_order_keys();
@@ -260,7 +260,7 @@ class CBXWPBookmarkMost_ElemWidget extends \Elementor\Widget_Base {
 			$order_by = 'object_count';
 		}
 		$attr['orderby'] = $order_by;
-		
+
 		$attr = apply_filters( 'cbxwpbookmark_elementor_shortcode_builder_attr', $attr, $settings, 'cbxwpbookmark-most' );
 
 		$attr_html = '';

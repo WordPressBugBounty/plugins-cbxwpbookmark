@@ -78,8 +78,8 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                                 <p>
 									<?php
 									/* translators: %d: Total system wide category count */
-                                    echo sprintf( esc_html__( '%d categories', 'cbxwpbookmark' ), absint( $total_bookmarks ) );
-                                    ?>
+									echo sprintf( esc_html__( '%d categories', 'cbxwpbookmark' ), absint( $total_bookmarks ) );
+									?>
                                 </p>
                             </div>
                         </div>
@@ -167,6 +167,20 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                     <div class="content">
                         <div class="cbx-backend-settings-row">
                             <p>
+                                Version - 1.8.9
+                            </p>
+                            <ul>
+                                <li>[improvement] Login form/url improved</li>
+                                <li>[improvement] Login form/url improved</li>
+                                <li>[fixed] Visual composer param php error fixed</li>
+                                <li>[updated] Pro addon plugin new version(1.4.4) released</li>
+                                <li>[updated] myCred addon plugin new version(1.0.5) released</li>
+                                <li>[improvement] Plugin check latest check</li>
+                                <li>[added] Added new method for plugin update checker</li>
+                            </ul>
+                        </div>
+                        <div class="cbx-backend-settings-row">
+                            <p>
                                 Version - 1.8.8
                             </p>
                             <ul>
@@ -196,17 +210,8 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                                 Version - 1.8.4
                             </p>
                             <ul>
-                                <li>[improvement] Accessibility improvement modal close button for guest modal</li>>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 1.8.3
-                            </p>
-                            <ul>
-                                <li>[new] Fresh new icons</li>
-                                <li>[improvement] Accessibility improvement</li>
-                                <li>[updated] Pro addon new version(1.4.2) released</li>
+                                <li>[improvement] Accessibility improvement modal close button for guest modal</li>
+                                >
                             </ul>
                         </div>
                     </div>
@@ -218,6 +223,17 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                         </div>
                     </div>
                     <div class="content">
+                        <div class="cbx-backend-settings-row">
+                            <p>
+                                Version - 1.4.4
+                            </p>
+                            <ul>
+                                <li>[improvement] Shortcode improvement for grid plugin</li>
+                                <li>[updated] Core plugin new version(1.8.9) released</li>
+                                <li>[added] Added new method for plugin update checker</li>
+                                <li>[improvement] Minor improvements and WordPress latest version 6.7.1 compatible</li>
+                            </ul>
+                        </div>
                         <div class="cbx-backend-settings-row">
                             <p>
                                 Version - 1.4.3
@@ -236,27 +252,6 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                                 <li>[new] Fresh new icons</li>
                                 <li>[improvement] Accessibility improvement</li>
                                 <li>[updated] Core plugin new version(1.8.3) released</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 1.4.1
-                            </p>
-                            <ul>
-                                <li>[new] New field added in pro setting to restrict maximum bookmark limit, default unlimited</li>
-                                <li>[updated] Core updated</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 1.4.0
-                            </p>
-                            <ul>
-                                <li>[new] Ultimate member plugin support for profile page</li>
-                                <li>[new] UsersWP plugin support for profile page</li>
-                                <li>[new] Ultimate member profile custom tab for my bookmarks + custom settings</li>
-                                <li>[new] UsersWP plugin support for profile custom tab for my bookmarks + custom settings</li>
-                                <li>[fixed] Fixed buddypress activity bookmark button not showing. Need to update core plugin too.</li>
                             </ul>
                         </div>
                     </div>
@@ -456,10 +451,10 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
 							//$feed = fetch_feed( 'https://codeboxr.com/feed?post_type=product' );
 							$feed = fetch_feed( 'https://codeboxr.com/feed?post_type=post' );
 							if ( ! is_wp_error( $feed ) ) : $feed->init();
-								$feed->set_output_encoding( 'UTF-8' );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              // this is the encoding parameter, and can be left unchanged in almost every case
-								$feed->handle_content_type();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       // this double-checks the encoding type
-								$feed->set_cache_duration( 21600 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 // 21,600 seconds is six hours
-								$limit  = $feed->get_item_quantity( 10 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           // fetches the 18 most recent RSS feed stories
+								$feed->set_output_encoding( 'UTF-8' );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   // this is the encoding parameter, and can be left unchanged in almost every case
+								$feed->handle_content_type();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            // this double-checks the encoding type
+								$feed->set_cache_duration( 21600 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      // 21,600 seconds is six hours
+								$limit  = $feed->get_item_quantity( 10 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 // fetches the 18 most recent RSS feed stories
 								$items  = $feed->get_items( 0,
 									$limit );                                                                                                                                                                                                                                                                                                                                                                                                                  // this sets the limit and array for parsing the feed
 								$blocks = array_slice( $items, 0, 10 );

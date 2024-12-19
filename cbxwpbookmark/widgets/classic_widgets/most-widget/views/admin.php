@@ -2,25 +2,25 @@
 
 <!-- Widget Tittle -->
 <p>
-    <label for="<?php echo esc_attr($this->get_field_id( 'title' )); ?>">
+    <label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>">
 		<?php esc_html_e( 'Title', "cbxwpbookmark" ); ?>
     </label>
 
-    <input class="widefat" id="<?php echo esc_attr($this->get_field_id( 'title' )); ?>"
-           name="<?php echo esc_attr($this->get_field_name( 'title' )); ?>" type="text" value="<?php echo esc_attr($title); ?>"/>
+    <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"
+           name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>"/>
 </p>
 <p>
-    <label for="<?php echo esc_attr($this->get_field_id( 'limit' )); ?>">
+    <label for="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>">
 		<?php esc_html_e( 'Display Limit', "cbxwpbookmark" ); ?>
     </label>
 
-    <input class="widefat" id="<?php echo esc_attr($this->get_field_id( 'limit' )); ?>"
-           name="<?php echo esc_attr($this->get_field_name( 'limit' )); ?>" type="text" value="<?php echo absint($limit); ?>"/>
+    <input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'limit' ) ); ?>"
+           name="<?php echo esc_attr( $this->get_field_name( 'limit' ) ); ?>" type="text" value="<?php echo absint( $limit ); ?>"/>
 </p>
 <p>
-    <label for="<?php echo esc_attr($this->get_field_id( 'daytime' )); ?>"> <?php esc_html_e( 'Select Time Duration', "cbxwpbookmark" ); ?>
-        <select class="widefat" id="<?php echo esc_attr($this->get_field_id( 'daytime' )); ?>"
-                name="<?php echo esc_attr($this->get_field_name( 'daytime' )); ?>">
+    <label for="<?php echo esc_attr( $this->get_field_id( 'daytime' ) ); ?>"> <?php esc_html_e( 'Select Time Duration', "cbxwpbookmark" ); ?>
+        <select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'daytime' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'daytime' ) ); ?>">
             <option value="0"><?php esc_html_e( '-- All Time --', "cbxwpbookmark" ); ?></option>
             <option value="1" <?php echo ( $daytime == '1' ) ? 'selected="selected"' : ''; ?>>
 				<?php esc_html_e( "1 Day", 'cbxwpbookmark' ); ?>
@@ -44,10 +44,10 @@
 $object_types = CBXWPBookmarkHelper::object_types();
 ?>
 <p>
-    <label for="<?php echo esc_attr($this->get_field_id( 'type' )); ?>"> <?php esc_html_e( 'Post Type(s)', "cbxwpbookmark" ); ?>
+    <label for="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>"> <?php esc_html_e( 'Post Type(s)', "cbxwpbookmark" ); ?>
 
-        <select multiple="true" class="widefat" id="<?php echo esc_attr($this->get_field_id( 'type' )); ?>"
-                name="<?php echo esc_attr($this->get_field_name( 'type' )); ?>[]">
+        <select multiple="true" class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'type' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'type' ) ); ?>[]">
 
             <option value="" <?php echo ( sizeof( $type ) == 0 ) ? 'selected="selected"' : ''; ?>>
 				<?php esc_html_e( "Select Post Type(s)", "cbxwpbookmark" ) ?>
@@ -58,7 +58,7 @@ $object_types = CBXWPBookmarkHelper::object_types();
 				foreach ( $object_types['builtin']['types'] as $type_slug => $type_name ) {
 					$type_slug = esc_attr( $type_slug );
 					$selected  = in_array( $type_slug, $type ) ? ' selected="selected" ' : '';
-					echo '<option value="' . esc_attr($type_slug) . '" ' . $selected . ' >' . esc_attr( $type_name ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo '<option value="' . esc_attr( $type_slug ) . '" ' . $selected . ' >' . esc_attr( $type_name ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				echo '</optgroup>';
 			}
@@ -68,7 +68,7 @@ $object_types = CBXWPBookmarkHelper::object_types();
 				foreach ( $object_types['custom']['types'] as $type_slug => $type_name ) {
 					$type_slug = esc_attr( $type_slug );
 					$selected  = in_array( $type_slug, $type ) ? ' selected="selected" ' : '';
-					echo '<option value="' . esc_attr($type_slug) . '" ' . $selected . ' >' . esc_attr( $type_name ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo '<option value="' . esc_attr( $type_slug ) . '" ' . $selected . ' >' . esc_attr( $type_name ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				echo '</optgroup>';
 			}
@@ -80,9 +80,9 @@ $object_types = CBXWPBookmarkHelper::object_types();
 
 </p>
 <p>
-    <label for="<?php echo esc_attr($this->get_field_id( 'orderby' )); ?>"><?php esc_html_e( "Order By", "cbxwpbookmark" ); ?>
-        <select class="widefat" id="<?php echo esc_attr($this->get_field_id( 'orderby' )); ?>"
-                name="<?php echo esc_attr($this->get_field_name( 'orderby' )); ?>">
+    <label for="<?php echo esc_attr( $this->get_field_id( 'orderby' ) ); ?>"><?php esc_html_e( "Order By", "cbxwpbookmark" ); ?>
+        <select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'orderby' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'orderby' ) ); ?>">
             <option value="object_count" <?php echo ( $order_by == "object_count" ) ? 'selected="selected"' : ''; ?>> <?php esc_html_e( "Bookmark Count", "cbxwpbookmark" ); ?></option>
             <option value="object_type" <?php echo ( $order_by == "object_type" ) ? 'selected="selected"' : ''; ?>> <?php esc_html_e( "Post Type", "cbxwpbookmark" ); ?></option>
             <option value="object_id" <?php echo ( $order_by == "object_id" ) ? 'selected="selected"' : ''; ?>> <?php esc_html_e( "Post ID", "cbxwpbookmark" ); ?></option>
@@ -97,18 +97,18 @@ $object_types = CBXWPBookmarkHelper::object_types();
 $order = strtoupper( $order );
 ?>
 <p>
-    <label for="<?php echo esc_attr($this->get_field_id( 'order' )); ?>"><?php esc_html_e( "Order", "cbxwpbookmark" ); ?>
-        <select class="widefat" id="<?php echo esc_attr($this->get_field_id( 'order' )); ?>"
-                name="<?php echo esc_attr($this->get_field_name( 'order' )); ?>">
+    <label for="<?php echo esc_attr( $this->get_field_id( 'order' ) ); ?>"><?php esc_html_e( "Order", "cbxwpbookmark" ); ?>
+        <select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'order' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'order' ) ); ?>">
             <option value="ASC" <?php echo ( $order == "ASC" ) ? 'selected="selected"' : ''; ?>> <?php esc_html_e( "Ascending", "cbxwpbookmark" ) ?> </option>
             <option value="DESC" <?php echo ( $order == "DESC" ) ? 'selected="selected"' : ''; ?>> <?php esc_html_e( "Descending", "cbxwpbookmark" ) ?> </option>
         </select> </label>
 
 </p>
 <p>
-    <label for="<?php echo esc_attr($this->get_field_id( 'show_count' )); ?>"><?php esc_html_e( "Show Count", "cbxwpbookmark" ); ?>
-        <select class="widefat" id="<?php echo esc_attr($this->get_field_id( 'show_count' )); ?>"
-                name="<?php echo esc_attr($this->get_field_name( 'show_count' )); ?>">
+    <label for="<?php echo esc_attr( $this->get_field_id( 'show_count' ) ); ?>"><?php esc_html_e( "Show Count", "cbxwpbookmark" ); ?>
+        <select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'show_count' ) ); ?>"
+                name="<?php echo esc_attr( $this->get_field_name( 'show_count' ) ); ?>">
 
             <option value="1" <?php echo ( $show_count == "1" ) ? 'selected="selected"' : ''; ?>>
 				<?php esc_html_e( "Yes", "cbxwpbookmark" ) ?>
@@ -121,8 +121,8 @@ $order = strtoupper( $order );
     </label>
 </p>
 <p>
-    <label for="<?php echo esc_attr($this->get_field_id( 'show_thumb' )); ?>"><?php esc_html_e( "Show Thumb", "cbxwpbookmark" ) ?>
-        <select class="widefat" id="<?php echo esc_attr($this->get_field_id( 'show_thumb' )); ?>" name="<?php echo esc_attr($this->get_field_name( 'show_thumb' )); ?>">
+    <label for="<?php echo esc_attr( $this->get_field_id( 'show_thumb' ) ); ?>"><?php esc_html_e( "Show Thumb", "cbxwpbookmark" ) ?>
+        <select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'show_thumb' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'show_thumb' ) ); ?>">
             <option value="1" <?php echo ( $show_thumb == 1 ) ? 'selected="selected"' : ''; ?>>
 				<?php esc_html_e( "Yes", "cbxwpbookmark" ) ?>
             </option>

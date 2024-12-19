@@ -5,23 +5,23 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 
-$object_id   = $item->object_id;
-$object_type = $item->object_type;
+$object_id    = $item->object_id;
+$object_type  = $item->object_type;
 $object_title = wp_strip_all_tags( get_the_title( $object_id ) );
 if ( $object_title == '' ) {
 	$object_title = esc_html__( 'Untitled', 'cbxwpbookmark' );
 }
-$object_link  = get_permalink( $object_id );
+$object_link = get_permalink( $object_id );
 
 $show_thumb = isset( $instance['show_thumb'] ) ? intval( $instance['show_thumb'] ) : 1;
 $thumb_size = 'thumbnail';
 $thumb_attr = [];
 
-echo '<li class="cbxwpbookmark-mostlist-item' . esc_attr($li_class) . '" >';
+echo '<li class="cbxwpbookmark-mostlist-item' . esc_attr( $li_class ) . '" >';
 
 do_action( 'cbxwpbookmark_bookmarkmost_single_item_start', $object_id, $item );
 
-echo '<a title="'.esc_attr($object_title).'" href="' . esc_url($object_link) . '">';
+echo '<a title="' . esc_attr( $object_title ) . '" href="' . esc_url( $object_link ) . '">';
 $thumb_html = '';
 if ( $show_thumb ) {
 	if ( has_post_thumbnail( $object_id ) ) {

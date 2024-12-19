@@ -223,7 +223,7 @@ class CBXWPBookmarkMyBookmark_Block {
 
 		$arr['title']    = isset( $attr['title'] ) ? esc_attr( $attr['title'] ) : '';
 		$arr['base_url'] = isset( $attr['base_url'] ) ? esc_url( $attr['base_url'] ) : cbxwpbookmarks_mybookmark_page_url();
-		$arr['order']    = isset( $attr['order'] ) ? strtoupper(esc_attr($attr['order'])) : 'DESC';
+		$arr['order']    = isset( $attr['order'] ) ? strtoupper( esc_attr( $attr['order'] ) ) : 'DESC';
 		$arr['orderby']  = isset( $attr['orderby'] ) ? esc_attr( $attr['orderby'] ) : 'id';
 		$arr['limit']    = isset( $attr['limit'] ) ? intval( $attr['limit'] ) : 10;
 
@@ -255,20 +255,24 @@ class CBXWPBookmarkMyBookmark_Block {
 		$arr['showshareurl'] = ( $arr['showshareurl'] == 'true' ) ? 1 : 0;
 
 		//take care some fields
-		$order = $attr['order'];
+		$order    = $attr['order'];
 		$order_by = $attr['orderby'];
 
 		$order_keys = cbxwpbookmarks_get_order_keys();
-		if(!in_array($order, $order_keys)) $order = 'DESC';
+		if ( ! in_array( $order, $order_keys ) ) {
+			$order = 'DESC';
+		}
 		$attr['order'] = $order;
 
 		$bookmark_sortable_keys = cbxwpbookmarks_bookmark_sortable_keys();
-		if(!in_array($order_by, $bookmark_sortable_keys)) $order_by = 'id';
+		if ( ! in_array( $order_by, $bookmark_sortable_keys ) ) {
+			$order_by = 'id';
+		}
 		$attr['orderby'] = $order_by;
 
 		$attr_html = '';
 		foreach ( $arr as $key => $value ) {
-			$attr_html .= ' ' . $key . '="' . esc_attr($value) . '" ';
+			$attr_html .= ' ' . $key . '="' . esc_attr( $value ) . '" ';
 		}
 
 		return do_shortcode( '[cbxwpbookmark ' . $attr_html . ']' );

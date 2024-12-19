@@ -105,7 +105,7 @@ class CBXWPBookmarkBtn_Block {
 
 		$attr_html = '';
 		foreach ( $arr as $key => $value ) {
-			$attr_html .= ' ' . $key . '="' . esc_attr($value) . '" ';
+			$attr_html .= ' ' . $key . '="' . esc_attr( $value ) . '" ';
 		}
 
 		return '[cbxwpbookmarkbtn ' . $attr_html . ']';

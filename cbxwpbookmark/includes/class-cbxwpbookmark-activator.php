@@ -53,6 +53,6 @@ class CBXWPBookmark_Activator {
 	 * @return int|string|WP_Error|null
 	 */
 	public static function cbxbookmark_create_page( $key = '', $slug = '', $page_title = '', $page_content = '' ) {
-		return CBXWPBookmarkHelper::cbxbookmark_create_page($key, $slug, $page_title, $page_content);
+		return CBXWPBookmarkHelper::cbxbookmark_create_page( $key, $slug, $page_title, $page_content );
 	}//end cbxbookmark_create_page
 }//end class CBXWPBookmark_Activator

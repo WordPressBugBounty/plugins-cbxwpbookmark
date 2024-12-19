@@ -132,7 +132,7 @@ class CBXWPBookmarkBtn_ElemWidget extends \Elementor\Widget_Base {
 	 */
 	protected function render() {
 		$settings = $this->get_settings();
-		$attr = [];
+		$attr     = [];
 
 		$attr['show_count'] = $this->yes_no_to_1_0( $settings['show_count'] );
 
@@ -142,7 +142,7 @@ class CBXWPBookmarkBtn_ElemWidget extends \Elementor\Widget_Base {
 		$attr_html = '';
 
 		foreach ( $attr as $key => $value ) {
-			$attr_html .= ' ' . $key . '="' . esc_attr($value) . '" ';
+			$attr_html .= ' ' . $key . '="' . esc_attr( $value ) . '" ';
 		}
 
 		echo do_shortcode( '[cbxwpbookmarkbtn ' . $attr_html . ']' );

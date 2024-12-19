@@ -245,7 +245,7 @@ class CBXWPBookmarkMost_Block {
 		$arr['show_thumb'] = ( $arr['show_thumb'] == 'true' ) ? 1 : 0;
 
 		//take care some fields
-		$order   = $attr['order'];
+		$order    = $attr['order'];
 		$order_by = $attr['orderby'];
 
 		$order_keys = cbxwpbookmarks_get_order_keys();

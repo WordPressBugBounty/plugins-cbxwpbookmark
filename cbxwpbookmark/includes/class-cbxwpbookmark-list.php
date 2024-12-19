@@ -107,11 +107,11 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 			}
 		}
 
-		$edit_link = apply_filters('cbxwpbookmark_dashboard_listing_editlink', $edit_link, $object_id, $object_type);
+		$edit_link = apply_filters( 'cbxwpbookmark_dashboard_listing_editlink', $edit_link, $object_id, $object_type );
 
 		if ( $edit_link == '' ) {
 			return $post_id . ' - ' . esc_html__( 'Untitled article', 'cbxwpbookmark' );
-		}else{
+		} else {
 			return $post_id . ' - ' . $edit_link;
 		}
 	}//end column_object_id
@@ -296,7 +296,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 		// security check!
 		if ( isset( $_POST['_wpnonce'] ) && ! empty( $_POST['_wpnonce'] ) ) {
 			//$nonce  = filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING );
-			$nonce  = CBXWPBookmarkHelper::filter_string_polyfill( $_POST['_wpnonce'] ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$nonce  = CBXWPBookmarkHelper::filter_string_polyfill( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$action = 'bulk-' . $this->_args['plural'];
 
 			if ( ! wp_verify_nonce( $nonce, $action ) ) {
@@ -318,7 +318,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 
 			$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
-			$results = $_REQUEST['cbxwpbookmarklist'];
+			$results = isset( $_REQUEST['cbxwpbookmarklist'] ) ? wp_unslash( $_REQUEST['cbxwpbookmarklist'] ) : []; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			foreach ( $results as $id ) {
 
 				$id = intval( $id );
@@ -328,7 +328,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 
 				if ( 'delete' === $new_status ) {
 
-					cbxwpbookmarks_delete_bookmark($id, $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type']);
+					cbxwpbookmarks_delete_bookmark( $id, $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type'] );
 					/*do_action( 'cbxbookmark_bookmark_removed_before', $id, $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type'] );
 
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -359,10 +359,10 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 
 		$option_name = $screen->get_option( 'per_page', 'option' ); //the core class name is WP_Screen
 
-		$perpage = intval( get_user_meta( $user, $option_name, true ) );
+		$per_page = intval( get_user_meta( $user, $option_name, true ) );
 
-		if ( $perpage == 0 ) {
-			$perpage = intval( $screen->get_option( 'per_page', 'default' ) );
+		if ( $per_page == 0 ) {
+			$per_page = intval( $screen->get_option( 'per_page', 'default' ) );
 		}
 
 
@@ -387,7 +387,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 		$order_by    = ( isset( $_REQUEST['orderby'] ) && $_REQUEST['orderby'] != '' ) ? sanitize_text_field( $_REQUEST['orderby'] ) : 'logs.id';
 		// phpcs:enable
 
-		$data = $this->getLogData( $search, $id, $object_id, $object_type, $cat_id, $user_id, $order_by, $order, $perpage, $current_page );
+		$data = $this->getLogData( $search, $id, $object_id, $object_type, $cat_id, $user_id, $order_by, $order, $per_page, $current_page );
 
 		$total_items = intval( $this->getLogDataCount( $search, $id, $object_id, $object_type, $cat_id, $user_id ) );
 
@@ -397,9 +397,9 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 		 * REQUIRED. We also have to register our pagination options & calculations.
 		 */
 		$this->set_pagination_args( [
-			'total_items' => $total_items,                     //WE have to calculate the total number of items
-			'per_page'    => $perpage,                         //WE have to determine how many items to show on a page
-			'total_pages' => ceil( $total_items / $perpage )   //WE have to calculate the total number of pages
+			'total_items' => $total_items,                      //WE have to calculate the total number of items
+			'per_page'    => $per_page,                         //WE have to determine how many items to show on a page
+			'total_pages' => ceil( $total_items / $per_page )   //WE have to calculate the total number of pages
 		] );
 
 	}//end method prepare_items
@@ -415,12 +415,12 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 	 * @param  int  $user_id
 	 * @param  string  $order_by
 	 * @param  string  $order
-	 * @param  int  $perpage
+	 * @param  int  $per_page
 	 * @param  int  $page
 	 *
 	 * @return array|null|object
 	 */
-	public function getLogData( $search = '', $id = 0, $object_id = 0, $object_type = '', $cat_id = 0, $user_id = 0, $order_by = 'logs.id', $order = 'DESC', $perpage = 20, $page = 1 ) {
+	public function getLogData( $search = '', $id = 0, $object_id = 0, $object_type = '', $cat_id = 0, $user_id = 0, $order_by = 'logs.id', $order = 'DESC', $per_page = 20, $page = 1 ) {
 		global $wpdb;
 		$settings       = $this->settings_api;
 		$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
@@ -450,13 +450,13 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 		$sql_select = "logs.*, cat.cat_name as cat_name";
 
 
-		$sql_select = apply_filters( 'cbxwpbookmark_list_admin_select', $sql_select, $search, $id, $object_id, $object_type, $cat_id, $user_id, $order_by, $order, $perpage, $page );
+		$sql_select = apply_filters( 'cbxwpbookmark_list_admin_select', $sql_select, $search, $id, $object_id, $object_type, $cat_id, $user_id, $order_by, $order, $per_page, $page );
 
 		$join = $where_sql = '';
 
 		$join .= " LEFT JOIN $category_table  as cat ON cat.id = logs.cat_id ";
 
-		$join = apply_filters( 'cbxwpbookmark_list_admin_join', $join, $search, $id, $object_id, $object_type, $cat_id, $user_id, $order_by, $order, $perpage, $page );
+		$join = apply_filters( 'cbxwpbookmark_list_admin_join', $join, $search, $id, $object_id, $object_type, $cat_id, $user_id, $order_by, $order, $per_page, $page );
 
 
 		if ( $object_id !== 0 ) {
@@ -475,7 +475,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 			$where_sql .= ( ( $where_sql != '' ) ? ' AND ' : '' ) . $wpdb->prepare( 'logs.user_id=%d', intval( $user_id ) );
 		}
 
-		$where_sql = apply_filters( 'cbxwpbookmark_list_admin_where', $where_sql, $search, $id, $object_id, $object_type, $cat_id, $user_id, $order_by, $order, $perpage, $page );
+		$where_sql = apply_filters( 'cbxwpbookmark_list_admin_where', $where_sql, $search, $id, $object_id, $object_type, $cat_id, $user_id, $order_by, $order, $per_page, $page );
 
 		if ( $where_sql == '' ) {
 			$where_sql = '1';
@@ -484,11 +484,11 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 
 		$limit_sql = '';
 
-		if ( $perpage != - 1 ) {
-			$start_point = ( $page * $perpage ) - $perpage;
+		if ( $per_page != - 1 ) {
+			$start_point = ( $page * $per_page ) - $per_page;
 			$limit_sql   = "LIMIT";
 			$limit_sql   .= ' ' . $start_point . ',';
-			$limit_sql   .= ' ' . $perpage;
+			$limit_sql   .= ' ' . $per_page;
 		}
 
 		$sortingOrder = " ORDER BY $order_by $order ";
@@ -607,11 +607,12 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 		}
 
 		/* translators: %s: Number of items. */
-		$output = '<span class="displaying-num">' . sprintf( _n( '%s item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
+		$output = '<span class="displaying-num">' . sprintf( _n( '%s item', '%s items', $total_items, 'cbxwpbookmark' ), number_format_i18n( $total_items ) ) . '</span>';
 
 		$current              = $this->get_pagenum();
 		$removable_query_args = wp_removable_query_args();
 
+		//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 
 		$current_url = remove_query_arg( $removable_query_args, $current_url );
@@ -640,7 +641,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 
 		$pagination_params = [];
 
-		$search = isset( $_REQUEST['s'] ) ? esc_attr( wp_unslash( $_REQUEST['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$search = isset( $_REQUEST['s'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		//$logdate = ( isset( $_REQUEST['logdate'] ) && $_REQUEST['logdate'] != '' ) ? sanitize_text_field( $_REQUEST['logdate'] ) : '';
 
 		if ( $search != '' ) {
@@ -659,7 +660,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 		} else {
 			$page_links[] = sprintf( "<a class='first-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
 				esc_url( remove_query_arg( 'paged', $current_url ) ),
-				__( 'First page' ),
+				__( 'First page', 'cbxwpbookmark' ),
 				'&laquo;'
 			);
 		}
@@ -671,17 +672,17 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 
 			$page_links[] = sprintf( "<a class='prev-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
 				esc_url( add_query_arg( $pagination_params, $current_url ) ),
-				__( 'Previous page' ),
+				__( 'Previous page', 'cbxwpbookmark' ),
 				'&lsaquo;'
 			);
 		}
 
 		if ( 'bottom' === $which ) {
 			$html_current_page  = $current;
-			$total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page' ) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
+			$total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page', 'cbxwpbookmark' ) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
 		} else {
 			$html_current_page = sprintf( "%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
-				'<label for="current-page-selector" class="screen-reader-text">' . __( 'Current Page' ) . '</label>',
+				'<label for="current-page-selector" class="screen-reader-text">' . __( 'Current Page', 'cbxwpbookmark' ) . '</label>',
 				$current,
 				strlen( $total_pages )
 			);
@@ -689,7 +690,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
 
 		/* translators: 1. Current page 2. Total page */
-		$page_links[] = $total_pages_before . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . $total_pages_after;
+		$page_links[] = $total_pages_before . sprintf( _x( '%1$s of %2$s', 'paging', 'cbxwpbookmark' ), $html_current_page, $html_total_pages ) . $total_pages_after;
 
 		if ( $disable_next ) {
 			$page_links[] = '<span class="tablenav-pages-navspan" aria-hidden="true">&rsaquo;</span>';
@@ -698,7 +699,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 
 			$page_links[] = sprintf( "<a class='next-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
 				esc_url( add_query_arg( $pagination_params, $current_url ) ),
-				__( 'Next page' ),
+				__( 'Next page', 'cbxwpbookmark' ),
 				'&rsaquo;'
 			);
 		}
@@ -710,7 +711,7 @@ class CBXWPBookmark_List_Table extends WP_List_Table {
 
 			$page_links[] = sprintf( "<a class='last-page' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
 				esc_url( add_query_arg( $pagination_params, $current_url ) ),
-				__( 'Last page' ),
+				__( 'Last page', 'cbxwpbookmark' ),
 				'&raquo;'
 			);
 		}

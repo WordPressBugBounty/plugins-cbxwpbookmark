@@ -65,8 +65,8 @@ class CBXWPBookmark_Customizer {
 	 */
 	public function add_sections( $wp_customize ) {
 		//load custom controls
-		require_once CBXWPBOOKMARK_ROOT_PATH. 'includes/customizer/fields/class-cbxwpbookmark-customizer-select.php';
-		require_once CBXWPBOOKMARK_ROOT_PATH. 'includes/customizer/fields/class-cbxwpbookmark-customizer-checkbox.php';
+		require_once CBXWPBOOKMARK_ROOT_PATH . 'includes/customizer/fields/class-cbxwpbookmark-customizer-select.php';
+		require_once CBXWPBOOKMARK_ROOT_PATH . 'includes/customizer/fields/class-cbxwpbookmark-customizer-checkbox.php';
 		require_once CBXWPBOOKMARK_ROOT_PATH . 'includes/customizer/fields/class-cbxwpbookmark-customizer-switch.php';
 
 		$wp_customize->add_panel( 'cbxwpbookmark', [
@@ -781,12 +781,12 @@ class CBXWPBookmark_Customizer {
 	 * Styles to improve our form.
 	 */
 	public function add_styles() {
-		$version = $this->version;
-		$css_url_part     = CBXWPBOOKMARK_ROOT_URL.'assets/css/';
-		$vendors_url_part = CBXWPBOOKMARK_ROOT_URL.'assets/vendors/';
+		$version          = $this->version;
+		$css_url_part     = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
+		$vendors_url_part = CBXWPBOOKMARK_ROOT_URL . 'assets/vendors/';
 
 		wp_register_style( 'select2', $vendors_url_part . 'select2/select2.min.css', [], $version );
-		wp_register_style( 'cbxwpbookmark-customizer', $css_url_part. 'cbxwpbookmark-customizer.css', [ 'select2' ], $version );
+		wp_register_style( 'cbxwpbookmark-customizer', $css_url_part . 'cbxwpbookmark-customizer.css', [ 'select2' ], $version );
 		wp_enqueue_style( 'cbxwpbookmark-customizer' );
 	}//end add_styles
 
@@ -794,9 +794,9 @@ class CBXWPBookmark_Customizer {
 	 * Scripts to improve our form.
 	 */
 	public function add_scripts() {
-		$version = $this->version;
-		$js_url_part      = CBXWPBOOKMARK_ROOT_URL.'assets/js/';
-		$vendors_url_part = CBXWPBOOKMARK_ROOT_URL.'assets/vendors/';
+		$version          = $this->version;
+		$js_url_part      = CBXWPBOOKMARK_ROOT_URL . 'assets/js/';
+		$vendors_url_part = CBXWPBOOKMARK_ROOT_URL . 'assets/vendors/';
 
 		wp_register_script( 'select2', $vendors_url_part . 'select2/select2.min.js', [ 'jquery' ], $version, true );
 		wp_register_script( 'cbxwpbookmark-customizer', $js_url_part . 'cbxwpbookmark-customizer.js', [

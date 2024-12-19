@@ -62,8 +62,8 @@ class CBXWPBookmarkMost_Widget extends WP_Widget {
 	/**
 	 * Outputs the content of the widget.
 	 *
-	 * @param array $args
-	 * @param array $instance
+	 * @param  array  $args
+	 * @param  array  $instance
 	 *
 	 * @return int|void
 	 */
@@ -129,7 +129,7 @@ class CBXWPBookmarkMost_Widget extends WP_Widget {
 		$attr['show_thumb'] = isset( $instance['show_thumb'] ) ? absint( $instance['show_thumb'] ) : 1;
 
 		//take care some fields
-		$order   = $attr['order'];
+		$order    = $attr['order'];
 		$order_by = $attr['orderby'];
 
 		$order_keys = cbxwpbookmarks_get_order_keys();
@@ -172,8 +172,8 @@ class CBXWPBookmarkMost_Widget extends WP_Widget {
 	/**
 	 * Processes the widget's options to be saved.
 	 *
-	 * @param array $new_instance
-	 * @param array $old_instance
+	 * @param  array  $new_instance
+	 * @param  array  $old_instance
 	 *
 	 * @return array|mixed
 	 */
@@ -202,7 +202,7 @@ class CBXWPBookmarkMost_Widget extends WP_Widget {
 	/**
 	 * Generates the administration form for the widget.
 	 *
-	 * @param array instance The array of keys and values for the widget.
+	 * @param  array instance The array of keys and values for the widget.
 	 */
 	public function form( $instance ) {
 		$instance = wp_parse_args(
@@ -224,9 +224,9 @@ class CBXWPBookmarkMost_Widget extends WP_Widget {
 		$title      = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$limit      = isset( $instance['limit'] ) ? absint( $instance['limit'] ) : 10;
 		$daytime    = isset( $instance['daytime'] ) ? absint( $instance['daytime'] ) : 0;
-		$order_by    = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'object_count'; //id, object_id, object_type, object_count
+		$order_by   = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'object_count';               //id, object_id, object_type, object_count
 		$order      = isset( $instance['order'] ) ? strtoupper( esc_attr( $instance['order'] ) ) : 'DESC';             //desc, asc
-		$type       = isset( $instance['type'] ) ? wp_unslash( $instance['type'] ) : [];                 //post, page, custom post types or any custom object type
+		$type       = isset( $instance['type'] ) ? wp_unslash( $instance['type'] ) : [];                               //post, page, custom post types or any custom object type
 		$show_count = isset( $instance['show_count'] ) ? absint( $instance['show_count'] ) : 1;
 		$show_thumb = isset( $instance['show_thumb'] ) ? absint( $instance['show_thumb'] ) : 1;
 

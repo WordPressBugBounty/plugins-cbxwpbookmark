@@ -151,10 +151,12 @@
                 $cat_add_form.hide();
                 $cat_edit_form.hide();
                 $cat_edit_list.hide();
-                $toolbar.find('.cbxwpbkmark-toolbar-listcat').hide();
+                //$toolbar.find('.cbxwpbkmark-toolbar-listcat').hide();
+                $toolbar.find('.cbxwpbkmark-toolbar-listcat').addClass('cbxwpbkmark-hide');
 
                 $cat_book_list.show();
-                $toolbar.find('.cbxwpbkmark-toolbar-newcat').show();
+                //$toolbar.find('.cbxwpbkmark-toolbar-newcat').show();
+                $toolbar.find('.cbxwpbkmark-toolbar-newcat').removeClass('cbxwpbkmark-hide');
                 $bookmark_btn.find('.cbxwpbkmarktrig_label').text(cbxwpbookmark.add_to_head_default);
 
                 /* cbxReposition($bookmark_btn[0], $bookmark_panel[0],{
@@ -227,7 +229,8 @@
                             $cat_edit_list.find('.cbxwpbkmarklist').html($cat_options_edit);
 
                             if ((cbxwpbookmark.max_cat_limit > 0) && (cbxwpbookmark.user_current_cat_count >= cbxwpbookmark.max_cat_limit)) {
-                                $bookmark_panel.find('.cbxwpbkmark-toolbar-newcat').hide();
+                                //$bookmark_panel.find('.cbxwpbkmark-toolbar-newcat').hide();
+                                $bookmark_panel.find('.cbxwpbkmark-toolbar-newcat').addClass('cbxwpbkmark-hide');
                             }
 
                             CBXWPBookmarkEvents_do_action('cbxwpbookmark_trigger_cats_loaded', $bookmark_btn, $bookmark_panel, cats);
@@ -353,13 +356,16 @@
             var $toolbar        = $bookmark_panel.find('.cbxwpbkmark-toolbar');
 
             if ((cbxwpbookmark.max_cat_limit > 0) && (cbxwpbookmark.user_current_cat_count >= cbxwpbookmark.max_cat_limit)) {
-                $this.hide();
+                //$this.hide();
+                $this.addClass('cbxwpbkmark-hide');
                 alert(cbxwpbookmark.max_cat_limit_error);
                 return;
             } else {
                 //hide new button, show list button
-                $toolbar.find('.cbxwpbkmark-toolbar-listcat').show();
-                $this.hide();
+                //$toolbar.find('.cbxwpbkmark-toolbar-listcat').show();
+                $toolbar.find('.cbxwpbkmark-toolbar-listcat').removeClass('cbxwpbkmark-hide');
+                //$this.hide();
+                $this.addClass('cbxwpbkmark-hide');
 
                 $cat_book_list.hide(); //hide default category list panel
                 $cat_edit_list.hide(); //hide bookmark manage categories
@@ -397,8 +403,12 @@
             $cat_edit_form.hide();
             $cat_book_list.hide();
             $cat_edit_list.show();
-            $toolbar.find('.cbxwpbkmark-toolbar-newcat').hide();
-            $toolbar.find('.cbxwpbkmark-toolbar-listcat').show();
+            //$this.hide();
+
+            //$toolbar.find('.cbxwpbkmark-toolbar-newcat').hide();
+            $toolbar.find('.cbxwpbkmark-toolbar-newcat').addClass('cbxwpbkmark-hide');
+            //$toolbar.find('.cbxwpbkmark-toolbar-listcat').show();
+            $toolbar.find('.cbxwpbkmark-toolbar-listcat').removeClass('cbxwpbkmark-hide');
 
             $cat_edit_list.find('.cbxlbjs-searchbar').val('');
             $bookmark_panel.find('.cbxwpbkmarkloading').show();
@@ -481,8 +491,10 @@
             $cat_book_list.show();
             $cat_edit_list.hide();
 
-            $toolbar.find('.cbxwpbkmark-toolbar-newcat').show();
-            $toolbar.find('.cbxwpbkmark-toolbar-listcat').hide();
+            //$toolbar.find('.cbxwpbkmark-toolbar-newcat').show();
+            $toolbar.find('.cbxwpbkmark-toolbar-newcat').removeClass('cbxwpbkmark-hide');
+            //$toolbar.find('.cbxwpbkmark-toolbar-listcat').hide();
+            $toolbar.find('.cbxwpbkmark-toolbar-listcat').addClass('cbxwpbkmark-hide');
 
             $cat_book_list.find('.cbxlbjs-searchbar').val('');
             $bookmark_panel.find('.cbxwpbkmarkloading').show();
@@ -813,17 +825,21 @@
             $cat_book_list.show();
             $cat_edit_list.hide();
 
-            $toolbar.find('.cbxwpbkmark-toolbar-newcat').hide();
-            $toolbar.find('.cbxwpbkmark-toolbar-listcat').hide();
+            //$toolbar.find('.cbxwpbkmark-toolbar-newcat').hide();
+            $toolbar.find('.cbxwpbkmark-toolbar-newcat').addClass('cbxwpbkmark-hide');
+            //$toolbar.find('.cbxwpbkmark-toolbar-listcat').hide();
+            $toolbar.find('.cbxwpbkmark-toolbar-listcat').addClass('cbxwpbkmark-hide');
 
             $bookmark_panel.find('.cbxwpbkmarktrig_label').text(cbxwpbookmark.add_to_head_default);
 
             //check if max user cat limit crossed
             if ((cbxwpbookmark.max_cat_limit > 0) && (cbxwpbookmark.user_current_cat_count >= cbxwpbookmark.max_cat_limit)) {
                 //then hide the category create panel
-                $toolbar.find('.cbxwpbkmark-toolbar-newcat').hide();
+                //$toolbar.find('.cbxwpbkmark-toolbar-newcat').hide();
+                $toolbar.find('.cbxwpbkmark-toolbar-newcat').addClass('cbxwpbkmark-hide');
             } else {
-                $toolbar.find('.cbxwpbkmark-toolbar-newcat').show();
+                //$toolbar.find('.cbxwpbkmark-toolbar-newcat').show();
+                $toolbar.find('.cbxwpbkmark-toolbar-newcat').removeClass('cbxwpbkmark-hide');
             }
 
         });//end: on click close add new category panel

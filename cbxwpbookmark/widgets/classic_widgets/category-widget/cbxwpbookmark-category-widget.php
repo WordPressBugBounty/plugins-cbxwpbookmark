@@ -63,8 +63,8 @@ class CBXWPBookmarkCategory_Widget extends WP_Widget {
 	/**
 	 * Outputs the content of the widget.
 	 *
-	 * @param array args  The array of form elements
-	 * @param array instance The current instance of the widget
+	 * @param  array args  The array of form elements
+	 * @param  array instance The current instance of the widget
 	 */
 	public function widget( $args, $instance ) {
 		if ( ! isset( $args['widget_id'] ) ) {
@@ -126,7 +126,7 @@ class CBXWPBookmarkCategory_Widget extends WP_Widget {
 			$attr['base_url']       = esc_url( $instance['base_url'] );
 
 			//take care some fields
-			$order   = $attr['order'];
+			$order    = $attr['order'];
 			$order_by = $attr['orderby'];
 
 			$order_keys = cbxwpbookmarks_get_order_keys();
@@ -152,7 +152,7 @@ class CBXWPBookmarkCategory_Widget extends WP_Widget {
 			$widget_string .= do_shortcode( '[cbxwpbookmark-mycat ' . $attr_html . ']' );
 
 		} else {
-			$widget_string .= '<strong>'.esc_html__( 'Sorry, This widget is not compatible as per setting. This widget can be used only if bookmark mode is "User owns category"', 'cbxwpbookmark' ).'</strong>';
+			$widget_string .= '<strong>' . esc_html__( 'Sorry, This widget is not compatible as per setting. This widget can be used only if bookmark mode is "User owns category"', 'cbxwpbookmark' ) . '</strong>';
 		}
 
 
@@ -164,8 +164,8 @@ class CBXWPBookmarkCategory_Widget extends WP_Widget {
 	/**
 	 * Processes the widget's options to be saved.
 	 *
-	 * @param array $new_instance
-	 * @param array $old_instance
+	 * @param  array  $new_instance
+	 * @param  array  $old_instance
 	 *
 	 * @return array
 	 */
@@ -190,7 +190,7 @@ class CBXWPBookmarkCategory_Widget extends WP_Widget {
 	/**
 	 * Generates the administration form for the widget.
 	 *
-	 * @param array instance The array of keys and values for the widget.
+	 * @param  array instance The array of keys and values for the widget.
 	 */
 	public function form( $instance ) {
 		$instance = wp_parse_args(
@@ -217,7 +217,7 @@ class CBXWPBookmarkCategory_Widget extends WP_Widget {
 
 		$title          = wp_strip_all_tags( $instance['title'] );
 		$order          = strtoupper( esc_attr( $instance['order'] ) );
-		$order_by        = esc_attr( $instance['orderby'] );
+		$order_by       = esc_attr( $instance['orderby'] );
 		$privacy        = absint( $instance['privacy'] );
 		$display        = absint( $instance['display'] );
 		$show_count     = absint( $instance['show_count'] );

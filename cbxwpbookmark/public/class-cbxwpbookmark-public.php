@@ -44,7 +44,7 @@ class CBXWPBookmark_Public {
 	 * @since    1.0.0
 	 *
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name = '', $version = '' ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
@@ -99,8 +99,8 @@ class CBXWPBookmark_Public {
 		$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
 		$user_id     = absint( get_current_user_id() ); //get the current logged in user id
-		$object_id   = absint( $_POST['object_id'] );
-		$object_type = isset( $_POST['object_type'] ) ? esc_attr( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page, user, product, any thing custom
+		$object_id   = isset( $_POST['object_id'] ) ? absint( $_POST['object_id'] ) : 0;
+		$object_type = isset( $_POST['object_type'] ) ? sanitize_text_field( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page, user, product, any thing custom
 
 		if ( $bookmark_mode == 'user_cat' ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -399,12 +399,12 @@ class CBXWPBookmark_Public {
 		}
 
 		if ( isset( $_POST['catid'] ) ) {
-			$catid             = sanitize_text_field( $_POST['catid'] );
+			$catid             = sanitize_text_field( wp_unslash( $_POST['catid'] ) );
 			$instance['catid'] = array_filter( explode( ',', $catid ) );
 		}
 
 		if ( isset( $_POST['type'] ) ) {
-			$type             = sanitize_text_field( $_POST['type'] );
+			$type             = sanitize_text_field( wp_unslash( $_POST['type'] ) );
 			$instance['type'] = array_filter( explode( ',', $type ) );
 		}
 
@@ -413,14 +413,14 @@ class CBXWPBookmark_Public {
 		}
 
 		if ( isset( $_POST['order'] ) && $_POST['order'] != null ) {
-			$instance['order'] = esc_attr( $_POST['order'] );
+			$instance['order'] = sanitize_text_field( wp_unslash( $_POST['order'] ) );
 		}
 
 		if ( isset( $_POST['orderby'] ) && $_POST['orderby'] != null ) {
-			$instance['orderby'] = esc_attr( $_POST['orderby'] );
+			$instance['orderby'] = sanitize_text_field( wp_unslash( $_POST['orderby'] ) );
 		}
 
-		$instance['allowdelete'] = intval( $_POST['allowdelete'] );
+		$instance['allowdelete'] = isset( $_POST['allowdelete'] ) ? absint( $_POST['allowdelete'] ) : 0;
 
 		if ( function_exists( 'cbxbookmark_post_html' ) && cbxbookmark_post_html( $instance, false ) ) {
 			$message['code'] = 1;
@@ -470,8 +470,8 @@ class CBXWPBookmark_Public {
 		$category_table = $wpdb->prefix . 'cbxwpbookmarkcat';
 		$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
-		$cat_name    = isset( $_POST['cat_name'] ) ? sanitize_text_field( $_POST['cat_name'] ) : '';
-		$cat_privacy = intval( $_POST['privacy'] );
+		$cat_name    = isset( $_POST['cat_name'] ) ? sanitize_text_field( wp_unslash( $_POST['cat_name'] ) ) : '';
+		$cat_privacy = isset( $_POST['privacy'] ) ? absint( $_POST['privacy'] ) : 1;
 
 
 		$message = [];
@@ -539,10 +539,10 @@ class CBXWPBookmark_Public {
 		$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
 		$cat_id      = isset( $_POST['cat_id'] ) ? intval( $_POST['cat_id'] ) : 0;
-		$cat_name    = isset( $_POST['cat_name'] ) ? sanitize_text_field( $_POST['cat_name'] ) : '';
-		$cat_privacy = intval( $_POST['privacy'] );
-		$object_id   = intval( $_POST['object_id'] );
-		$object_type = isset( $_POST['object_type'] ) ? esc_attr( $_POST['object_type'] ) : 'post'; //post, page, user, product, any thing custom
+		$cat_name    = isset( $_POST['cat_name'] ) ? sanitize_text_field( wp_unslash( $_POST['cat_name'] ) ) : '';
+		$cat_privacy = isset( $_POST['privacy'] ) ? absint( $_POST['privacy'] ) : 1;
+		$object_id   = isset( $_POST['object_id'] ) ? absint( $_POST['object_id'] ) : 0;
+		$object_type = isset( $_POST['object_type'] ) ? sanitize_text_field( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page, user, product, any thing custom
 
 
 		$user_id = get_current_user_id(); //get the current logged in user id
@@ -670,10 +670,10 @@ class CBXWPBookmark_Public {
 
 
 		$cat_id      = isset( $_POST['cat_id'] ) ? intval( $_POST['cat_id'] ) : 0;
-		$cat_name    = isset( $_POST['cat_name'] ) ? sanitize_text_field( $_POST['cat_name'] ) : '';
-		$cat_privacy = intval( $_POST['privacy'] );
-		$object_id   = intval( $_POST['object_id'] );
-		$object_type = isset( $_POST['object_type'] ) ? esc_attr( $_POST['object_type'] ) : 'post'; //post, page, user, product, any thing custom
+		$cat_name    = isset( $_POST['cat_name'] ) ? sanitize_text_field( wp_unslash( $_POST['cat_name'] ) ) : '';
+		$cat_privacy = isset( $_POST['privacy'] ) ? absint( $_POST['privacy'] ) : 1;
+		$object_id   = isset( $_POST['object_id'] ) ? absint( $_POST['object_id'] ) : 0;
+		$object_type = isset( $_POST['object_type'] ) ? sanitize_text_field( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page, user, product, any thing custom
 
 		$user_id = get_current_user_id(); //get the current logged in user id
 		$message = [];
@@ -775,18 +775,18 @@ class CBXWPBookmark_Public {
 
 			$data = [];
 
-			$cat_name = sanitize_text_field( wp_unslash( $_POST['catname'] ) );
-			$cat_id   = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
-			$privacy  = intval( $_POST['privacy'] );
+			$cat_name = isset( $_POST['catname'] ) ? sanitize_text_field( wp_unslash( $_POST['catname'] ) ) : '';
+			$cat_id   = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
+			$privacy  = isset( $_POST['privacy'] ) ? absint( $_POST['privacy'] ) : 1;
 			$user_id  = get_current_user_id();
 
 			// Category Table with database Prefix
-			$bookmarkcategory_table = $wpdb->prefix . 'cbxwpbookmarkcat';
+			$category_table = $wpdb->prefix . 'cbxwpbookmarkcat';
 
 			// Update Query
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$update = $wpdb->update(
-				$bookmarkcategory_table, [
+				$category_table, [
 				'cat_name' => $cat_name, // string
 				'privacy'  => $privacy   // integer (number)
 			], [
@@ -836,18 +836,18 @@ class CBXWPBookmark_Public {
 		$bookmark_mode = $setting->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
 		if ( isset( $_POST ) && $bookmark_mode == 'user_cat' ) {
-			$cat_id = intval( $_POST['id'] );
+			$cat_id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 
 
-			$bookmarkcategory_table = $wpdb->prefix . 'cbxwpbookmarkcat';
-			$bookmark_table         = $wpdb->prefix . 'cbxwpbookmark';
+			$category_table = $wpdb->prefix . 'cbxwpbookmarkcat';
+			$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
 			$user_id = get_current_user_id();
 
 			do_action( 'cbxbookmark_category_deleted_before', $cat_id, $user_id );
 
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$delete_category = $wpdb->delete( $bookmarkcategory_table, [
+			$delete_category = $wpdb->delete( $category_table, [
 				'id'      => $cat_id,
 				'user_id' => $user_id
 			], [ '%d', '%d' ] );
@@ -866,7 +866,7 @@ class CBXWPBookmark_Public {
 
 				if ( $bookmarks_by_category != null ) {
 					foreach ( $bookmarks_by_category as $single_bookmark ) {
-						cbxwpbookmarks_delete_bookmark($single_bookmark['id'], $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type']);
+						cbxwpbookmarks_delete_bookmark( $single_bookmark['id'], $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type'] );
 						/*do_action( 'cbxbookmark_bookmark_removed_before', $single_bookmark['id'], $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type'] );
 
 						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -881,10 +881,10 @@ class CBXWPBookmark_Public {
 
 				if ( isset( $_POST['object_id'] ) ) {
 					$object_id   = intval( $_POST['object_id'] );
-					$object_type = isset( $_POST['object_type'] ) ? esc_attr( $_POST['object_type'] ) : 'post'; //post, page, user, product, any thing custom
+					$object_type = isset( $_POST['object_type'] ) ? sanitize_text_field( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page, user, product, any thing custom
 
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					$cats_by_user = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $bookmarkcategory_table WHERE user_id = %d", $user_id ), ARRAY_A );
+					$cats_by_user = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $category_table WHERE user_id = %d", $user_id ), ARRAY_A );
 
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 					$post_in_cats_t = $wpdb->get_results( $wpdb->prepare( "SELECT DISTINCT cat_id FROM $bookmark_table WHERE object_type = %s AND  user_id = %d AND object_id = %d", [
@@ -939,10 +939,10 @@ class CBXWPBookmark_Public {
 		$bookmark_mode = $setting->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
 		$user_id   = get_current_user_id();
-		$cat_id    = intval( $_POST['cat_id'] );
-		$object_id = intval( $_POST['object_id'] );
+		$cat_id    = isset( $_POST['cat_id'] ) ? absint( $_POST['cat_id'] ) : 0;
+		$object_id = isset( $_POST['object_id'] ) ? absint( $_POST['object_id'] ) : 0;
 
-		$object_type = isset( $_POST['object_type'] ) ? esc_attr( $_POST['object_type'] ) : 'post'; //post, page or any custom post and later any object type
+		$object_type = isset( $_POST['object_type'] ) ? sanitize_text_field( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page or any custom post and later any object type
 
 		$bookmark_table       = $wpdb->prefix . 'cbxwpbookmark';
 		$user_bookmarks_count = cbxwpbookmarks_getTotalBookmarkByUser( $user_id );
@@ -1079,23 +1079,22 @@ class CBXWPBookmark_Public {
 		check_ajax_referer( 'cbxbookmarknonce', 'security' );
 
 		if ( isset( $_POST ) ) {
-			$bookmark_id = intval( $_POST['bookmark_id'] );
-			$object_id   = intval( $_POST['object_id'] );
-			$object_type = isset( $_POST['object_type'] ) ? esc_attr( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page or any custom post and later any object type
+			$bookmark_id = isset( $_POST['bookmark_id'] ) ? absint( $_POST['bookmark_id'] ) : 0;
+			$object_id   = isset( $_POST['object_id'] ) ? absint( $_POST['object_id'] ) : 0;
+			$object_type = isset( $_POST['object_type'] ) ? sanitize_text_field( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page or any custom post and later any object type
 
 
-			$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
+			//$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
 			$user_id = get_current_user_id();
 
 			//$single_bookmark = CBXWPBookmarkHelper::singleBookmarkByObjectUser( $object_id, $user_id );
 
-			$delete_status = cbxwpbookmarks_delete_bookmark($bookmark_id, $user_id, $object_id, $object_type);
+			$delete_status = cbxwpbookmarks_delete_bookmark( $bookmark_id, $user_id, $object_id, $object_type );
 
-			if($delete_status){
+			if ( $delete_status ) {
 				$data['msg'] = 0;
-			}
-			else{
+			} else {
 				$data['msg'] = 1;
 			}
 
@@ -1116,7 +1115,6 @@ class CBXWPBookmark_Public {
 				$data['msg'] = 1;
 			}*/
 		} else {
-
 			$data['msg'] = esc_html__( 'No data available', 'cbxwpbookmark' );
 		}
 
@@ -1143,6 +1141,9 @@ class CBXWPBookmark_Public {
 	 * enqueue scripts
 	 */
 	public function enqueue_scripts() {
+
+		$close_svg = cbxwpbookmarks_load_svg( 'icon_close' );
+
 		$setting = $this->settings_api;
 
 		$bookmark_mode           = $setting->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
@@ -1164,8 +1165,8 @@ class CBXWPBookmark_Public {
                   <option value="1" title="' . esc_html__( 'Public Category', 'cbxwpbookmark' ) . '">' . esc_html__( 'Public', 'cbxwpbookmark' ) . '</option>
                   <option value="0" title="' . esc_html__( 'Private Category', 'cbxwpbookmark' ) . '">' . esc_html__( 'Private', 'cbxwpbookmark' ) . '</option>
                 </select>
-                <button data-busy="0" title="'.esc_attr__('Click to update', 'cbxwpbookmark').'"  class="cbxbookmark-btn cbxbookmark-cat-save ld-ext-right">' . esc_html__( 'Update', 'cbxwpbookmark' ) . '<i class="ld ld-ring ld-spin"></i></button>
-                <button title="'.esc_attr__('Click to close', 'cbxwpbookmark').'"  class="cbxbookmark-btn cbxbookmark-cat-close cbx-icon-parent-flex" ><i class="cbx-icon cbx-icon-inline cbx-icon-close"></i><i class="cbxbookmark-cat-close-label sr-only">' . esc_html__( 'Close', 'cbxwpbookmark' ) . '</i></button>
+                <button data-busy="0" title="' . esc_attr__( 'Click to update', 'cbxwpbookmark' ) . '"  class="cbxbookmark-btn cbxbookmark-cat-save ld-ext-right">' . esc_html__( 'Update', 'cbxwpbookmark' ) . '<i class="ld ld-ring ld-spin"></i></button>
+                <button title="' . esc_attr__( 'Click to close', 'cbxwpbookmark' ) . '"  class="cbxbookmark-btn cbxbookmark-btn-secondary cbxbookmark-cat-close icon icon-only cbx-icon-parent-flex" ><i class="cbx-icon">' . $close_svg . '</i><i class="cbxbookmark-cat-close-label sr-only">' . esc_html__( 'Close', 'cbxwpbookmark' ) . '</i></button>
                 <div class="clear clearfix cbxwpbkmark-clearfix"></div>
             </div>';
 
@@ -1279,16 +1280,16 @@ class CBXWPBookmark_Public {
 
 		$user_id = absint( get_current_user_id() ); //get the current logged in user id
 
-		$cat_id    = absint( $_POST['cat_id'] );
-		$cat_total = absint( $_POST['cat_total'] );
-		$privacy   = absint( $_POST['privacy'] );
-		$userid    = absint( $_POST['userid'] );
-		$totalpage = absint( $_POST['totalpage'] );
-		$page      = absint( $_POST['page'] );
+		$cat_id    = isset( $_POST['cat_id'] ) ? absint( $_POST['cat_id'] ) : 0;
+		$cat_total = isset( $_POST['cat_total'] ) ? absint( $_POST['cat_total'] ) : 0;
+		$privacy   = isset( $_POST['privacy'] ) ? absint( $_POST['privacy'] ) : 1;
+		$userid    = isset( $_POST['userid'] ) ? absint( $_POST['userid'] ) : 0;
+		$totalpage = isset( $_POST['totalpage'] ) ? absint( $_POST['totalpage'] ) : 0;
+		$page      = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 0;
 
 
-		$perpage    = apply_filters( 'cbxwpbookmark_sublist_perpage', 10 );
-		$total_page = ceil( $cat_total / $perpage );
+		$per_page   = apply_filters( 'cbxwpbookmark_sublist_perpage', 10 );
+		$total_page = ceil( $cat_total / $per_page );
 
 		if ( $userid == 0 ) {
 			$userid = get_current_user_id();
@@ -1306,13 +1307,13 @@ class CBXWPBookmark_Public {
 		//$page = 1;
 
 
-		$start_point = ( $page * $perpage ) - $perpage;
+		$start_point = ( $page * $per_page ) - $per_page;
 		$limit_sql   = "LIMIT";
 		$limit_sql   .= ' ' . $start_point . ',';
-		$limit_sql   .= ' ' . $perpage;
+		$limit_sql   .= ' ' . $per_page;
 
 		$order_by = 'object_id';
-		$order   = 'DESC';
+		$order    = 'DESC';
 
 		if ( $bookmark_mode == 'user_cat' ) {
 			$param    = [ $userid, $cat_id ];
@@ -1537,7 +1538,7 @@ class CBXWPBookmark_Public {
 			foreach ( $bookmarks as $single_bookmark ) {
 				$id = absint( $single_bookmark['id'] );
 
-				$delete_status = cbxwpbookmarks_delete_bookmark($id, $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type']);
+				$delete_status = cbxwpbookmarks_delete_bookmark( $id, $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type'] );
 
 				/*do_action( 'cbxbookmark_bookmark_removed_before', $id, $single_bookmark['user_id'], $single_bookmark['object_id'], $single_bookmark['object_type'] );
 

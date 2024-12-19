@@ -17,7 +17,7 @@ if ( ! function_exists( 'cbxwpbookmark_object_types' ) ) {
 	/**
 	 * Return post types list, if plain is true then send as plain array , else array as post type groups
 	 *
-	 * @param bool|false $plain
+	 * @param  bool|false  $plain
 	 *
 	 * @return array
 	 */
@@ -32,12 +32,12 @@ if ( ! function_exists( 'show_cbxbookmark_btn' ) ):
 	/**
 	 * Returns bookmark button html markup
 	 *
-	 * @param int $object_id post id
-	 * @param null $object_type post type
-	 * @param int $show_count if show bookmark counts
-	 * @param string $extra_wrap_class style css class
-	 * @param string $skip_ids post ids to skip
-	 * @param string $skip_roles user roles
+	 * @param  int  $object_id  post id
+	 * @param  null  $object_type  post type
+	 * @param  int  $show_count  if show bookmark counts
+	 * @param  string  $extra_wrap_class  style css class
+	 * @param  string  $skip_ids  post ids to skip
+	 * @param  string  $skip_roles  user roles
 	 *
 	 * @return string
 	 */
@@ -51,8 +51,8 @@ if ( ! function_exists( 'cbxbookmark_post_html' ) ) {
 	/**
 	 * Returns bookmarks as per $instance attribues
 	 *
-	 * @param array $instance
-	 * @param bool $echo
+	 * @param  array  $instance
+	 * @param  bool  $echo
 	 *
 	 * @return void|string
 	 */
@@ -72,8 +72,8 @@ if ( ! function_exists( 'cbxbookmark_mycat_html' ) ) {
 	/**
 	 * Return users bookmark categories
 	 *
-	 * @param array $instance
-	 * @param bool $echo
+	 * @param  array  $instance
+	 * @param  bool  $echo
 	 *
 	 * @return void|string
 	 */
@@ -108,9 +108,9 @@ if ( ! function_exists( 'cbxbookmark_most_html' ) ) {
 	/**
 	 * Returns most bookmarked posts
 	 *
-	 * @param array $instance
-	 * @param array $attr
-	 * @param bool $echo
+	 * @param  array  $instance
+	 * @param  array  $attr
+	 * @param  bool  $echo
 	 *
 	 * @return void|string
 	 */
@@ -175,8 +175,8 @@ if ( ! function_exists( 'cbxwpbookmarks_getTotalBookmarkByUserByPostype' ) ) {
 	/**
 	 * Get total bookmark by user_id by post type
 	 *
-	 * @param int $user_id
-	 * @param string $post_type
+	 * @param  int  $user_id
+	 * @param  string  $post_type
 	 *
 	 * @return int
 	 */
@@ -190,7 +190,7 @@ if ( ! function_exists( 'cbxwpbookmarks_getTotalBookmarkByCategory' ) ) {
 	/**
 	 * Get total bookmark count for any category id
 	 *
-	 * @param int $cat_id
+	 * @param  int  $cat_id
 	 *
 	 * @return int
 	 */
@@ -203,8 +203,8 @@ if ( ! function_exists( 'cbxwpbookmarks_getTotalBookmarkByCategoryByUser' ) ) {
 	/**
 	 * Get total bookmark count for any category id of any user
 	 *
-	 * @param int $cat_id
-	 * @param int $user_id
+	 * @param  int  $cat_id
+	 * @param  int  $user_id
 	 *
 	 * @return int
 	 */
@@ -217,7 +217,7 @@ if ( ! function_exists( 'cbxwpbookmarks_isBookmarked' ) ) {
 	/**
 	 * Is a post bookmarked at least once
 	 *
-	 * @param int $object_id
+	 * @param  int  $object_id
 	 *
 	 * @return bool
 	 */
@@ -230,8 +230,8 @@ if ( ! function_exists( 'cbxwpbookmarks_isBookmarkedByUser' ) ) {
 	/**
 	 * Is post bookmarked by user
 	 *
-	 * @param int $object_id
-	 * @param string $user_id
+	 * @param  int  $object_id
+	 * @param  string  $user_id
 	 *
 	 * @return mixed
 	 */
@@ -370,8 +370,8 @@ if ( ! function_exists( 'cbxwpbookmarks_load_svg' ) ) {
 	/**
 	 * Load an SVG file from a directory.
 	 *
-	 * @param string $svg_name The name of the SVG file (without the .svg extension).
-	 * @param string $directory The directory where the SVG files are stored.
+	 * @param  string  $svg_name  The name of the SVG file (without the .svg extension).
+	 * @param  string  $directory  The directory where the SVG files are stored.
 	 *
 	 * @return string|false The SVG content if found, or false on failure.
 	 * @since 1.0.0
@@ -381,6 +381,19 @@ if ( ! function_exists( 'cbxwpbookmarks_load_svg' ) ) {
 		if ( $svg_name == '' ) {
 			return '';
 		}
+
+
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		}
+
+		$credentials = request_filesystem_credentials( site_url() . '/wp-admin/', '', false, false, null );
+		if ( ! WP_Filesystem( $credentials ) ) {
+			return; // Error handling here
+		}
+
+		global $wp_filesystem;
+
 
 		$directory = cbxwpbookmarks_icon_path();
 
@@ -392,9 +405,10 @@ if ( ! function_exists( 'cbxwpbookmarks_load_svg' ) ) {
 		$file_path = apply_filters( 'cbxwpbookmarks_svg_file_path', $file_path, $svg_name );
 
 		// Check if the file exists.
-		if ( file_exists( $file_path ) && is_readable( $file_path ) ) {
+		//if ( file_exists( $file_path ) && is_readable( $file_path ) ) {
+		if ( $wp_filesystem->exists( $file_path ) && is_readable( $file_path ) ) {
 			// Get the SVG file content.
-			return file_get_contents( $file_path );
+			return $wp_filesystem->get_contents( $file_path );
 		} else {
 			// Return false if the file does not exist or is not readable.
 			return '';
@@ -458,8 +472,8 @@ if ( ! function_exists( 'cbxwpbookmarks_delete_bookmarks' ) ) {
 	/**
 	 * Delete bookmark by object id and object type(optional))
 	 *
-	 * @param int $object_id
-	 * @param string $object_type
+	 * @param  int  $object_id
+	 * @param  string  $object_type
 	 */
 	function cbxwpbookmarks_delete_bookmarks( $object_id, $object_type = '' ) {
 		//global $wpdb;
@@ -481,7 +495,7 @@ if ( ! function_exists( 'cbxwpbookmarks_delete_bookmarks' ) ) {
 					return;
 				}
 
-				cbxwpbookmarks_delete_bookmark($bookmark_id, $user_id, $object_id, $object_type);
+				cbxwpbookmarks_delete_bookmark( $bookmark_id, $user_id, $object_id, $object_type );
 
 				/*do_action( 'cbxbookmark_bookmark_removed_before', $bookmark_id, $user_id, $object_id, $object_type );
 
@@ -511,7 +525,7 @@ if ( ! function_exists( ' cbxwpbookmarks_delete_bookmark' ) ) {
 		$object_id   = absint( $object_id );
 		$object_type = esc_attr( $object_type );
 
-		if($bookmark_id == 0 || $user_id == 0 || $object_id == 0 || $object_type == '') {
+		if ( $bookmark_id == 0 || $user_id == 0 || $object_id == 0 || $object_type == '' ) {
 			return;
 		}
 
@@ -532,4 +546,22 @@ if ( ! function_exists( ' cbxwpbookmarks_delete_bookmark' ) ) {
 
 		return $delete_bookmark;
 	}//end method cbxwpbookmarks_delete_bookmark
+}
+
+if ( ! function_exists( 'cbxwpbookmarks_login_url_with_redirect' ) ) {
+	function cbxwpbookmarks_login_url_with_redirect() {
+		//$login_url          = wp_login_url();
+		//$redirect_url       = '';
+
+		if ( is_singular() ) {
+			$login_url = wp_login_url( get_permalink() );
+			//$redirect_url = get_permalink();
+		} else {
+			global $wp;
+			$login_url = wp_login_url( home_url( add_query_arg( [], $wp->request ) ) );
+			//$redirect_url = home_url( add_query_arg( [], $wp->request ) );
+		}
+
+		return $login_url;
+	}//end function cbxwpbookmarks_login_url_with_redirect
 }

@@ -256,6 +256,10 @@ class CBXWPBookmarkHelper {
 	 * @return string
 	 */
 	public static function show_cbxbookmark_btn( $object_id = 0, $object_type = null, $show_count = 1, $extra_wrap_class = '', $skip_ids = '', $skip_roles = '' ) {
+		$close_svg  = cbxwpbookmarks_load_svg( 'icon_close' );
+		$delete_svg = cbxwpbookmarks_load_svg( 'icon_delete' );
+		$plus_svg   = cbxwpbookmarks_load_svg( 'icon_plus' );
+
 		$object_id        = absint( $object_id );
 		$object_type      = trim( esc_attr( $object_type ) );
 		$show_count       = absint( $show_count );
@@ -305,7 +309,7 @@ class CBXWPBookmarkHelper {
 		} else {
 			//$skip_roles = array_map( 'trim', explode( ',', $skip_roles ) );
 			//purify each role
-			$skip_roles      = explode( ',', $skip_roles );
+			$skip_roles = explode( ',', $skip_roles );
 
 
 			$skip_roles_temp = [];
@@ -324,8 +328,8 @@ class CBXWPBookmarkHelper {
 
 		}
 
-		$current_user   = wp_get_current_user();
-		$user_id        = absint( $current_user->ID );
+		$current_user    = wp_get_current_user();
+		$user_id         = absint( $current_user->ID );
 		$logged_in       = ( $user_id > 0 ) ? 1 : 0;
 		$logged_in_class = ( $logged_in ) ? 'cbxwpbkmarkwrap_loggedin' : 'cbxwpbkmarkwrap_guest';
 
@@ -413,10 +417,25 @@ class CBXWPBookmarkHelper {
 		if ( $user_id == 0 ):
 
 			$output .= ' <div  data-type="' . $object_type . '" data-object_id="' . $object_id . '" class="cbxwpbkmarkguestwrap" id="cbxwpbkmarkguestwrap-' . $object_id . '">';
+			$output .= '<div class="cbxwpbkmarkguest-message">';
+
+			$output .= '<div class="cbxwpbkmarkguest-message-head">';
+			$output .= '<span class="cbxwpbkmarkguest-message-head-label">' . esc_html__( 'Please login to bookmark', 'cbxwpbookmark' ) . '</span>';
+			$output .= '<a class="cbxwpbkmarkguesttrig_close" role="button" title="' . esc_attr__( 'Click to close bookmark panel/modal', 'cbxwpbookmark' ) . '" href="#" ><i class="cbx-icon">' . $close_svg . '</i><i class="sr-only">' . esc_html__( 'Close', 'cbxwpbookmark' ) . '</i></a>';
+			$output .= '</div>';
+
+			$output .= '<div class="cbxwpbkmarkguest-content">';
 
 
+			$show_login_form = esc_attr( $settings->get_option( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
+			if ( $show_login_form != 'none' ) {
+				$output .= cbxwpbookmark_get_template_html( 'global/login_form.php', [ 'settings' => $settings, 'inline' => 0 ] );
+			} else {
+				$output .= cbxwpbookmark_get_template_html( 'global/login_url.php', [ 'settings' => $settings, 'inline' => 0 ] );
+			}
 
-			if ( is_singular() ) {
+
+			/*if ( is_singular() ) {
 				$login_url    = wp_login_url( get_permalink() );
 				$redirect_url = get_permalink();
 			} else {
@@ -425,17 +444,6 @@ class CBXWPBookmarkHelper {
 				$login_url    = wp_login_url( home_url( add_query_arg( [], $wp->request ) ) );
 				$redirect_url = home_url( add_query_arg( [], $wp->request ) );
 			}
-
-
-			$output .= '<div class="cbxwpbkmarkguest-message">';
-
-            $output .= '<div class="cbxwpbkmarkguest-message-head">';
-			$output .= '<span class="cbxwpbkmarkguest-message-head-label">' . esc_html__( 'Please login to bookmark', 'cbxwpbookmark' ) . '</span>';
-			$output .= '<a class="cbxwpbkmarkguesttrig_close" role="button" title="'.esc_attr__('Click to close bookmark panel/modal', 'cbxwpbookmark').'" href="#" ><i class="cbx-icon cbx-icon-close"></i><i class="sr-only">'.esc_html__('Close', 'cbxwpbookmark').'</i></a>';
-			$output .= '</div>';
-
-            $output .= '<div class="cbxwpbkmarkguest-content">';
-
 
 			$guest_form_html = '';
 
@@ -450,35 +458,34 @@ class CBXWPBookmarkHelper {
 			}
 
 
-
 			$output .= apply_filters( 'cbxwpbookmark_login_html', $guest_form_html, $login_url, $redirect_url );
 
 			$guest_register_html = '';
 			$guest_show_register = intval( $settings->get_option( 'guest_show_register', 'cbxwpbookmark_basics', 1 ) );
 			if ( $guest_show_register ) {
 				if ( get_option( 'users_can_register' ) ) {
-					$register_url        = add_query_arg( 'redirect_to', urlencode( $redirect_url ), wp_registration_url() );
-					/* translators: %s: register url */
-					$guest_register_html .= '<p class="cbxwpbookmark-guest-register">' . sprintf( wp_kses(__( 'No account yet? <a href="%s">Register</a>', 'cbxwpbookmark' ), ['a' => []]), $register_url ) . '</p>';
+					$register_url = add_query_arg( 'redirect_to', urlencode( $redirect_url ), wp_registration_url() );
+					//translators: %s: register url
+					$guest_register_html .= '<p class="cbxwpbookmark-guest-register">' . sprintf( wp_kses( __( 'No account yet? <a href="%s">Register</a>', 'cbxwpbookmark' ), [ 'a' => [] ] ), $register_url ) . '</p>';
 				}
 
 				$output .= apply_filters( 'cbxwpbookmark_register_html', $guest_register_html, $redirect_url );
 
-			}
+			}*/
 
 
 			$output .= '</div>'; //.cbxwpbkmarkguest-content
-			$output .= '</div>';
-			$output .= '</div>';
+			$output .= '</div>'; //.cbxwpbkmarkguest-message
+			$output .= '</div>'; //.cbxwpbkmarkguestwrap
 
 
 		else:
 
 			if ( $bookmark_mode != 'no_cat' ):
-				$output .= ' <div style="z-index: ' . $pop_z_index . ';"  data-type="' . esc_attr($object_type) . '" data-object_id="' . absint($object_id) . '" class="cbxwpbkmarklistwrap" id="cbxwpbkmarklistwrap-' . $object_id . '">
+				$output .= ' <div style="z-index: ' . $pop_z_index . ';"  data-type="' . esc_attr( $object_type ) . '" data-object_id="' . absint( $object_id ) . '" class="cbxwpbkmarklistwrap" id="cbxwpbkmarklistwrap-' . $object_id . '">
                              <div class="addto-head">
                                 <span class="cbxwpbkmarktrig_label">' . esc_html__( 'Click Category to Bookmark', 'cbxwpbookmark' ) . '</span>
-                                <span role="button" title="' . esc_html__( 'Click to close bookmark panel/modal', 'cbxwpbookmark' ) . '"  data-object_id="' . absint($object_id) . '" class="cbxwpbkmarktrig_close"><i class="cbx-icon cbx-icon-close"></i><i class="sr-only">'.esc_html__('Close', 'cbxwpbookmark').'</i></span>
+                                <span role="button" title="' . esc_html__( 'Click to close bookmark panel/modal', 'cbxwpbookmark' ) . '"  data-object_id="' . absint( $object_id ) . '" class="cbxwpbkmarktrig_close"><i class="cbx-icon">' . $close_svg . '</i><i class="sr-only">' . esc_html__( 'Close', 'cbxwpbookmark' ) . '</i></span>
                              </div>
                             
                             <div class="cbxwpbkmark_cat_book_list">
@@ -487,7 +494,7 @@ class CBXWPBookmarkHelper {
 										<input class="cbxlbjs-searchbar" placeholder="' . esc_html__( 'Search...', 'cbxwpbookmark' ) . '">
 										<i class="cbxlbjs-searchbar-icon"></i>
 									</div>
-									<ul class="cbxwpbookmark-list-generic cbxlbjs-list cbxwpbkmarklist" style="" data-type="' . esc_attr($object_type) . '" data-object_id="' . absint($object_id) . '">
+									<ul class="cbxwpbookmark-list-generic cbxlbjs-list cbxwpbkmarklist" style="" data-type="' . esc_attr( $object_type ) . '" data-object_id="' . absint( $object_id ) . '">
 									</ul>
 								</div>
                             </div>';
@@ -526,8 +533,8 @@ class CBXWPBookmarkHelper {
                                     </div>
                                     <div class="cbxwpbkmark-field-wrap-actions">                                        
                                         <div class="cbxwpbkmark-field-wrap-action-right">
-                                            <button data-busy="0" type="button" data-object_id="' . absint($object_id) . '" class="cbxwpbkmark-field-create-submit cbxbookmark-btn cbxbookmark-btn-blue ld-ext-right" title="' . esc_html__( 'Create Category', 'cbxwpbookmark' ) . '"><span class="cbxwpbkmark-field-create-submit-label">'.esc_attr__('Create', 'cbxwpbookmark').'</span><i class="ld ld-ring ld-spin"></i></button>
-                                            <button type="button" class="cbxwpbkmark-field-create-close cbxbookmark-btn" title="' . esc_html__( 'Close', 'cbxwpbookmark' ) . '"><i class="cbx-icon cbx-icon-inline cbx-icon-close"></i><i class="cbxbookmark-cat-close-label sr-only">'.esc_attr__('Close', 'cbxwpbookmark').'</i></button>
+                                            <button data-busy="0" type="button" data-object_id="' . absint( $object_id ) . '" class="cbxwpbkmark-field-create-submit cbxbookmark-btn cbxbookmark-btn-primary ld-ext-right" title="' . esc_html__( 'Create Category', 'cbxwpbookmark' ) . '"><span class="cbxwpbkmark-field-create-submit-label">' . esc_attr__( 'Create', 'cbxwpbookmark' ) . '</span><i class="ld ld-ring ld-spin"></i></button>
+                                            <button type="button" class="cbxbookmark-btn cbxbookmark-btn-secondary cbxwpbkmark-field-create-close" title="' . esc_html__( 'Close', 'cbxwpbookmark' ) . '"><i class="cbx-icon">' . $close_svg . '</i><i class="cbxbookmark-cat-close-label sr-only">' . esc_attr__( 'Close', 'cbxwpbookmark' ) . '</i></button>
                                         </div>
                                     </div>
                                     <div class="cbxwpbkmark-clearfix"></div>
@@ -540,7 +547,7 @@ class CBXWPBookmarkHelper {
                                     </div>
                                     <div class="cbxwpbkmark-field-wrap">                                        
                                         <div class="cbxwpbkmarkmanagecatselect ' . $cat_hide_class . '">
-                                        	<select class="cbxwpbkmark-field cbxwpbkmark-field-select  cbxwpbkmark-field-privacy cbxwpbkmark-field-privacy_' . absint($object_id) . '">
+                                        	<select class="cbxwpbkmark-field cbxwpbkmark-field-select  cbxwpbkmark-field-privacy cbxwpbkmark-field-privacy_' . absint( $object_id ) . '">
 	                                            <option value="1">' . esc_html__( 'Public Category', 'cbxwpbookmark' ) . '</option>
 	                                            <option value="0">' . esc_html__( 'Private Category', 'cbxwpbookmark' ) . '</option>
 										  	</select>                                          
@@ -548,19 +555,19 @@ class CBXWPBookmarkHelper {
                                     </div>
                                     <div class="cbxwpbkmark-field-wrap-actions">
                                         <div class="cbxwpbkmark-field-wrap-action-left">
-                                            <button type="button" class="cbxwpbkmark-field-delete-submit cbxbookmark-btn" data-object_id="' . absint($object_id) . '" title="' . esc_html__( 'Click to delete', 'cbxwpbookmark' ) . '"><i class="cbx-icon cbx-icon-inline cbx-icon-delete"></i><i class="cbxwpbkmark-field-delete-submit-label sr-only">'.esc_attr__('Delete', 'cbxwpbookmark').'</i></button>
+                                            <button type="button" class="cbxbookmark-btn cbxbookmark-btn-danger  cbxwpbkmark-field-delete-submit icon icon-only" data-object_id="' . absint( $object_id ) . '" title="' . esc_html__( 'Click to delete', 'cbxwpbookmark' ) . '"><i class="cbx-icon">' . $delete_svg . '</i><i class="cbxwpbkmark-field-delete-submit-label sr-only">' . esc_attr__( 'Delete', 'cbxwpbookmark' ) . '</i></button>
                                         </div>
                                         <div class="cbxwpbkmark-field-wrap-action-right">
-                                            <button data-busy="0" type="button" class="cbxwpbkmark-field-update-submit cbxbookmark-btn cbxbookmark-btn-blue ld-ext-right" data-object_id="' . absint($object_id) . '"  title="' . esc_html__( 'Click to save', 'cbxwpbookmark' ) . '"><span class="cbxwpbkmark-field-update-submit-label">'.esc_attr__('Save', 'cbxwpbookmark').'</span><i class="ld ld-ring ld-spin"></i></button>
-                                            <button type="button" class="cbxwpbkmark-field-update-close cbxbookmark-btn" title="' . esc_html__( 'Click to Close', 'cbxwpbookmark' ) . '"><i class="cbx-icon cbx-icon-inline cbx-icon-close"></i><i class="cbxbookmark-cat-close-label sr-only">'.esc_attr__('Close', 'cbxwpbookmark').'</i></button>    
+                                            <button data-busy="0" type="button" class="cbxbookmark-btn cbxwpbkmark-field-update-submit cbxbookmark-btn-primary ld-ext-right" data-object_id="' . absint( $object_id ) . '"  title="' . esc_html__( 'Click to save', 'cbxwpbookmark' ) . '"><span class="cbxwpbkmark-field-update-submit-label">' . esc_attr__( 'Save', 'cbxwpbookmark' ) . '</span><i class="ld ld-ring ld-spin"></i></button>
+                                            <button type="button" class="cbxbookmark-btn cbxbookmark-btn-secondary cbxwpbkmark-field-update-close icon icon-only" title="' . esc_html__( 'Click to Close', 'cbxwpbookmark' ) . '"><i class="cbx-icon">' . $close_svg . '</i><i class="cbxbookmark-cat-close-label sr-only">' . esc_attr__( 'Close', 'cbxwpbookmark' ) . '</i></button>    
                                         </div>                                                                              
                                     </div>
                                     <div class="cbxwpbkmark-clearfix"></div>
                                 </div>
 								<div class="cbxwpbkmark-toolbar">
-									<span class="cbxwpbkmark-toolbar-newcat icon icon-inline icon-right" data-type="' . esc_attr($object_type) . '" data-object_id="' . absint($object_id) . '" ><i class="cbx-icon cbx-icon-plus"></i><i class="no-italics button-label">' . esc_html__( 'New Category', 'cbxwpbookmark' ) . '</i></span>
-									<span class="cbxwpbkmark-toolbar-listcat" data-type="' . esc_attr($object_type) . '" data-object_id="' . absint($object_id) . '" >' . esc_html__( 'List Category', 'cbxwpbookmark' ) . '</span>
-									<span class="cbxwpbkmark-toolbar-editcat" data-type="' . esc_attr($object_type) . '" data-object_id="' . absint($object_id) . '" >' . esc_html__( 'Manage Category', 'cbxwpbookmark' ) . '</span>
+									<span class="cbxwpbkmark-toolbar-newcat icon icon-right" data-type="' . esc_attr( $object_type ) . '" data-object_id="' . absint( $object_id ) . '" ><i class="cbx-icon">' . $plus_svg . '</i><i class="no-italics button-label">' . esc_html__( 'New Category', 'cbxwpbookmark' ) . '</i></span>
+									<span class="cbxwpbkmark-toolbar-listcat" data-type="' . esc_attr( $object_type ) . '" data-object_id="' . absint( $object_id ) . '" >' . esc_html__( 'List Category', 'cbxwpbookmark' ) . '</span>
+									<span class="cbxwpbkmark-toolbar-editcat" data-type="' . esc_attr( $object_type ) . '" data-object_id="' . absint( $object_id ) . '" >' . esc_html__( 'Manage Category', 'cbxwpbookmark' ) . '</span>
 									<div class="cbxwpbkmark-clearfix"></div>									
 								</div><!-- end .cbxwpbkmark-toolbar -->';
 				endif;
@@ -582,6 +589,9 @@ class CBXWPBookmarkHelper {
 	 * @return false|string
 	 */
 	public static function cbxbookmark_post_html( $instance ) {
+		$delete_svg = cbxwpbookmarks_load_svg( 'icon_delete' );
+		$edit_svg   = cbxwpbookmarks_load_svg( 'icon_edit' );
+
 		global $wpdb;
 
 		$object_types   = CBXWPBookmarkHelper::object_types( true ); //get plain post type as array
@@ -592,10 +602,10 @@ class CBXWPBookmarkHelper {
 
 		$bookmark_mode = $setting->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
-		$limit   = isset( $instance['limit'] ) ? intval( $instance['limit'] ) : 10;
+		$limit    = isset( $instance['limit'] ) ? intval( $instance['limit'] ) : 10;
 		$order_by = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'id';
-		$order   = isset( $instance['order'] ) ? esc_attr( $instance['order'] ) : 'DESC';
-		$type    = isset( $instance['type'] ) ? wp_unslash( $instance['type'] ) : []; //object type(post types), multiple as array
+		$order    = isset( $instance['order'] ) ? esc_attr( $instance['order'] ) : 'DESC';
+		$type     = isset( $instance['type'] ) ? wp_unslash( $instance['type'] ) : []; //object type(post types), multiple as array
 
 
 		//old format compatibility
@@ -622,8 +632,7 @@ class CBXWPBookmarkHelper {
 
 
 		$userid_attr = isset( $instance['userid'] ) ? intval( $instance['userid'] ) : 0;
-		$userid = absint($userid_attr);
-
+		$userid      = absint( $userid_attr );
 
 
 		$privacy = 2; //all
@@ -641,19 +650,16 @@ class CBXWPBookmarkHelper {
 
 		//$category_privacy_sql = '';
 		//$main_sql             = '';
-		$cat_sql              = '';
-		$type_sql             = '';
+		$cat_sql  = '';
+		$type_sql = '';
 
 
-
-
-		if($bookmark_mode != 'no_cat'){
+		if ( $bookmark_mode != 'no_cat' ) {
 			if ( is_array( $catid ) && sizeof( $catid ) > 0 ) {
 				$cats_ids_placeholders = implode( ',', array_fill( 0, count( $catid ), '%d' ) );
 				/* phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare */
 				$cat_sql = $wpdb->prepare( "AND cat_id IN ({$cats_ids_placeholders})", $catid );
-			}
-			else{
+			} else {
 				if ( $bookmark_mode == 'user_cat' ) {
 					//same user seeing
 					if ( $privacy != 2 ) {
@@ -661,7 +667,7 @@ class CBXWPBookmarkHelper {
 						$cats = $wpdb->get_results( $wpdb->prepare( "SELECT *  FROM  {$category_table} WHERE user_id = %d AND privacy = %d", $userid, intval( $privacy ) ), ARRAY_A );
 					} else {
 						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-						$cats = $wpdb->get_results( $wpdb->prepare("SELECT *  FROM  {$category_table} WHERE user_id = %d", $userid), ARRAY_A );
+						$cats = $wpdb->get_results( $wpdb->prepare( "SELECT *  FROM  {$category_table} WHERE user_id = %d", $userid ), ARRAY_A );
 					}
 
 					$cats_ids = [];
@@ -702,11 +708,10 @@ class CBXWPBookmarkHelper {
 		$items = $wpdb->get_results( $wpdb->prepare( $main_sql, $param ) );
 
 
-
 		// checking If results are available
 		if ( $items !== null && sizeof( $items ) > 0 ) {
 			foreach ( $items as $item ) {
-				$action_html = ( $allowdelete ) ? '&nbsp; <span class="cbxbookmark-delete-btn cbxbookmark-post-delete ld-ext-right" data-busy="0" data-object_id="' . absint($item->object_id) . '" data-object_type="' . esc_attr($item->object_type) . '" data-bookmark_id="' . absint($item->id) . '"><i class="cbx-icon cbx-icon-15 cbx-icon-delete"></i><i class="ld ld-ring ld-spin"></i><i class="sr-only">'.esc_attr__('Delete', 'cbxwpbookmark').'</i></span>' : '';
+				$action_html = ( $allowdelete ) ? '&nbsp; <span class="cbxbookmark-delete-btn cbxbookmark-post-delete ld-ext-right icon icon-only" data-busy="0" data-object_id="' . absint( $item->object_id ) . '" data-object_type="' . esc_attr( $item->object_type ) . '" data-bookmark_id="' . absint( $item->id ) . '"><i class="cbx-icon cbx-icon-15">' . $delete_svg . '</i><i class="ld ld-ring ld-spin"></i><i class="sr-only">' . esc_attr__( 'Delete', 'cbxwpbookmark' ) . '</i></span>' : '';
 
 				$sub_item_class = '';
 
@@ -758,10 +763,10 @@ class CBXWPBookmarkHelper {
 
 		$object_types = CBXWPBookmarkHelper::object_types( true ); //get plain post type as array
 
-		$limit   = isset( $instance['limit'] ) ? absint( $instance['limit'] ) : 10;
-		$daytime = isset( $instance['daytime'] ) ? absint( $instance['daytime'] ) : 0;
+		$limit    = isset( $instance['limit'] ) ? absint( $instance['limit'] ) : 10;
+		$daytime  = isset( $instance['daytime'] ) ? absint( $instance['daytime'] ) : 0;
 		$order_by = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'object_id'; //id, object_id, object_type, object_count
-		$order   = isset( $instance['order'] ) ? esc_attr( $instance['order'] ) : 'DESC';
+		$order    = isset( $instance['order'] ) ? esc_attr( $instance['order'] ) : 'DESC';
 
 		$order      = strtoupper( $order );
 		$order_keys = cbxwpbookmarks_get_order_keys();
@@ -785,7 +790,6 @@ class CBXWPBookmarkHelper {
 
 		$type = array_filter( $type );
 		$type = array_intersect( $type, $allowed_object_types );
-
 
 
 		$ul_class = isset( $attr['ul_class'] ) ? $attr['ul_class'] : '';
@@ -817,16 +821,16 @@ class CBXWPBookmarkHelper {
 
 
 			if ( $daytime > 0 ) {
-				$time = gmdate( 'Y-m-d H:i:s', strtotime( '-' . $daytime . ' day' ) );
+				$time         = gmdate( 'Y-m-d H:i:s', strtotime( '-' . $daytime . ' day' ) );
 				$datetime_sql .= $wpdb->prepare( " created_date > %s ", $time );
-				$where_sql .= ( ( $where_sql != '' ) ? ' AND ' : '' ) . $datetime_sql;
+				$where_sql    .= ( ( $where_sql != '' ) ? ' AND ' : '' ) . $datetime_sql;
 			}
 
 
 			if ( sizeof( $type ) > 0 ) {
 				$type_placeholders = implode( ',', array_fill( 0, count( $type ), '%s' ) );
 				/* phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared */
-				$type_sql = $wpdb->prepare( " object_type IN ({$type_placeholders}) ", $type );
+				$type_sql  = $wpdb->prepare( " object_type IN ({$type_placeholders}) ", $type );
 				$where_sql .= ( ( $where_sql != '' ) ? ' AND ' : '' ) . $type_sql;
 			}
 
@@ -863,7 +867,7 @@ class CBXWPBookmarkHelper {
 			if ( $items != null || sizeof( $items ) > 0 ) {
 
 				foreach ( $items as $item ) {
-					$show_count_html = ( $show_count == 1 ) ? '<i>(' . number_format_i18n(absint( $item->totalobject )) . ')</i>' : '';
+					$show_count_html = ( $show_count == 1 ) ? '<i>(' . number_format_i18n( absint( $item->totalobject ) ) . ')</i>' : '';
 
 					if ( in_array( $item->object_type, $object_types ) ) {
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -898,9 +902,12 @@ class CBXWPBookmarkHelper {
 	 * @return false|string
 	 */
 	public static function cbxbookmark_mycat_html( $instance ) {
+		$delete_svg = cbxwpbookmarks_load_svg( 'icon_delete' );
+		$edit_svg   = cbxwpbookmarks_load_svg( 'icon_edit' );
+
 		global $wpdb;
 
-		$settings           = new CBXWPBookmark_Settings_API();
+		$settings               = new CBXWPBookmark_Settings_API();
 		$user_bookmark_page_url = cbxwpbookmarks_mybookmark_page_url();
 		$bookmark_mode          = $settings->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
@@ -909,7 +916,7 @@ class CBXWPBookmarkHelper {
 		}
 
 		$privacy    = isset( $instance['privacy'] ) ? intval( $instance['privacy'] ) : 1; //1 = public, 0 = private 2 = ignore
-		$order_by    = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'cat_name';
+		$order_by   = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'cat_name';
 		$order      = isset( $instance['order'] ) ? esc_attr( $instance['order'] ) : 'ASC';
 		$show_count = isset( $instance['show_count'] ) ? intval( $instance['show_count'] ) : 0;
 		$title      = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
@@ -983,7 +990,6 @@ class CBXWPBookmarkHelper {
 			//$order = esc_sql($order);
 
 
-
 			if ( $bookmark_mode == 'user_cat' ) {
 
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -992,11 +998,11 @@ class CBXWPBookmarkHelper {
 				);
 			} elseif ( $bookmark_mode == 'global_cat' ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$items = $wpdb->get_results( $wpdb->prepare("SELECT * FROM  $category_table WHERE 1  ORDER BY %s %s", $order_by, $order) );
+				$items = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM  $category_table WHERE 1  ORDER BY %s %s", $order_by, $order ) );
 			}
 
 
-            $cbxbmcatid = ( isset( $_GET['cbxbmcatid'] ) && $_GET['cbxbmcatid'] != null ) ? absint( sanitize_text_field( $_GET['cbxbmcatid'] ) ) : 0;//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$cbxbmcatid = ( isset( $_GET['cbxbmcatid'] ) && $_GET['cbxbmcatid'] != null ) ? absint( sanitize_text_field( $_GET['cbxbmcatid'] ) ) : 0;//phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 
 			// Checking for available results
@@ -1006,13 +1012,14 @@ class CBXWPBookmarkHelper {
 					foreach ( $items as $item ) {
 						$list_data_attr = '';
 
-                        $item_id = absint($item->id);
+						$item_id = absint( $item->id );
 
 						$cat_permalink   = $user_bookmark_page_url;
 						$show_count_html = '';
 
 
-						$action_html = ( $allowedit ) ? '<span role="button"  class="cbxbookmark-edit-btn" title="'.esc_attr__('Click to Save/edit', 'cbxwpbookmark').'"><i class="cbx-icon cbx-icon-edit cbx-icon-15"></i><i class="cbxbookmark-edit-btn-label sr-only">'.esc_html__('Edit' ,'cbxwpbookmark').'</i></span><span role="button" class="cbxbookmark-delete-btn"  data-id="' . absint( $item->id ) . '" title="'.esc_attr__('Click to delete', 'cbxwpbookmark').'"><i class="cbx-icon cbx-icon-delete cbx-icon-15"></i><i class="cbxbookmark-delete-btn-label sr-only">'.esc_html__('Delete', 'cbxwpbookmark').'</i></span>' : '';
+						$action_html = ( $allowedit ) ? '<span role="button"  class="cbxbookmark-edit-btn icon icon-only" title="' . esc_attr__( 'Click to Save/edit', 'cbxwpbookmark' ) . '"><i class="cbx-icon">' . $edit_svg . '</i><i class="cbxbookmark-edit-btn-label sr-only">' . esc_html__( 'Edit', 'cbxwpbookmark' ) . '</i></span><span role="button" class="cbxbookmark-delete-btn icon icon-only"  data-id="' . absint( $item->id ) . '" title="' . esc_attr__( 'Click to delete',
+								'cbxwpbookmark' ) . '"><i class="cbx-icon">' . $delete_svg . '</i><i class="cbxbookmark-delete-btn-label sr-only">' . esc_html__( 'Delete', 'cbxwpbookmark' ) . '</i></span>' : '';
 
 
 						$category_count_user_query = '';
@@ -1022,13 +1029,13 @@ class CBXWPBookmarkHelper {
 
 						//$category_count_query = "SELECT count(*) as totalobject from $bookmark_table where cat_id = %d $category_count_user_query";
 						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-						$count_total          = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as totalobject from $bookmark_table where cat_id=%d $category_count_user_query", absint( $item->id )) );
+						$count_total = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as totalobject from $bookmark_table where cat_id=%d $category_count_user_query", absint( $item->id ) ) );
 
 						if ( $show_count == 1 ) {
 							$show_count_html = '<i>(' . number_format_i18n( $count_total ) . ')</i>';
 						}
 
-						$list_data_attr .= '  data-id="' .  $item_id  . '" ';
+						$list_data_attr .= '  data-id="' . $item_id . '" ';
 
 						if ( $allowedit || $show_bookmarks ) {
 							$list_data_attr .= ' data-userid="' . $userid . '"   data-privacy="' . absint( $item->privacy ) . '" data-name="' . esc_attr( wp_unslash( $item->cat_name ) ) . '" ';
@@ -1042,16 +1049,15 @@ class CBXWPBookmarkHelper {
 						//if show bookmark as sublist
 						$sub_list_class = '';
 						if ( $show_bookmarks ) {
-							$perpage        = apply_filters( 'cbxwpbookmark_sublist_perpage', 10 );
-							$total_page     = ceil( $count_total / $perpage );
+							$per_page       = apply_filters( 'cbxwpbookmark_sublist_perpage', 10 );
+							$total_page     = ceil( $count_total / $per_page );
 							$list_data_attr .= ' data-processed="0" data-page="1" data-totalpage="' . intval( $total_page ) . '" data-total="' . intval( $count_total ) . '" ';
 							$sub_list_class = 'cbxbookmark-category-list-item-expand';
+						} else {
+							if ( $item_id == $cbxbmcatid ) {
+								$sub_list_class .= ' cbxbookmark-category-list-item-active ';
+							}
 						}
-                        else{
-                            if($item_id == $cbxbmcatid){
-                                $sub_list_class .= ' cbxbookmark-category-list-item-active ';
-                            }
-                        }
 
 
 						$output .= '<li class="cbxbookmark-category-list-item ' . esc_attr( $sub_list_class ) . '" ' . $list_data_attr . '> <a href="' . esc_url( $cat_permalink ) . '" class="cbxlbjs-item-widget" data-privacy="' . esc_attr( $item->privacy ) . '">' . esc_attr( wp_unslash( $item->cat_name ) ) . '</a>' . $show_count_html . $action_html . '</li>';
@@ -1059,10 +1065,10 @@ class CBXWPBookmarkHelper {
 
 					if ( ! $show_bookmarks ) {
 						$all_active_class = '';
-						if($cbxbmcatid == 0){
+						if ( $cbxbmcatid == 0 ) {
 							$all_active_class = ' cbxbookmark-category-list-item-active ';
 						}
-						$output .= '<li class="cbxbookmark-category-list-item '.esc_attr($all_active_class).' cbxbookmark-category-list-item-notfound"> <a  href="' . $user_bookmark_page_url . '" class="cbxlbjs-item-widget" >' . esc_html__( 'All Categories', 'cbxwpbookmark' ) . '</a></li>';
+						$output .= '<li class="cbxbookmark-category-list-item ' . esc_attr( $all_active_class ) . ' cbxbookmark-category-list-item-notfound"> <a  href="' . esc_url( $user_bookmark_page_url ) . '" class="cbxlbjs-item-widget" >' . esc_html__( 'All Categories', 'cbxwpbookmark' ) . '</a></li>';
 					}
 
 				} elseif ( $display == 1 ) {
@@ -1095,7 +1101,7 @@ class CBXWPBookmarkHelper {
 
 							//$count_query = "SELECT count(*) as totalobject from $bookmark_table where cat_id = %d $category_count_user_query";
 							// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-							$num         = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as totalobject from $bookmark_table where cat_id = %d %s;", intval( $item->id ), $category_count_user_query ) );
+							$num = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as totalobject from $bookmark_table where cat_id = %d %s;", intval( $item->id ), $category_count_user_query ) );
 
 							$show_count_html = ' <i>(' . number_format_i18n( $num ) . ')</i>';
 						}
@@ -1135,26 +1141,12 @@ class CBXWPBookmarkHelper {
 
 			}
 		} else {
-			/* translators: %s: login url */
-			/*$cbxbookmark_login_link = sprintf( wp_kses(__( 'Please <a href="%s">login</a> to view Category', 'cbxwpbookmark' ), ['a' => ['href' => []]]),
-				wp_login_url( $user_bookmark_page_url )
-			);*/
-
-			/*//todo: integrate the login form
-
-			$output .= '<li>';
-			$output .= $cbxbookmark_login_link;
-			$output .= '</li>';*/
 
 
-
-
-			//$output .= ' <div  data-type="' . $object_type . '" data-object_id="' . $object_id . '" class="cbxwpbkmarkguestwrap" id="cbxwpbkmarkguestwrap-' . $object_id . '">';
 			$output .= ' <div class="cbxwpbkmarkguestwrap cbxwpbkmarkguestwrap-inline">';
 
 
-
-			if ( is_singular() ) {
+			/*if ( is_singular() ) {
 				$login_url    = wp_login_url( $user_bookmark_page_url );
 				$redirect_url = $user_bookmark_page_url;
 			} else {
@@ -1162,14 +1154,14 @@ class CBXWPBookmarkHelper {
 				//$login_url =  wp_login_url( home_url( $wp->request ) );
 				$login_url    = wp_login_url( home_url( add_query_arg( [], $wp->request ) ) );
 				$redirect_url = home_url( add_query_arg( [], $wp->request ) );
-			}
+			}*/
 
 
 			$output .= '<div class="cbxwpbkmarkguest-message">';
 
-			$guest_form_html = '<h3 class="cbxwpbookmark-title cbxwpbookmark-title-login">' . esc_html__( 'Please login to bookmark', 'cbxwpbookmark' ) . '</h3>';
+			//$guest_form_html = '<h3 class="cbxwpbookmark-title cbxwpbookmark-title-login">' . esc_html__( 'Please login to bookmark', 'cbxwpbookmark' ) . '</h3>';
 
-			$guest_login_form = esc_attr( $settings->get_option( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
+			/*$guest_login_form = esc_attr( $settings->get_option( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
 
 
 			if ( $guest_login_form == 'none' ) {
@@ -1188,20 +1180,31 @@ class CBXWPBookmarkHelper {
 			$guest_show_register = intval( $settings->get_option( 'guest_show_register', 'cbxwpbookmark_basics', 1 ) );
 			if ( $guest_show_register ) {
 				if ( get_option( 'users_can_register' ) ) {
-					$register_url        = add_query_arg( 'redirect_to', urlencode( $redirect_url ), wp_registration_url() );
-					/* translators: %s: register url */
-					$guest_register_html .= '<p class="cbxwpbookmark-guest-register">' . sprintf( wp_kses(__( 'No account yet? <a href="%s">Register</a>', 'cbxwpbookmark' ), ['a' => []]), $register_url ) . '</p>';
+					$register_url = add_query_arg( 'redirect_to', urlencode( $redirect_url ), wp_registration_url() );
+					//translators: %s: register url
+					$guest_register_html .= '<p class="cbxwpbookmark-guest-register">' . sprintf( wp_kses( __( 'No account yet? <a href="%s">Register</a>', 'cbxwpbookmark' ), [ 'a' => [] ] ), $register_url ) . '</p>';
 				}
 
 				$output .= apply_filters( 'cbxwpbookmark_register_html', $guest_register_html, $redirect_url );
 
+			}*/
+
+
+			$output .= '<div class="cbxwpbkmarkguest-content-inline">';
+
+
+			$show_login_form = esc_attr( $settings->get_option( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
+			if ( $show_login_form != 'none' ) {
+				$output .= cbxwpbookmark_get_template_html( 'global/login_form.php', [ 'settings' => $settings, 'inline' => 1 ] );
+			} else {
+				$output .= cbxwpbookmark_get_template_html( 'global/login_url.php', [ 'settings' => $settings, 'inline' => 1 ] );
 			}
 
+			$output .= '</div>'; //.cbxwpbkmarkguest-content
+			$output .= '</div>'; //.cbxwpbkmarkguest-message
+			$output .= '</div>'; //.cbxwpbkmarkguestwrap
 
-			$output .= '</div>';
-			$output .= '</div>';
-
-            $output = '<li style="list-style: none !important;;">'.$output.'</li>';
+			$output = '<li style="list-style: none !important;">' . $output . '</li>';
 		} ?>
 
 		<?php
@@ -1234,12 +1237,12 @@ class CBXWPBookmarkHelper {
 	 * @return false|string
 	 */
 	public static function cbxwpbookmarks_mybookmark_page_url() {
-		$settings      = new CBXWPBookmark_Settings_API();
-		$mybookmark_pageid = absint( $settings->get_option( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
+		$settings           = new CBXWPBookmark_Settings_API();
+		$mybookmark_page_id = absint( $settings->get_option( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
 
 		$mybookmark_page_url = '#';
-		if ( $mybookmark_pageid > 0 ) {
-			$mybookmark_page_url = get_permalink( $mybookmark_pageid );
+		if ( $mybookmark_page_id > 0 ) {
+			$mybookmark_page_url = get_permalink( $mybookmark_page_id );
 		}
 
 		return apply_filters( 'cbxwpbookmarks_mybookmark_page_url', esc_url( $mybookmark_page_url ) );
@@ -1259,42 +1262,42 @@ class CBXWPBookmarkHelper {
 		$query = "SELECT count(*) as count FROM $category_table WHERE 1";
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
-		$count = $wpdb->get_var( $query);
+		$count = $wpdb->get_var( $query );
 
 		return ( $count === null ) ? 0 : intval( $count );
 	}//end getTotalCategoryCount
 
 	/**
-     * Get total bookmark count by type system wide
-     *
+	 * Get total bookmark count by type system wide
+	 *
 	 * @param $object_type
 	 *
 	 * @return int
-     * @since 1.8.0
+	 * @since 1.8.0
 	 */
-    public static function getTotalBookmarkCountByType($object_type = '') {
-	    global $wpdb;
-	    $bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
+	public static function getTotalBookmarkCountByType( $object_type = '' ) {
+		global $wpdb;
+		$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
-	    $object_type = esc_attr($object_type);
+		$object_type = esc_attr( $object_type );
 
-	    if ( $object_type == '' ) {
-		    return 0;
-	    }
+		if ( $object_type == '' ) {
+			return 0;
+		}
 
-	    //$query = "SELECT count(*) as count FROM $bookmark_table WHERE 1";
+		//$query = "SELECT count(*) as count FROM $bookmark_table WHERE 1";
 
-	    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
-	    $count = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as count FROM $bookmark_table WHERE object_type = %s", $object_type ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
+		$count = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as count FROM $bookmark_table WHERE object_type = %s", $object_type ) );
 
-	    return ( $count === null ) ? 0 : absint( $count );
-    }//end method getTotalBookmarkCountByType
+		return ( $count === null ) ? 0 : absint( $count );
+	}//end method getTotalBookmarkCountByType
 
 	/**
 	 * Get total bookmark system wide
 	 *
 	 * @return int
-     * @since 1.8.0
+	 * @since 1.8.0
 	 */
 	public static function getTotalBookmarkCount() {
 		global $wpdb;
@@ -1304,7 +1307,7 @@ class CBXWPBookmarkHelper {
 		$query = "SELECT count(*) as count FROM $bookmark_table WHERE 1";
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
-		$count = $wpdb->get_var( $query);
+		$count = $wpdb->get_var( $query );
 
 		return ( $count === null ) ? 0 : intval( $count );
 	}//end getTotalBookmarkCount
@@ -1442,7 +1445,7 @@ class CBXWPBookmarkHelper {
 			return 0;
 		}
 
-	    //$query = "SELECT count(*) as count from $bookmark_table where cat_id = %d AND user_id = %d";
+		//$query = "SELECT count(*) as count from $bookmark_table where cat_id = %d AND user_id = %d";
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$count = $wpdb->get_var( $wpdb->prepare( "SELECT count(*) as count from $bookmark_table where cat_id = %d AND user_id = %d;", $cat_id, $user_id ) );
 
@@ -1537,13 +1540,13 @@ class CBXWPBookmarkHelper {
 		}
 
 
-        $catid = absint( $catid );
+		$catid = absint( $catid );
 		global $wpdb;
 		$category_table = $wpdb->prefix . 'cbxwpbookmarkcat';
 
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$category = $wpdb->get_row($wpdb->prepare( "SELECT * FROM  $category_table WHERE id = %d;", $catid ),	ARRAY_A);
+		$category = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM  $category_table WHERE id = %d;", $catid ), ARRAY_A );
 
 		return ( $category === null ) ? [] : $category;
 	}//end getBookmarkCategoryById
@@ -1664,13 +1667,13 @@ class CBXWPBookmarkHelper {
 	public static function getAllOptionNames() {
 		global $wpdb;
 
-		$prefix       = 'cbxwpbookmark_';
+		$prefix = 'cbxwpbookmark_';
 
 		$wild = '%';
 		$like = $wpdb->esc_like( $prefix ) . $wild;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$option_names = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$wpdb->options} WHERE option_name LIKE %s", $like), ARRAY_A );
+		$option_names = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->options} WHERE option_name LIKE %s", $like ), ARRAY_A );
 
 		return apply_filters( 'cbxwpbookmark_option_names', $option_names );
 	}//end getAllOptionNames
@@ -1756,7 +1759,7 @@ class CBXWPBookmarkHelper {
 	 *
 	 * @return array
 	 */
-	public static function object_types_assoc( ) {
+	public static function object_types_assoc() {
 		$post_type_args = [
 			'builtin' => [
 				'options' => [
@@ -1786,23 +1789,22 @@ class CBXWPBookmarkHelper {
 		}
 
 
+		$assoc_list = [];
+		if ( isset( $postTypes['builtin']['types'] ) ) {
 
-        $assoc_list = [];
-        if ( isset( $postTypes['builtin']['types'] ) ) {
+			foreach ( $postTypes['builtin']['types'] as $key => $name ) {
+				$assoc_list[ $key ] = $name;
+			}
+		}
 
-            foreach ( $postTypes['builtin']['types'] as $key => $name ) {
-                $assoc_list[$key] = $name;
-            }
-        }
+		if ( isset( $postTypes['custom']['types'] ) ) {
 
-        if ( isset( $postTypes['custom']['types'] ) ) {
+			foreach ( $postTypes['custom']['types'] as $key => $name ) {
+				$assoc_list[ $key ] = $name;
+			}
+		}
 
-            foreach ( $postTypes['custom']['types'] as $key => $name ) {
-                $assoc_list[$key] = $name;
-            }
-        }
-
-        return apply_filters('cbxwpbookmarks_post_types_assoc', $assoc_list);
+		return apply_filters( 'cbxwpbookmarks_post_types_assoc', $assoc_list );
 	}//end object_types_assoc
 
 	/**
@@ -1848,20 +1850,21 @@ class CBXWPBookmarkHelper {
 	public static function getBookmarksByObject( $object_id = 0, $object_type = '' ) {
 		global $wpdb;
 
-        $bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
-		$object_id = intval( $object_id );
-		$bookmarks = null;
+		$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
+		$object_id      = intval( $object_id );
+		$bookmarks      = null;
 
-        if($object_id == 0) return null;
-
-		if ( $object_type  != '') {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$bookmarks = $wpdb->get_results( $wpdb->prepare("SELECT log.* FROM $bookmark_table AS log WHERE log.object_id = %d ;", $object_id), 'ARRAY_A' );
+		if ( $object_id == 0 ) {
+			return null;
 		}
-        else{
-	        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-	        $bookmarks = $wpdb->get_results( $wpdb->prepare("SELECT log.* FROM $bookmark_table AS log WHERE log.object_id = %d AND log.object_type = %s ;", $object_id, $object_type), 'ARRAY_A' );
-        }
+
+		if ( $object_type != '' ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$bookmarks = $wpdb->get_results( $wpdb->prepare( "SELECT log.* FROM $bookmark_table AS log WHERE log.object_id = %d ;", $object_id ), 'ARRAY_A' );
+		} else {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$bookmarks = $wpdb->get_results( $wpdb->prepare( "SELECT log.* FROM $bookmark_table AS log WHERE log.object_id = %d AND log.object_type = %s ;", $object_id, $object_type ), 'ARRAY_A' );
+		}
 
 		return $bookmarks;
 	}//end getBookmarksByObject
@@ -1882,7 +1885,7 @@ class CBXWPBookmarkHelper {
 		$single_bookmark = null;
 		if ( $bookmark_id > 0 ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$single_bookmark = $wpdb->get_row( $wpdb->prepare("SELECT log.* FROM $bookmark_table AS log WHERE log.id = %d ;", $bookmark_id), 'ARRAY_A' );
+			$single_bookmark = $wpdb->get_row( $wpdb->prepare( "SELECT log.* FROM $bookmark_table AS log WHERE log.id = %d ;", $bookmark_id ), 'ARRAY_A' );
 		}
 
 		return $single_bookmark;
@@ -1906,7 +1909,7 @@ class CBXWPBookmarkHelper {
 		$single_bookmark = null;
 		if ( $object_id > 0 && $user_id > 0 ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$single_bookmark = $wpdb->get_row( $wpdb->prepare("SELECT log.* FROM $bookmark_table AS log WHERE log.object_id = %d AND log.user_id = %d;", $object_id, $user_id), 'ARRAY_A' );
+			$single_bookmark = $wpdb->get_row( $wpdb->prepare( "SELECT log.* FROM $bookmark_table AS log WHERE log.object_id = %d AND log.user_id = %d;", $object_id, $user_id ), 'ARRAY_A' );
 		}
 
 		return $single_bookmark;
@@ -1934,7 +1937,7 @@ class CBXWPBookmarkHelper {
 			//$sql_select = "SELECT log.* FROM $category_table AS log";
 
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$single_category = $wpdb->get_row( $wpdb->prepare("SELECT log.* FROM $category_table AS log WHERE log.id=%d;", $category_id), 'ARRAY_A' );
+			$single_category = $wpdb->get_row( $wpdb->prepare( "SELECT log.* FROM $category_table AS log WHERE log.id=%d;", $category_id ), 'ARRAY_A' );
 		}
 
 		return $single_category;
@@ -2040,6 +2043,9 @@ class CBXWPBookmarkHelper {
 	 * @return string
 	 */
 	public static function create_category_html( $instance = [] ) {
+		$plus_svg  = cbxwpbookmarks_load_svg( 'icon_plus' );
+		$close_svg = cbxwpbookmarks_load_svg( 'icon_close' );
+
 		$settings = new CBXWPBookmark_Settings_API();
 
 		$bookmark_mode           = esc_attr( $settings->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' ) );
@@ -2059,7 +2065,7 @@ class CBXWPBookmarkHelper {
 			$can_user_create_own_category = apply_filters( 'cbxwpbookmark_can_user_create_own_category', true, $user_id );
 
 			if ( $can_user_create_own_category ) {
-				$create_category_html .= '<span role="button" title="'.esc_attr__('Create New Category', 'cbxwpbookmark').'" class="cbxbookmark-category-list-create icon icon-inline icon-right"><i class="cbx-icon cbx-icon-plus"></i><i class="no-italics button-label">' . esc_attr__( 'Create New Category', 'cbxwpbookmark' ) . '</i></span>';
+				$create_category_html .= '<span role="button" title="' . esc_attr__( 'Create New Category', 'cbxwpbookmark' ) . '" class="cbxbookmark-category-list-create icon icon-right"><i class="cbx-icon">' . $plus_svg . '</i><i class="no-italics button-label">' . esc_attr__( 'Create New Category', 'cbxwpbookmark' ) . '</i></span>';
 			}
 
 			$create_category_html .= '<div class="cbxbookmark-category-list-create-form">';
@@ -2070,8 +2076,8 @@ class CBXWPBookmarkHelper {
                   <option ' . selected( $category_default_status, 1, false ) . ' value="1" title="Public Category">' . esc_attr__( 'Public', 'cbxwpbookmark' ) . '</option>
                   <option ' . selected( $category_default_status, 0, false ) . ' value="0" title="Private Category">' . esc_attr__( 'Private', 'cbxwpbookmark' ) . '</option>
                 </select>
-                <button data-busy="0" title="'.esc_attr__('Click to create/save', 'cbxwpbookmark').'"  data-busy="0"  class="cbxbookmark-btn cbxbookmark-cat-save ld-ext-right">' . esc_html__( 'Create', 'cbxwpbookmark' ) . '<i class="ld ld-ring ld-spin"></i></button>
-                <button title="'.esc_attr__('Click to close', 'cbxwpbookmark').'"  class="cbxbookmark-btn cbxbookmark-cat-close cbx-icon-parent-flex"><i class="cbx-icon cbx-icon-inline cbx-icon-close"></i><i class="cbxbookmark-cat-close-label sr-only">' . esc_html__( 'Close', 'cbxwpbookmark' ) . '</i></button>
+                <button data-busy="0" title="' . esc_attr__( 'Click to create/save', 'cbxwpbookmark' ) . '"  data-busy="0"  class="cbxbookmark-btn cbxbookmark-cat-save ld-ext-right">' . esc_html__( 'Create', 'cbxwpbookmark' ) . '<i class="ld ld-ring ld-spin"></i></button>
+                <button title="' . esc_attr__( 'Click to close', 'cbxwpbookmark' ) . '"  class="cbxbookmark-btn cbxbookmark-btn-secondary cbxbookmark-cat-close icon icon-only cbx-icon-parent-flex"><i class="cbx-icon">' . $close_svg . '</i><i class="cbxbookmark-cat-close-label sr-only">' . esc_html__( 'Close', 'cbxwpbookmark' ) . '</i></button>
                 <div class="clear clearfix cbxwpbkmark-clearfix"></div>
             </div>';
 
@@ -2125,8 +2131,8 @@ class CBXWPBookmarkHelper {
 	public static function is_rest() {
 		$prefix = rest_get_url_prefix();
 
-		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST    || isset( $_GET['rest_route'] ) && strpos( trim( $_GET['rest_route'], '\\/' ), $prefix, 0 ) === 0 ) {
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST || isset( $_GET['rest_route'] ) && strpos( trim( wp_unslash( $_GET['rest_route'] ), '\\/' ), $prefix, 0 ) === 0 ) {
 			return true;
 		}
 
@@ -2222,7 +2228,7 @@ class CBXWPBookmarkHelper {
 		$bookmark_table = $wpdb->prefix . 'cbxwpbookmark';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$bookmarks = $wpdb->get_results($wpdb->prepare( "SELECT *  FROM  $bookmark_table WHERE user_id = %d", $user_id ),ARRAY_A);
+		$bookmarks = $wpdb->get_results( $wpdb->prepare( "SELECT *  FROM  $bookmark_table WHERE user_id = %d", $user_id ), ARRAY_A );
 
 		if ( $bookmarks !== null ) {
 			return $bookmarks;
@@ -2302,8 +2308,9 @@ class CBXWPBookmarkHelper {
 	/**
 	 * Returns setting sections
 	 *
-	 * @return void
-	 * @since 1.7.14
+	 *
+	 * @return mixed|null
+	 * @since  1.7.14
 	 */
 	public static function cbxwpbookmark_setting_sections() {
 		return apply_filters( 'cbxwpbookmark_setting_sections',
@@ -2311,11 +2318,7 @@ class CBXWPBookmarkHelper {
 				[
 					'id'    => 'cbxwpbookmark_basics',
 					'title' => esc_html__( 'General Settings', 'cbxwpbookmark' ),
-				],
-				[
-					'id'    => 'cbxwpbookmark_tools',
-					'title' => esc_html__( 'Tools', 'cbxwpbookmark' ),
-				],
+				]
 			]
 		);
 	}//end method cbxwpbookmark_setting_sections
@@ -2366,26 +2369,39 @@ class CBXWPBookmarkHelper {
 		}
 
 
-		$mybookmark_pageid = absint( $settings->get_option( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
+		$mybookmark_page_id = absint( $settings->get_option( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
 
-		$mybookmark_pageid_link_html = '';
-		if ( $mybookmark_pageid > 0 ) {
-			$mybookmark_pageid_link      = cbxwpbookmarks_mybookmark_page_url();
+		$mybookmark_page_id_link_html = '';
+		if ( $mybookmark_page_id > 0 ) {
+			$mybookmark_page_id_link = cbxwpbookmarks_mybookmark_page_url();
 			/* translators: %s: my bookmark page url */
-			$mybookmark_pageid_link_html = sprintf( wp_kses(__( 'Visit <a href="%s" target="_blank">My Bookmarks</a> Page', 'cbxwpbookmark' ), ['a' => ['href' => [], 'target' => []]]), esc_url( $mybookmark_pageid_link ) );
+			$mybookmark_page_id_link_html .= sprintf( wp_kses( __( 'Visit <a href="%s" target="_blank">My Bookmarks</a> Page', 'cbxwpbookmark' ), [
+				'a' => [
+					'href'   => [],
+					'target' => []
+				]
+			] ), esc_url( $mybookmark_page_id_link ) );
 		} else {
-			$mybookmark_pageid_link_html = esc_html__( 'My Bookmark Page doesn\'t exists.', 'cbxwpbookmark' ) . ' ' . wp_kses(__( 'Please <a data-busy="0" id="cbxwpbookmark_autocreate_page" class="button" href="#" target="_blank">click here</a> to create. If <strong>My Bookmark Page Method</strong> is <strong>Customizer</strong> then only page will be created without shortcode as shortcode is not needed for customizer method.', 'cbxwpbookmark' ), ['a' => [ 'href' => [], 'target' => [], 'id' => [], 'class' => [] , 'data-busy' => [] ]]);
+			$mybookmark_page_id_link_html .= esc_html__( 'My Bookmark Page doesn\'t exists.', 'cbxwpbookmark' ) . ' ' . wp_kses( __( 'Please <a data-busy="0" id="cbxwpbookmark_autocreate_page" class="button" href="#" target="_blank">click here</a> to create. If <strong>My Bookmark Page Method</strong> is <strong>Customizer</strong> then only page will be created without shortcode as shortcode is not needed for customizer method.', 'cbxwpbookmark' ), [
+					'a' => [
+						'href'      => [],
+						'target'    => [],
+						'id'        => [],
+						'class'     => [],
+						'data-busy' => []
+					]
+				] );
 		}
 
 		$mybookmark_customizer_url_html = '';
-		if ( $mybookmark_pageid > 0 ) {
+		if ( $mybookmark_page_id > 0 ) {
 			$mybookmark_customizer_url      = add_query_arg( [
 				'autofocus' => [ 'panel' => 'cbxwpbookmark' ],
 				'url'       => cbxwpbookmarks_mybookmark_page_url()
 			], admin_url( 'customize.php' ) );
 			$mybookmark_customizer_url_html = '<a href="' . esc_url( $mybookmark_customizer_url ) . '">' . esc_html__( 'Configure using customizer', 'cbxwpbookmark' ) . '</a>';
 		} else {
-			$mybookmark_customizer_url_html = wp_kses( __( 'To configure <strong>My Bookmarks</strong> page using customizer please create a page and set as my bookmark page using above setting.', 'cbxwpbookmark' ), ['strong' => []] );
+			$mybookmark_customizer_url_html = wp_kses( __( 'To configure <strong>My Bookmarks</strong> page using customizer please create a page and set as my bookmark page using above setting.', 'cbxwpbookmark' ), [ 'strong' => [] ] );
 		}
 
 		$gust_login_forms = CBXWPBookmarkHelper::guest_login_forms();
@@ -2393,7 +2409,7 @@ class CBXWPBookmarkHelper {
 
 		$settings_builtin_fields =
 			[
-				'cbxwpbookmark_basics' => [
+				'cbxwpbookmark_basics'   => [
 					'basics_heading'     => [
 						'name'    => 'basics_heading',
 						'label'   => esc_html__( 'General Settings', 'cbxwpbookmark' ),
@@ -2565,7 +2581,7 @@ class CBXWPBookmarkHelper {
 					'mybookmark_pageid'     => [
 						'name'    => 'mybookmark_pageid',
 						'label'   => esc_html__( 'My Bookmark Page', 'cbxwpbookmark' ),
-						'desc'    => esc_html__( 'User\'s private(or public based on shortcode/customizer params) bookmark page.', 'cbxwpbookmark' ) . ' ' . $mybookmark_pageid_link_html,
+						'desc'    => esc_html__( 'User\'s private(or public based on shortcode/customizer params) bookmark page.', 'cbxwpbookmark' ) . ' ' . $mybookmark_page_id_link_html,
 						'type'    => 'select',
 						'default' => 0,
 						'options' => $pages_options,
@@ -2623,7 +2639,7 @@ class CBXWPBookmarkHelper {
 					],
 
 				],
-				'cbxwpbookmark_tools'  => [
+				'cbxwpbookmark_tools'    => [
 					'tools_heading'        => [
 						'name'    => 'tools_heading',
 						'label'   => esc_html__( 'Tools Settings', 'cbxwpbookmark' ),
@@ -2633,7 +2649,7 @@ class CBXWPBookmarkHelper {
 					'delete_global_config' => [
 						'name'    => 'delete_global_config',
 						'label'   => esc_html__( 'On Uninstall delete plugin data', 'cbxwpbookmark' ),
-						'desc'    => '<p>' . esc_html__( 'Delete Global Config data and custom table created by this plugin on uninstall.', 'cbxwpbookmark' ) . ' ' . esc_html__( 'Details table information is here', 'cbxwpbookmark' ) . '</p>' . '<p><strong>' .esc_html__( 'Please note that this process can not be undone and it is recommended to keep full database backup before doing this.', 'cbxwpbookmark' ) . '</strong></p>',
+						'desc'    => '<p>' . esc_html__( 'Delete Global Config data and custom table created by this plugin on uninstall.', 'cbxwpbookmark' ) . ' ' . esc_html__( 'Details table information is here', 'cbxwpbookmark' ) . '</p>' . '<p><strong>' . esc_html__( 'Please note that this process can not be undone and it is recommended to keep full database backup before doing this.', 'cbxwpbookmark' ) . '</strong></p>',
 						'type'    => 'radio',
 						'options' => [
 							'yes' => esc_html__( 'Yes', 'cbxwpbookmark' ),
@@ -2650,7 +2666,17 @@ class CBXWPBookmarkHelper {
 					],
 
 				],
+				/*'cbxwpbookmark_licences' => [
+					'licence_heading' => [
+						'name'    => 'licence_heading',
+						'label'   => esc_html__( 'Pro Addon License Information', 'cbxwpbookmark' ),
+						'type'    => 'heading',
+						'default' => '',
+					],
+
+				]*/
 			];
+
 
 		$settings_fields = []; //final setting array that will be passed to different filters
 
@@ -2867,7 +2893,9 @@ class CBXWPBookmarkHelper {
 		//$settings = new CBXWPBookmark_Settings_API();
 
 		$cbxwpbookmark_basics = get_option( 'cbxwpbookmark_basics' );
-        if(!is_array($cbxwpbookmark_basics)) $cbxwpbookmark_basics = [];
+		if ( ! is_array( $cbxwpbookmark_basics ) ) {
+			$cbxwpbookmark_basics = [];
+		}
 
 		$option_value = isset( $cbxwpbookmark_basics[ $key ] ) ? intval( $cbxwpbookmark_basics[ $key ] ) : 0;
 
@@ -2939,11 +2967,33 @@ class CBXWPBookmarkHelper {
 		}
 
 		//let's update the option
-        if(is_numeric($page_id)){
-	        $cbxwpbookmark_basics[ $key ] = $page_id;
-        }
+		if ( is_numeric( $page_id ) ) {
+			$cbxwpbookmark_basics[ $key ] = $page_id;
+		}
 		update_option( 'cbxwpbookmark_basics', $cbxwpbookmark_basics );
 
 		return $page_id;
 	}//end cbxbookmark_create_page
+
+	public static function get_any_plugin_version( $plugin_slug = '' ) {
+		if ( $plugin_slug == '' ) {
+			return '';
+		}
+
+		// Ensure the required file is loaded
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		// Get all installed plugins
+		$all_plugins = get_plugins();
+
+		// Check if the plugin exists
+		if ( isset( $all_plugins[ $plugin_slug ] ) ) {
+			return $all_plugins[ $plugin_slug ]['Version'];
+		}
+
+		// Return false if the plugin is not found
+		return '';
+	}//end method get_pro_addon_version
 }//end CBXWPBookmarkHelper
