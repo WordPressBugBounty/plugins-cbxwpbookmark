@@ -51,7 +51,7 @@ class CBXWPBookmark_Uninstall {
 
 
 		$settings             = new CBXWPBookmark_Settings_API();
-		$delete_global_config = $settings->get_option( 'delete_global_config', 'cbxwpbookmark_tools', 'no' );
+		$delete_global_config = $settings->get_field( 'delete_global_config', 'cbxwpbookmark_tools', 'no' );
 
 		if ( $delete_global_config == 'yes' ) {
 			//before hook

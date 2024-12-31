@@ -167,6 +167,14 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                     <div class="content">
                         <div class="cbx-backend-settings-row">
                             <p>
+                                Version - 1.8.10
+                            </p>
+                            <ul>
+                                <li>[improvement] Plugin on upgrade migration process improved</li>
+                            </ul>
+                        </div>
+                        <div class="cbx-backend-settings-row">
+                            <p>
                                 Version - 1.8.9
                             </p>
                             <ul>
@@ -187,33 +195,6 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                                 <li>[fixed] PHP error fixed for login form</li>
                             </ul>
                         </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 1.8.6
-                            </p>
-                            <ul>
-                                <li>[fixed] Style related issues</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 1.8.5
-                            </p>
-                            <ul>
-                                <li>[fixed] Fixed icon missing bug after last icons update</li>
-                                <li>[improvement] Accessibility improvement</li>
-                                <li>[updated] Pro addon plugin new version(1.4.3) released</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 1.8.4
-                            </p>
-                            <ul>
-                                <li>[improvement] Accessibility improvement modal close button for guest modal</li>
-                                >
-                            </ul>
-                        </div>
                     </div>
                 </div>
                 <div class="cbx-backend-card dashboard-changelog">
@@ -223,6 +204,15 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                         </div>
                     </div>
                     <div class="content">
+                        <div class="cbx-backend-settings-row">
+                            <p>
+                                Version - 1.4.5
+                            </p>
+                            <ul>
+                                <li>[improvement] Style and other minor improvements</li>
+                                <li>[improvement] Style improvement</li>
+                            </ul>
+                        </div>
                         <div class="cbx-backend-settings-row">
                             <p>
                                 Version - 1.4.4
@@ -242,16 +232,6 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                                 <li>[fixed] Fixed icon missing bug after last icons update</li>
                                 <li>[improvement] Accessibility improvement</li>
                                 <li>[updated] Core plugin new version(1.8.5) released</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 1.4.2
-                            </p>
-                            <ul>
-                                <li>[new] Fresh new icons</li>
-                                <li>[improvement] Accessibility improvement</li>
-                                <li>[updated] Core plugin new version(1.8.3) released</li>
                             </ul>
                         </div>
                     </div>

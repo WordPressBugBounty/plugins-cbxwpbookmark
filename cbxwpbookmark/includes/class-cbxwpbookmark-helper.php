@@ -74,6 +74,8 @@ class CBXWPBookmarkHelper {
 	 * @return array
 	 */
 	public static function customizer_default_values() {
+        $my_bookmark_url = cbxwpbookmarks_mybookmark_page_url();
+
 		$customizer_default = [
 			'shortcodes'          => 'cbxwpbookmark-mycat,cbxwpbookmark',
 			'cbxwpbookmark-mycat' => [
@@ -93,7 +95,7 @@ class CBXWPBookmarkHelper {
 				'allowedit'      => 0,
 				// 0 = don't  1 = yes,  allow edit and delete
 				'honorauthor'    => 0,
-				'base_url'       => cbxwpbookmarks_mybookmark_page_url()
+				'base_url'       => $my_bookmark_url
 			],
 			'cbxwpbookmark'       => [
 				'title'          => esc_html__( 'All Bookmarks', 'cbxwpbookmark' ), //if empty title will not be shown
@@ -108,7 +110,7 @@ class CBXWPBookmarkHelper {
 				'allowdelete'    => 0,
 				'allowdeleteall' => 0,
 				'showshareurl'   => 1,
-				'base_url'       => cbxwpbookmarks_mybookmark_page_url(),
+				'base_url'       => $my_bookmark_url
 			],
 		];
 
@@ -116,12 +118,12 @@ class CBXWPBookmarkHelper {
 	}//end customizer_default_values
 
 	/**
-	 * Adjust customizer default values
+     * Adjust customizer default values
+     *
+	 * @param boolean $update
+	 * @param boolean $return
 	 *
-	 * @param  bool  $update
-	 * @param  bool  $return
-	 *
-	 * @return array|nothing
+	 * @return array|void
 	 */
 	public static function customizer_default_adjust( $update = false, $return = false ) {
 		$default_values = CBXWPBookmarkHelper::customizer_default_values();
@@ -281,8 +283,8 @@ class CBXWPBookmarkHelper {
 			return '';
 		}
 
-		$bookmark_mode = $settings->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
-		$pop_z_index   = intval( $settings->get_option( 'pop_z_index', 'cbxwpbookmark_basics', 1 ) );
+		$bookmark_mode = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
+		$pop_z_index   = intval( $settings->get_field( 'pop_z_index', 'cbxwpbookmark_basics', 1 ) );
 		if ( $pop_z_index <= 0 ) {
 			$pop_z_index = 1;
 		}
@@ -362,9 +364,9 @@ class CBXWPBookmarkHelper {
 
 		$bookmarked_by_user = CBXWPBookmarkHelper::isBookmarkedByUser( $object_id, $user_id );
 
-		$display_label    = intval( $settings->get_option( 'display_label', 'cbxwpbookmark_basics', 1 ) );
-		$bookmark_label   = $settings->get_option( 'bookmark_label', 'cbxwpbookmark_basics', '' );
-		$bookmarked_label = $settings->get_option( 'bookmarked_label', 'cbxwpbookmark_basics', '' );
+		$display_label    = intval( $settings->get_field( 'display_label', 'cbxwpbookmark_basics', 1 ) );
+		$bookmark_label   = $settings->get_field( 'bookmark_label', 'cbxwpbookmark_basics', '' );
+		$bookmarked_label = $settings->get_field( 'bookmarked_label', 'cbxwpbookmark_basics', '' );
 		$bookmark_label   = ( $bookmark_label == '' ) ? esc_html__( 'Bookmark', 'cbxwpbookmark' ) : $bookmark_label;
 		$bookmarked_label = ( $bookmarked_label == '' ) ? esc_html__( 'Bookmarked', 'cbxwpbookmark' ) : $bookmarked_label;
 
@@ -427,7 +429,7 @@ class CBXWPBookmarkHelper {
 			$output .= '<div class="cbxwpbkmarkguest-content">';
 
 
-			$show_login_form = esc_attr( $settings->get_option( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
+			$show_login_form = esc_attr( $settings->get_field( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
 			if ( $show_login_form != 'none' ) {
 				$output .= cbxwpbookmark_get_template_html( 'global/login_form.php', [ 'settings' => $settings, 'inline' => 0 ] );
 			} else {
@@ -447,7 +449,7 @@ class CBXWPBookmarkHelper {
 
 			$guest_form_html = '';
 
-			$guest_login_form = esc_attr( $settings->get_option( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
+			$guest_login_form = esc_attr( $settings->get_field( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
 			if ( $guest_login_form == 'none' ) {
 				$guest_form_html .= '<a href="' . esc_url( $login_url ) . '">' . esc_html__( 'Please login', 'cbxwpbookmark' ) . '</a>';
 			} else {
@@ -461,7 +463,7 @@ class CBXWPBookmarkHelper {
 			$output .= apply_filters( 'cbxwpbookmark_login_html', $guest_form_html, $login_url, $redirect_url );
 
 			$guest_register_html = '';
-			$guest_show_register = intval( $settings->get_option( 'guest_show_register', 'cbxwpbookmark_basics', 1 ) );
+			$guest_show_register = intval( $settings->get_field( 'guest_show_register', 'cbxwpbookmark_basics', 1 ) );
 			if ( $guest_show_register ) {
 				if ( get_option( 'users_can_register' ) ) {
 					$register_url = add_query_arg( 'redirect_to', urlencode( $redirect_url ), wp_registration_url() );
@@ -501,8 +503,8 @@ class CBXWPBookmarkHelper {
 
 				if ( $bookmark_mode == 'user_cat' ) :
 
-					$category_default_status = intval( $settings->get_option( 'category_status', 'cbxwpbookmark_basics', 1 ) );
-					$hide_cat_privacy        = intval( $settings->get_option( 'hide_cat_privacy', 'cbxwpbookmark_basics', 0 ) );
+					$category_default_status = intval( $settings->get_field( 'category_status', 'cbxwpbookmark_basics', 1 ) );
+					$hide_cat_privacy        = intval( $settings->get_field( 'hide_cat_privacy', 'cbxwpbookmark_basics', 0 ) );
 
 					$cat_hide_class = ( $hide_cat_privacy == 1 ) ? 'cbxwpbkmark_cat_hide' : '';
 
@@ -909,7 +911,7 @@ class CBXWPBookmarkHelper {
 
 		$settings               = new CBXWPBookmark_Settings_API();
 		$user_bookmark_page_url = cbxwpbookmarks_mybookmark_page_url();
-		$bookmark_mode          = $settings->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
+		$bookmark_mode          = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
 		if ( $bookmark_mode == 'no_cat' ) {
 			return '';
@@ -1161,7 +1163,7 @@ class CBXWPBookmarkHelper {
 
 			//$guest_form_html = '<h3 class="cbxwpbookmark-title cbxwpbookmark-title-login">' . esc_html__( 'Please login to bookmark', 'cbxwpbookmark' ) . '</h3>';
 
-			/*$guest_login_form = esc_attr( $settings->get_option( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
+			/*$guest_login_form = esc_attr( $settings->get_field( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
 
 
 			if ( $guest_login_form == 'none' ) {
@@ -1177,7 +1179,7 @@ class CBXWPBookmarkHelper {
 			$output .= apply_filters( 'cbxwpbookmark_login_html', $guest_form_html, $login_url, $redirect_url );
 
 			$guest_register_html = '';
-			$guest_show_register = intval( $settings->get_option( 'guest_show_register', 'cbxwpbookmark_basics', 1 ) );
+			$guest_show_register = intval( $settings->get_field( 'guest_show_register', 'cbxwpbookmark_basics', 1 ) );
 			if ( $guest_show_register ) {
 				if ( get_option( 'users_can_register' ) ) {
 					$register_url = add_query_arg( 'redirect_to', urlencode( $redirect_url ), wp_registration_url() );
@@ -1193,7 +1195,7 @@ class CBXWPBookmarkHelper {
 			$output .= '<div class="cbxwpbkmarkguest-content-inline">';
 
 
-			$show_login_form = esc_attr( $settings->get_option( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
+			$show_login_form = esc_attr( $settings->get_field( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
 			if ( $show_login_form != 'none' ) {
 				$output .= cbxwpbookmark_get_template_html( 'global/login_form.php', [ 'settings' => $settings, 'inline' => 1 ] );
 			} else {
@@ -1238,14 +1240,15 @@ class CBXWPBookmarkHelper {
 	 */
 	public static function cbxwpbookmarks_mybookmark_page_url() {
 		$settings           = new CBXWPBookmark_Settings_API();
-		$mybookmark_page_id = absint( $settings->get_option( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
 
-		$mybookmark_page_url = '#';
-		if ( $mybookmark_page_id > 0 ) {
-			$mybookmark_page_url = get_permalink( $mybookmark_page_id );
+		$my_bookmark_page_id = absint( $settings->get_field( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
+
+		$my_bookmark_page_url = '#';
+		if ( $my_bookmark_page_id > 0 ) {
+			$my_bookmark_page_url = get_permalink( $my_bookmark_page_id );
 		}
 
-		return apply_filters( 'cbxwpbookmarks_mybookmark_page_url', esc_url( $mybookmark_page_url ) );
+		return apply_filters( 'cbxwpbookmarks_mybookmark_page_url', esc_url( $my_bookmark_page_url ) );
 	}//end cbxwpbookmarks_mybookmark_page_url
 
 	/**
@@ -2048,9 +2051,9 @@ class CBXWPBookmarkHelper {
 
 		$settings = new CBXWPBookmark_Settings_API();
 
-		$bookmark_mode           = esc_attr( $settings->get_option( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' ) );
-		$category_default_status = intval( $settings->get_option( 'category_status', 'cbxwpbookmark_basics', 1 ) );
-		$hide_cat_privacy        = intval( $settings->get_option( 'hide_cat_privacy', 'cbxwpbookmark_basics', 0 ) );
+		$bookmark_mode           = esc_attr( $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' ) );
+		$category_default_status = intval( $settings->get_field( 'category_status', 'cbxwpbookmark_basics', 1 ) );
+		$hide_cat_privacy        = intval( $settings->get_field( 'hide_cat_privacy', 'cbxwpbookmark_basics', 0 ) );
 
 		$cat_hide_class = ( $hide_cat_privacy == 1 ) ? 'cbxwpbkmark_cat_hide' : '';
 
@@ -2340,7 +2343,7 @@ class CBXWPBookmarkHelper {
 		$posts_definition = CBXWPBookmarkHelper::post_types_multiselect( CBXWPBookmarkHelper::post_types() );
 
 
-		$post_types_automation_default = $settings->get_option( 'cbxbookmarkposttypes', 'cbxwpbookmark_basics', [] );
+		$post_types_automation_default = $settings->get_field( 'cbxbookmarkposttypes', 'cbxwpbookmark_basics', [] );
 
 		if ( ! is_array( $post_types_automation_default ) ) {
 			$post_types_automation_default = [];
@@ -2369,20 +2372,20 @@ class CBXWPBookmarkHelper {
 		}
 
 
-		$mybookmark_page_id = absint( $settings->get_option( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
+		$my_bookmark_page_id = absint( $settings->get_field( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
 
-		$mybookmark_page_id_link_html = '';
-		if ( $mybookmark_page_id > 0 ) {
-			$mybookmark_page_id_link = cbxwpbookmarks_mybookmark_page_url();
+		$my_bookmark_page_id_link_html = '';
+		if ( $my_bookmark_page_id > 0 ) {
+			$my_bookmark_page_id_link = cbxwpbookmarks_mybookmark_page_url();
 			/* translators: %s: my bookmark page url */
-			$mybookmark_page_id_link_html .= sprintf( wp_kses( __( 'Visit <a href="%s" target="_blank">My Bookmarks</a> Page', 'cbxwpbookmark' ), [
+			$my_bookmark_page_id_link_html .= sprintf( wp_kses( __( 'Visit <a href="%s" target="_blank">My Bookmarks</a> Page', 'cbxwpbookmark' ), [
 				'a' => [
 					'href'   => [],
 					'target' => []
 				]
-			] ), esc_url( $mybookmark_page_id_link ) );
+			] ), esc_url( $my_bookmark_page_id_link ) );
 		} else {
-			$mybookmark_page_id_link_html .= esc_html__( 'My Bookmark Page doesn\'t exists.', 'cbxwpbookmark' ) . ' ' . wp_kses( __( 'Please <a data-busy="0" id="cbxwpbookmark_autocreate_page" class="button" href="#" target="_blank">click here</a> to create. If <strong>My Bookmark Page Method</strong> is <strong>Customizer</strong> then only page will be created without shortcode as shortcode is not needed for customizer method.', 'cbxwpbookmark' ), [
+			$my_bookmark_page_id_link_html .= esc_html__( 'My Bookmark Page doesn\'t exists.', 'cbxwpbookmark' ) . ' ' . wp_kses( __( 'Please <a data-busy="0" id="cbxwpbookmark_autocreate_page" class="button" href="#" target="_blank">click here</a> to create. If <strong>My Bookmark Page Method</strong> is <strong>Customizer</strong> then only page will be created without shortcode as shortcode is not needed for customizer method.', 'cbxwpbookmark' ), [
 					'a' => [
 						'href'      => [],
 						'target'    => [],
@@ -2394,7 +2397,7 @@ class CBXWPBookmarkHelper {
 		}
 
 		$mybookmark_customizer_url_html = '';
-		if ( $mybookmark_page_id > 0 ) {
+		if ( $my_bookmark_page_id > 0 ) {
 			$mybookmark_customizer_url      = add_query_arg( [
 				'autofocus' => [ 'panel' => 'cbxwpbookmark' ],
 				'url'       => cbxwpbookmarks_mybookmark_page_url()
@@ -2581,7 +2584,7 @@ class CBXWPBookmarkHelper {
 					'mybookmark_pageid'     => [
 						'name'    => 'mybookmark_pageid',
 						'label'   => esc_html__( 'My Bookmark Page', 'cbxwpbookmark' ),
-						'desc'    => esc_html__( 'User\'s private(or public based on shortcode/customizer params) bookmark page.', 'cbxwpbookmark' ) . ' ' . $mybookmark_page_id_link_html,
+						'desc'    => esc_html__( 'User\'s private(or public based on shortcode/customizer params) bookmark page.', 'cbxwpbookmark' ) . ' ' . $my_bookmark_page_id_link_html,
 						'type'    => 'select',
 						'default' => 0,
 						'options' => $pages_options,
@@ -2791,7 +2794,7 @@ class CBXWPBookmarkHelper {
 	public static function allowed_object_type() {
 		$settings = new CBXWPBookmark_Settings_API();
 
-		$allowed_object_types = $settings->get_option( 'cbxbookmarkposttypes', 'cbxwpbookmark_basics', [] );
+		$allowed_object_types = $settings->get_field( 'cbxbookmarkposttypes', 'cbxwpbookmark_basics', [] );
 
 		if ( ! is_array( $allowed_object_types ) ) {
 			$allowed_object_types = [];

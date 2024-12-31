@@ -3,7 +3,7 @@ Contributors: codeboxr, manchumahara
 Tags: bookmark,favorite,collection,user collection,user bookmark
 Requires at least: 5.3
 Tested up to: 6.7.1
-Stable tag: 1.8.9
+Stable tag: 1.8.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -169,6 +169,10 @@ How to install the plugin and get it working.
 == Screenshots ==
 
 == Changelog ==
+= 1.8.10 =
+* [improvement] Plugin on upgrade migration process improved
+* [improvement] Style improvement
+
 = 1.8.9 =
 * [improvement] Login form/url improved
 * [improvement] Login form/url improved

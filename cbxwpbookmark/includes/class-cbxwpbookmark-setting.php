@@ -34,10 +34,40 @@ if ( ! class_exists( 'CBXWPBookmark_Settings_API' ) ):
 		 */
 		private static $_instance;
 
-		public function __construct( $cbxwpbookmark = '', $version = '' ) {
+		/**
+         * Returns class's instance
+         *
+		 * @return object|self
+		 */
+		public static function instance() {
+			if ( is_null( self::$_instance ) ) {
+				self::$_instance = new self();
+			}
 
-		}//end method constructor
+			return self::$_instance;
+		}//end method instance
 
+		/**
+		 * Cloning is forbidden.
+		 *
+		 * @since 2.1
+		 */
+		public function __clone() {
+			wc_doing_it_wrong( __FUNCTION__, esc_html__( 'Cloning is forbidden.', 'cbxwpbookmark' ), '2.1' );
+		}//end method clone
+
+		/**
+		 * Unserializing instances of this class is forbidden.
+		 *
+		 * @since 2.1
+		 */
+		public function __wakeup() {
+			wc_doing_it_wrong( __FUNCTION__, esc_html__( 'Unserializing instances of this class is forbidden.', 'cbxwpbookmark' ), '2.1' );
+		}//end method wakeup
+
+		public function __construct() {
+
+		}//end constructor
 
 		/**
 		 * Set settings sections
@@ -561,19 +591,19 @@ if ( ! class_exists( 'CBXWPBookmark_Settings_API' ) ):
 
 			if ( isset( $args['optgroup'] ) && $args['optgroup'] ) {
 				foreach ( $args['options'] as $opt_grouplabel => $option_vals ) {
-					$html .= '<optgroup label="' . $opt_grouplabel . '">';
+					$html .= '<optgroup label="' . esc_attr($opt_grouplabel) . '">';
 
 					if ( ! is_array( $option_vals ) ) {
 						$option_vals = [];
 					} else {
-						$option_vals = $option_vals;
+						//$option_vals = $option_vals;
 					}
 
 					foreach ( $option_vals as $key => $val ) {
 						$selected = in_array( $key, $value ) ? ' selected="selected" ' : '';
 						$html     .= sprintf( '<option value="%s" ' . $selected . '>%s</option>', $key, $val );
 					}
-					$html .= '<optgroup>';
+					$html .= '</optgroup>';
 				}
 			} else {
 				$option_vals = $args['options'];
@@ -637,7 +667,7 @@ if ( ! class_exists( 'CBXWPBookmark_Settings_API' ) ):
 						$selected = in_array( $key, $value ) ? ' selected="selected" ' : '';
 						$html     .= sprintf( '<option value="%s" ' . $selected . '>%s</option>', $key, $val );
 					}
-					$html .= '<optgroup>';
+					$html .= '</optgroup>';
 				}
 			} else {
 				//$option_vals = $this->convert_associate($args['options']);
@@ -757,7 +787,6 @@ if ( ! class_exists( 'CBXWPBookmark_Settings_API' ) ):
 		 * @return void
 		 */
 		function callback_password( $args ) {
-
 			$value = esc_attr( $this->get_option( $args['id'], $args['section'], $args['default'] ) );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 
@@ -911,10 +940,8 @@ if ( ! class_exists( 'CBXWPBookmark_Settings_API' ) ):
 				foreach ( $value as $val ) {
 					$new_value[ $val ] = ucfirst( $val );
 				}
-
 				return $new_value;
 			}
-
 
 			return $value;
 		}//end method convert_associate

@@ -736,48 +736,38 @@ class CBXWPBookmark_Admin {
 		wp_die();
 	}//end cbxwpbookmark_autocreate_page
 
-	/**
-	 * Post installation hook
-	 *
-	 * @param $response
-	 * @param  array  $hook_extra
-	 * @param  array  $result
-	 */
-	public function upgrader_post_install( $response, $hook_extra = [], $result = [] ) {
-		if ( $response && isset( $hook_extra['type'] ) && $hook_extra['type'] == 'plugin' ) {
-			if ( isset( $result['destination_name'] ) && $result['destination_name'] == 'cbxwpbookmark' ) {
-				if ( ! function_exists( 'is_plugin_active' ) ) {
-					include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-				}
-
-				CBXWPBookmarkHelper::create_tables();
-				CBXWPBookmarkHelper::customizer_default_adjust( true );
-				set_transient( 'cbxwpbookmark_upgraded_notice', 1 );
-			}
-		}
-	}//end method upgrader_post_install
-
 
 	/**
 	 * If we need to do something in upgrader process is completed
 	 *
-	 * @param $upgrader_object
-	 * @param $options
 	 */
-	public function plugin_upgrader_process_complete( $upgrader_object, $options ) {
-		if ( isset( $options['plugins'] ) && $options['action'] == 'update' && $options['type'] == 'plugin' ) {
-			if ( isset( $options['plugins'] ) && is_array( $options['plugins'] ) && sizeof( $options['plugins'] ) > 0 ) {
-				foreach ( $options['plugins'] as $each_plugin ) {
-					if ( $each_plugin == CBXWPBOOKMARK_BASE_NAME ) {
-						CBXWPBookmarkHelper::create_tables();
-						CBXWPBookmarkHelper::customizer_default_adjust( true );
-						set_transient( 'cbxwpbookmark_upgraded_notice', 1 );
-						break;
-					}
-				}
-			}
+	public function plugin_upgrader_process_complete() {
+		$saved_version = get_option('cbxwpbookmark_version');
+
+		if ($saved_version === false || version_compare($saved_version , CBXWPBOOKMARK_PLUGIN_VERSION, '<')) {
+			CBXWPBookmarkHelper::create_tables();
+
+			//CBXWPBookmarkHelper::cbxbookmark_create_pages();
+			//CBXWPBookmarkHelper::customizer_default_adjust( true );
+
+			add_action('init', [$this, 'plugin_upgrader_process_complete_partial']);
+
+			set_transient( 'cbxwpbookmark_upgraded_notice', 1 );
+
+			// Update the saved version
+			update_option('cbxwpbookmark_version', CBXWPBOOKMARK_PLUGIN_VERSION);
 		}
 	}//end plugin_upgrader_process_complete
+
+	/**
+	 * Partial tasks of 'plugin_upgrader_process_complete_partial'
+	 *
+	 * @return void
+	 */
+	public function plugin_upgrader_process_complete_partial(){
+		CBXWPBookmarkHelper::cbxbookmark_create_pages();
+		CBXWPBookmarkHelper::customizer_default_adjust( true );
+	}//end method plugin_upgrader_process_complete_partial
 
 	/**
 	 * Show a notice to anyone who has just installed the plugin for the first time
@@ -794,6 +784,7 @@ class CBXWPBookmark_Admin {
 			echo '<p>' . sprintf( wp_kses( __( 'Check <a style="color:#005ae0 !important; font-weight: bold;" href="%1$s">Plugin Setting</a> | <a style="color:#005ae0 !important; font-weight: bold;" href="%2$s" target="_blank">Documentation</a>', 'cbxwpbookmark' ), [ 'a' => [ 'href' => [], 'style' => [], 'target' => [] ] ] ), esc_url( admin_url( 'admin.php?page=cbxwpbookmark_settings' ) ),
 					'https://codeboxr.com/product/cbx-wordpress-bookmark/' ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo '</div>';
+
 			// Delete the transient so we don't keep displaying the activation message
 			delete_transient( 'cbxwpbookmark_activated_notice' );
 
@@ -809,6 +800,7 @@ class CBXWPBookmark_Admin {
 			/* translators: 1. Plugin setting url 2. Documentation link */
 			echo '<p>' . sprintf( wp_kses( __( 'Check <a style="color:#005ae0 !important; font-weight: bold;" href="%1$s">Plugin Setting</a> | <a style="color:#005ae0 !important; font-weight: bold;" href="%2$s" target="_blank">Documentation</a>', 'cbxwpbookmark' ), [ 'a' => [ 'href' => [], 'style' => [], 'target' => [] ] ] ), esc_url( admin_url( 'admin.php?page=cbxwpbookmark_settings' ) ), 'https://codeboxr.com/product/cbx-wordpress-bookmark/' ) . '</p>';
 			echo '</div>';
+
 			// Delete the transient so we don't keep displaying the activation message
 			delete_transient( 'cbxwpbookmark_upgraded_notice' );
 
@@ -834,14 +826,14 @@ class CBXWPBookmark_Admin {
 		$pro_addon_version = CBXWPBookmarkHelper::get_any_plugin_version('cbxwpbookmarkaddon/cbxwpbookmarkaddon.php');
 
 
-		if($pro_addon_version != '' && version_compare( $pro_addon_version, '1.4.4', '<' ) ){
+		if($pro_addon_version != '' && version_compare( $pro_addon_version, '1.4.5', '<' ) ){
 			// Custom message to display
 
 			//$plugin_setting_url = admin_url( 'admin.php?page=cbxwpbookmark_settings#cbxwpbookmark_licences' );
 			$plugin_manual_update = 'https://codeboxr.com/manual-update-pro-addon/';
 
 			/* translators:translators: %s: plugin setting url for licence */
-			$custom_message     = wp_kses(sprintf( __( '<strong>Note:</strong> CBX Bookmark & Favorite Pro Addon is custom plugin. This plugin can not be auto update from dashboard/plugin manager. For manual update please check <a target="_blank" href="%1$s">documentation</a>. <strong style="color: red;">It seems this plugin\'s current version is older than 1.4.4. To get the latest pro addon features, this plugin needs to upgrade to 1.4.4 or later.</strong>', 'cbxwpbookmark' ), esc_url( $plugin_manual_update ) ), ['strong' => ['style' => []],'a' => ['href' => [], 'target' => []]]);
+			$custom_message     = wp_kses(sprintf( __( '<strong>Note:</strong> CBX Bookmark & Favorite Pro Addon is custom plugin. This plugin can not be auto update from dashboard/plugin manager. For manual update please check <a target="_blank" href="%1$s">documentation</a>. <strong style="color: red;">It seems this plugin\'s current version is older than 1.4.5. To get the latest pro addon features, this plugin needs to upgrade to 1.4.4 or later.</strong>', 'cbxwpbookmark' ), esc_url( $plugin_manual_update ) ), ['strong' => ['style' => []],'a' => ['href' => [], 'target' => []]]);
 
 			// Output a row with custom content
 			echo '<tr class="plugin-update-tr">

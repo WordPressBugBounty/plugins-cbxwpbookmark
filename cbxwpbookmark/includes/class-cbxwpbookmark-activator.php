@@ -31,8 +31,12 @@ class CBXWPBookmark_Activator {
 	 */
 	public static function activate() {
 		CBXWPBookmarkHelper::create_tables();
+		CBXWPBookmarkHelper::cbxbookmark_create_pages();     //create the shortcode page
 
 		set_transient( 'cbxwpbookmark_activated_notice', 1 );
+
+		// Update the saved version
+		update_option('cbxwpbookmark_version', CBXWPBOOKMARK_PLUGIN_VERSION);
 	}//end method activate
 
 	/**
