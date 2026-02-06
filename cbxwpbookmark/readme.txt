@@ -2,8 +2,8 @@
 Contributors: codeboxr, manchumahara
 Tags: bookmark,favorite,collection,user collection,user bookmark
 Requires at least: 5.3
-Tested up to: 6.8
-Stable tag: 1.9.11
+Tested up to: 6.9
+Stable tag: 2.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -139,17 +139,17 @@ This plugin is inspired from youtube's bookmark or favorite feature. User can cr
 * Ultimate member support
 * usersWP support
 
-### 🔱 Pro Addon: myCred Integration ###
+### 🔱 Pro Feature: myCred Integration ###
 
 * User gets point after bookmark (configurable)
 * Point cuts from user after remove bookmark (configurable)
 
-👉 Get the [CBX Bookmark myCred Addon](https://codeboxr.com/product/cbx-bookmark-mycred-addon/)
 
 ### 🔱 Third party plugin Integration ###
 
 * buddyBoss
 * myCred
+* bbPress
 * Fifu(Featured Image from URL)
 
 == 🔩 Installation ==
@@ -169,6 +169,46 @@ How to install the plugin and get it working.
 == Screenshots ==
 
 == Changelog ==
+= 2.0.6 =
+* [fixed] Dashboard and frontend bookmark listing js error fixed if single click category mode
+
+= 2.0.5 =
+* [fixed] VC widget error fixed
+* [updated] WordPress 6.9 compatible
+* [updated] Pro Addon 2.0.5 released
+* [new] Pro addon now supports automatic update [check setting]
+
+= 2.0.4 =
+* [fixed] Composer based custom scope/namespace for vendor to avoid conflict with other plugins
+* [fixed] Composer based custom scope/namespace for vendor to avoid conflict with other plugins
+* [fixed] Pro addon 2.0.4 released and needed to update to make it work with core 2.0.4
+* [note] Pro addon note: deactivate, manually delete & install new version or install the new version as replacement.
+* [fixed] Astra theme hash base vue js route fixed
+
+= 2.0.3 =
+* [important] From core version 2.0.0 there is compatibility issues with php and pro addon. For safe deactivate Bookmark pro addon(s). Update core & activate. the update pro addon.
+* [fixed] Fixed site crash or db connectivity error if not default mysql port
+* [improved] Table names are now escape[security improvement]
+* [improved] Pro Addon compatibility checking improved(2nd attempt)
+* [fixed] Frontend Dashboard - bookmarks and category link fixed
+* [updated] Pro addon 2.0.3 released
+
+= 2.0.2 =
+* [fixed] Pro Addon compatibility checking improved
+* [updated] Pro addon 2.0.2 released
+* [fixed] Auto page create security issue fixed(Reported by Nabil Irawan)
+
+= 2.0.1 =
+* [fixed] Composer loading issue solved
+
+= 2.0.0 =
+* [updated] PHP version compatibility check updated
+* [fixed] PHP file direct access check issue checked for all files
+* [updated] Admin dashboard design/views updated.
+* [updated] Admin dashboard pages implemented with js views
+* [improved] Helps and support and dashboard page separated
+* [updated] Pro Addon plugin V2.0.0 released
+
 = 1.9.11 =
 * [fixed] Deleting one category was deleting bookmarks from other category if bookmarks were in both category.
 * [updated] Pro addon plugin 1.5.4 released and compatible with latest Core Plugin 1.9.11

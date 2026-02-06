@@ -1,10 +1,11 @@
 <?php
+use CBXWPBookmark\CBXWPBookmarkUninstall;
 
 /**
  * Fired when the plugin is uninstalled.
  *
  *
- * @link       http://codeboxr.com
+ * @link       https://codeboxr.com
  * @since      1.0.0
  *
  * @package    cbxwpbookmark
@@ -18,14 +19,12 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 /**
  * The code that runs during plugin uninstall.
  */
-function uninstall_cbxwpbookmark() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-cbxwpbookmark-setting.php';
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-cbxwpbookmark-helper.php';
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-cbxwpbookmark-uninstall.php';
+function cbxwpbookmark_uninstall() {
+	require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
-	cbxwpbookmark_Uninstall::uninstall();
-}//end function uninstall_cbxwpbookmark
+	CBXWPBookmarkUninstall::uninstall();
+}//end function cbxwpbookmark_uninstall
 
 if ( ! defined( 'CBXWPBOOKMARK_PLUGIN_NAME' ) ) {
-	uninstall_cbxwpbookmark();
+	cbxwpbookmark_uninstall();
 }
