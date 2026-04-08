@@ -137,14 +137,27 @@ class CBXWPBookmarkSettings {
 		//register settings sections
 		foreach ( $this->settings_sections as $section ) {
 
-			if ( false == get_option( $section['id'] ) ) {
+			/*if ( false == get_option( $section['id'] ) ) {
 				$section_default_value = $this->getDefaultValueBySection( $section['id'] );
 				add_option( $section['id'], $section_default_value );
 			} else {
 
 				$section_default_value = $this->getMissingDefaultValueBySection( $section['id'] );
 				update_option( $section['id'], $section_default_value );
-			}
+			}*/
+
+            $current = get_option( $section['id'] );
+
+            if ( $current === false ) {
+                // truly not saved before
+                add_option( $section['id'], $this->getDefaultValueBySection( $section['id'] ) );
+            } else {
+                // saved before — merge missing defaults without overwriting user values
+               update_option(
+                        $section['id'],
+                        $this->getMissingDefaultValueBySection( $section['id'], $current )
+                );
+            }
 
 			if ( isset( $section['desc'] ) && ! empty( $section['desc'] ) ) {
 				$section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
@@ -211,6 +224,86 @@ class CBXWPBookmarkSettings {
 		}
 	}//end method admin_init
 
+    /**
+     * Sanitize callback for Settings API
+     */
+    function sanitize_options( $options ) {
+        /*foreach ( $options as $option_slug => $option_value ) {
+            $sanitize_callback = $this->get_sanitize_callback( $option_slug );
+
+            // If callback is set, call it
+            if ( $sanitize_callback ) {
+                $options[ $option_slug ] = call_user_func( $sanitize_callback, $option_value );
+                continue;
+            }
+        }
+
+        return $options;*/
+
+        if ( ! is_array( $options ) ) {
+            return [];
+        }
+
+        foreach ( $options as $option_slug => $option_value ) {
+
+            $callback = $this->get_sanitize_callback( $option_slug );
+            $field_type = $this->get_field_type( $option_slug );
+            $is_multi = $this->is_field_multi( $option_slug );
+
+            // 1️⃣ Use custom callback if developer provided one
+            if ( $callback ) {
+                $options[$option_slug] = call_user_func( $callback, $option_value );
+                continue;
+            }
+
+            // 2️⃣ Automatic sanitization by type
+            switch ( $field_type ) {
+
+                case 'textarea':
+                    $options[$option_slug] = wp_kses_post( $option_value );
+                    break;
+
+                case 'number':
+                    $options[$option_slug] = floatval( $option_value );
+                    break;
+
+                case 'checkbox':
+                    //$options[$option_slug] = $option_value ? 1 : 0;
+                    break;
+
+                case 'select':
+
+
+                    if ( $is_multi ) {
+                        // Multi-select: value must be array
+                        if ( ! is_array( $option_value ) ) {
+                            $options[$option_slug] = [];
+                        } else {
+                            $options[$option_slug] = array_map( 'sanitize_text_field', $option_value );
+                        }
+
+                    } else {
+                        // Single select
+                        $options[$option_slug] = sanitize_text_field( $option_value );
+                    }
+
+                    break;
+
+                case 'radio':
+                    $options[$option_slug] = sanitize_text_field( $option_value );
+                    break;
+
+                case 'text':
+                default:
+                    $options[$option_slug] = sanitize_text_field( $option_value );
+                    break;
+            }
+
+        }
+
+        return $options;
+    }//end method sanitize_options
+
 	/**
 	 * Prepares default values by section
 	 *
@@ -223,7 +316,12 @@ class CBXWPBookmarkSettings {
 
 		$fields = $this->settings_fields[ $section_id ];
 		foreach ( $fields as $field ) {
-			$default_values[ $field['name'] ] = isset( $field['default'] ) ? $field['default'] : '';
+            $default_undefined = '';
+            if($field['type'] === 'select' && isset($field['multi']) && absint($field['multi'])) {
+                $default_undefined = [];
+            }
+
+			$default_values[ $field['name'] ] = isset( $field['default'] ) ? $field['default'] : $default_undefined;
 		}
 
 		return $default_values;
@@ -233,11 +331,12 @@ class CBXWPBookmarkSettings {
 	 * Prepares default values by section
 	 *
 	 * @param $section_id
+	 * @param $current
 	 *
 	 * @return array
 	 */
-	function getMissingDefaultValueBySection( $section_id ) {
-		$section_value = get_option( $section_id );
+	function getMissingDefaultValueBySection( $section_id, $current = [] ) {
+		/*$section_value = get_option( $section_id );
 
 		$fields = $this->settings_fields[ $section_id ];
 		foreach ( $fields as $field ) {
@@ -246,7 +345,23 @@ class CBXWPBookmarkSettings {
 			}
 		}
 
-		return $section_value;
+		return $section_value;*/
+
+        $defaults = $this->getDefaultValueBySection( $section_id );
+
+        // ensure current is array
+        if ( ! is_array( $current ) ) {
+            $current = [];
+        }
+
+        // merge defaults only for keys that do not exist at all
+        foreach ( $defaults as $key => $value ) {
+            if ( ! array_key_exists( $key, $current ) ) {
+                $current[ $key ] = $value;
+            }
+        }
+
+        return $current;
 	}//end method getMissingDefaultValueBySection
 
 	/**
@@ -281,7 +396,7 @@ class CBXWPBookmarkSettings {
 		$plus_svg  = cbxwpbookmarks_load_svg( 'icon_plus' );
 		$minus_svg = cbxwpbookmarks_load_svg( 'icon_minus' );
 
-		$html = '<h3 class="setting_heading"><span class="setting_heading_title">' . esc_html( $args['name'] ) . '</span><a title="' . esc_attr__( 'Click to show hide',
+		$html = '<h3 class="setting_heading"><span class="setting_heading_title">' . esc_html( $args['name'] ) . '</span><a role="button" title="' . esc_attr__( 'Click to show hide',
 				'cbxwpbookmark' ) . '" class="setting_heading_toggle button outline primary icon-only icon-inline" href="#"><i class="cbx-icon cbx-icon-img setting_heading_toggle_plus">' . $plus_svg . '</i><i class="cbx-icon cbx-icon-img setting_heading_toggle_minus">' . $minus_svg . '</i></a></h3>';
 		$html .= $this->get_field_description( $args );
 
@@ -561,7 +676,7 @@ class CBXWPBookmarkSettings {
 	function callback_select( $args ) {
 		$value = $this->get_option( $args['id'], $args['section'], $args['default'] );
 
-		$multi      = isset( $args['multi'] ) ? intval( $args['multi'] ) : 0;
+		$multi      = isset( $args['multi'] ) ? absint( $args['multi'] ) : 0;
 		$multi_name = ( $multi ) ? '[]' : '';
 		$multi_attr = ( $multi ) ? ' multiple ' : '';
 
@@ -569,30 +684,24 @@ class CBXWPBookmarkSettings {
 			$value = [];
 		}
 
-		/*if ( ! is_array( $value ) ) {
-			$value = [];
-		}*/
-
 		$size = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular selecttwo-select';
 
-		if ( $args['placeholder'] == '' ) {
+		if ( $args['placeholder'] === '' ) {
 			$args['placeholder'] = esc_html__( 'Please Select', 'cbxwpbookmark' );
 		}
 
 		$html_id = "{$args['section']}_{$args['id']}";
 		$html_id = $this->settings_clean_label_for( $html_id );
 
-		//$html = sprintf( '<input type="hidden" name="%1$s[%2$s][]" value="" />', $args['section'], $args['id'] );
-		$html = sprintf( '<div class="selecttwo-select-wrapper"><select ' . $multi_attr . ' class="%1$s" name="%2$s[%3$s]' . $multi_name . '" id="%5$s" style="min-width: 150px !important;"  placeholder="%4$s" data-placeholder="%4$s">', $size, $args['section'], $args['id'], $args['placeholder'], $html_id );
+		$html = sprintf( '<input ' . $multi_attr . ' type="hidden" name="%1$s[%2$s]' . $multi_name . '" value="" />', $args['section'], $args['id'] );
+		$html .= sprintf( '<div class="selecttwo-select-wrapper"><select ' . $multi_attr . ' class="%1$s" name="%2$s[%3$s]' . $multi_name . '" id="%5$s" style="min-width: 150px !important;"  placeholder="%4$s" data-placeholder="%4$s">', $size, $args['section'], $args['id'], $args['placeholder'], $html_id );
 
 		if ( isset( $args['optgroup'] ) && $args['optgroup'] ) {
-			foreach ( $args['options'] as $opt_grouplabel => $option_vals ) {
-				$html .= '<optgroup label="' . esc_attr($opt_grouplabel) . '">';
+			foreach ( $args['options'] as $group_label => $option_vals ) {
+				$html .= '<optgroup label="' . esc_attr($group_label) . '">';
 
 				if ( ! is_array( $option_vals ) ) {
 					$option_vals = [];
-				} else {
-					//$option_vals = $option_vals;
 				}
 
 				foreach ( $option_vals as $key => $val ) {
@@ -603,6 +712,7 @@ class CBXWPBookmarkSettings {
 			}
 		} else {
 			$option_vals = $args['options'];
+
 
 			foreach ( $option_vals as $key => $val ) {
 				if ( $multi ) {
@@ -619,67 +729,6 @@ class CBXWPBookmarkSettings {
 
 		echo $html; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}//end method callback_select
-
-	/**
-	 * Displays a multi-selectbox for a settings field
-	 *
-	 * @param $args
-	 *
-	 * @return void
-	 */
-	function callback_multiselect( $args ) {
-		$value = $this->get_option( $args['id'], $args['section'], $args['default'] );
-
-		if ( ! is_array( $value ) ) {
-			$value = [];
-		}
-
-		$size = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular selecttwo-select';
-
-		if ( $args['placeholder'] == '' ) {
-			$args['placeholder'] = esc_html__( 'Please Select', 'cbxwpbookmark' );
-		}
-
-		$html_id = "{$args['section']}_{$args['id']}";
-		$html_id = $this->settings_clean_label_for( $html_id );
-
-		$html = sprintf( '<input type="hidden" name="%1$s[%2$s][]" value="" />', $args['section'], $args['id'] );
-		$html .= sprintf( '<div class="selecttwo-select-wrapper"><select multiple class="%1$s" name="%2$s[%3$s][]" id="%5$s" style="min-width: 150px !important;"  placeholder="%4$s" data-placeholder="%4$s">', $size, $args['section'], $args['id'], $args['placeholder'], $html_id );
-
-
-		if ( isset( $args['optgroup'] ) && $args['optgroup'] ) {
-			foreach ( $args['options'] as $opt_grouplabel => $option_vals ) {
-				$html .= '<optgroup label="' . $opt_grouplabel . '">';
-
-				if ( ! is_array( $option_vals ) ) {
-					$option_vals = [];
-				} else {
-					//$option_vals = $this->convert_associate($option_vals);
-					//$option_vals = $option_vals;
-				}
-
-
-				foreach ( $option_vals as $key => $val ) {
-					$selected = in_array( $key, $value ) ? ' selected="selected" ' : '';
-					$html     .= sprintf( '<option value="%s" ' . $selected . '>%s</option>', $key, $val );
-				}
-				$html .= '</optgroup>';
-			}
-		} else {
-			//$option_vals = $this->convert_associate($args['options']);
-			$option_vals = $args['options'];
-
-			foreach ( $option_vals as $key => $val ) {
-				$selected = in_array( $key, $value ) ? ' selected="selected" ' : '';
-				$html     .= sprintf( '<option value="%s" ' . $selected . '>%s</option>', $key, $val );
-			}
-		}
-
-		$html .= '</select></div>';
-		$html .= $this->get_field_description( $args );
-
-		echo $html; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	}//end method callback_multiselect
 
 	/**
 	 * Displays a rich text textarea for a settings field
@@ -793,8 +842,8 @@ class CBXWPBookmarkSettings {
         $html .= sprintf( '<div class="selecttwo-select-wrapper" data-placeholder="' . $placeholder . '" data-allow-clear="' . $allow_clear . '"><select ' . $multi_attr . '  class="%1$s" name="%2$s[%3$s]' . $multi_name . '" id="%2$s[%3$s]" style="min-width: 150px !important;" >', $size, $args['section'], $args['id'] );
 
 		if ( isset( $args['optgroup'] ) && $args['optgroup'] ) {
-			foreach ( $args['options'] as $opt_grouplabel => $option_vals ) {
-				$html .= '<optgroup label="' . esc_attr($opt_grouplabel) . '">';
+			foreach ( $args['options'] as $group_label => $option_vals ) {
+				$html .= '<optgroup label="' . esc_attr($group_label) . '">';
 
 				if ( ! is_array( $option_vals ) ) {
 					$option_vals = [];
@@ -1007,7 +1056,7 @@ class CBXWPBookmarkSettings {
 		$html .= '</div>';
 
 		if ( $allow_new ) {
-			$html .= '<p style="text-align: center;"><a data-index="' . intval( $index ) . '" data-busy="0" data-field_name="' . $args['name'] . '" data-section_name="' . $section_name . '" data-option_name="' . $option_name . '" class="button secondary form-table-fields-new" href="#">' . esc_html__( 'Add New', 'cbxwpbookmark' ) . '</a></p>';
+			$html .= '<p style="text-align: center;"><a data-index="' . absint( $index ) . '" data-busy="0" data-field_name="' . $args['name'] . '" data-section_name="' . $section_name . '" data-option_name="' . $option_name . '" class="button secondary form-table-fields-new" href="#">' . esc_html__( 'Add New', 'cbxwpbookmark' ) . '</a></p>';
 		}
 
 		$html .= '</div>';
@@ -1015,25 +1064,6 @@ class CBXWPBookmarkSettings {
 
 		echo $html; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}//end callback_repeat
-
-
-	/**
-	 * Sanitize callback for Settings API
-	 */
-	function sanitize_options( $options ) {
-		foreach ( $options as $option_slug => $option_value ) {
-			$sanitize_callback = $this->get_sanitize_callback( $option_slug );
-
-			// If callback is set, call it
-			if ( $sanitize_callback ) {
-				$options[ $option_slug ] = call_user_func( $sanitize_callback, $option_value );
-				continue;
-			}
-		}
-
-		return $options;
-	}//end method sanitize_options
-
 
 	/**
 	 * Convert an array to associative if not
@@ -1080,7 +1110,7 @@ class CBXWPBookmarkSettings {
 		}
 
 		// Iterate over registered fields and see if we can find proper callback
-		foreach ( $this->settings_fields as $section => $options ) {
+		/*foreach ( $this->settings_fields as $section => $options ) {
 			foreach ( $options as $option ) {
 				if ( $option['name'] != $slug ) {
 					continue;
@@ -1095,7 +1125,16 @@ class CBXWPBookmarkSettings {
 			}
 		}
 
-		return false;
+		return false;*/
+
+        foreach ( $this->settings_fields as $section => $fields ) {
+            foreach ( $fields as $field ) {
+                if ( $field['name'] === $slug && ! empty( $field['sanitize_callback'] ) ) {
+                    return $field['sanitize_callback'];
+                }
+            }
+        }
+        return false;
 	}//end get_sanitize_callback
 
 	/**
@@ -1149,13 +1188,27 @@ class CBXWPBookmarkSettings {
 	 * @return string
 	 */
 	function get_field( $option, $section, $default = '' ) {
-		$options = get_option( $section );
+		/*$options = get_option( $section );
 
 		if ( isset( $options[ $option ] ) ) {
 			return $options[ $option ];
 		}
 
-		return $default;
+		return $default;*/
+
+        $options = get_option( $section );
+
+        // make sure the returned option is an array
+        if ( ! is_array( $options ) ) {
+            return $default;
+        }
+
+        // distinguish between "not saved" vs "saved but empty"
+        if ( array_key_exists( $option, $options ) ) {
+            return $options[ $option ];
+        }
+
+        return $default;
 	}//end method get_option
 
 	/**
@@ -1213,7 +1266,7 @@ class CBXWPBookmarkSettings {
 		<div id="setting-tabs-contents">
 			<div id="global_setting_group_actions" class="mb-0 mt-10">
 				<?php do_action( 'cbxwpbookmark_setting_group_actions_start' ); ?>
-				<a class="button outline primary global_setting_group_action global_setting_group_action_open pull-right" href="#"><?php esc_html_e( 'Toggle All Sections', 'cbxwpbookmark' ); ?></a>
+				<a role="button" class="button outline primary global_setting_group_action global_setting_group_action_open pull-right" href="#"><?php esc_html_e( 'Toggle All Sections', 'cbxwpbookmark' ); ?></a>
 				<?php do_action( 'cbxwpbookmark_setting_group_actions_end' ); ?>
 				<div class="clear clearfix"></div>
 			</div>
@@ -1254,4 +1307,58 @@ class CBXWPBookmarkSettings {
 		<?php
 	}//end show_forms
 
+    /**
+     * Sanitize multi select field
+     *
+     * @param $value
+     *
+     * @return array
+     * @since 2.0.7
+     */
+    function sanitize_multiselect( $value ) {
+        if ( empty( $value ) || ! is_array( $value ) ) {
+            return [];
+        }
+
+        // sanitize each selected value
+        return array_map( 'sanitize_text_field', $value );
+    }//end method sanitize_multiselect
+
+    /**
+     * Get field t ype
+     *
+     * @param $slug
+     *
+     * @return mixed|string
+     * @since 2.0.7
+     */
+    function get_field_type( $slug ) {
+        foreach ( $this->settings_fields as $section => $fields ) {
+            foreach ( $fields as $field ) {
+                if ( $field['name'] === $slug ) {
+                    return $field['type'] ?? 'text';
+                }
+            }
+        }
+        return 'text';
+    }//end method get_field_type
+
+    /**
+     * Helper function to find out if the select field is multi
+     *
+     * @param $slug
+     *
+     * @return bool
+     * @since 2.0.7
+     */
+    function is_field_multi( $slug ) {
+        foreach ( $this->settings_fields as $section => $fields ) {
+            foreach ( $fields as $field ) {
+                if ( $field['name'] === $slug ) {
+                    return ! empty( $field['multi'] ) && absint( $field['multi'] ) === 1;
+                }
+            }
+        }
+        return false;
+    }//end method is_field_multi
 }

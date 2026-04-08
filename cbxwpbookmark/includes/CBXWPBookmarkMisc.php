@@ -43,7 +43,7 @@ class CBXWPBookmarkMisc {
 	 * @since 1.0.0
 	 * @access private
 	 */
-	private $plugin_basename;
+	//private $plugin_basename;
 
 	public function __construct() {
 		$this->plugin_name = CBXWPBOOKMARK_PLUGIN_NAME;
@@ -55,7 +55,7 @@ class CBXWPBookmarkMisc {
 		}
 
 		//get plugin base file name
-		$this->plugin_basename = plugin_basename( plugin_dir_path( __DIR__ ) . $this->plugin_name . '.php' );
+		//$this->plugin_basename = plugin_basename( plugin_dir_path( __DIR__ ) . $this->plugin_name . '.php' );
 	}
 
 	/**

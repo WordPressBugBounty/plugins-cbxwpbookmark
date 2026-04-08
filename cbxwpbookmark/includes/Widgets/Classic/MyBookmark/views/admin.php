@@ -1,3 +1,9 @@
+<?php
+// If this file is called directly, abort.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly.
+}
+?>
 <!-- This file is used to markup the administration form of the widget. -->
 
 <!-- Custom  Title Field -->

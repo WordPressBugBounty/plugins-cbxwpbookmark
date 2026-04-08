@@ -36,7 +36,7 @@ $cbxwpbookmark_save_svg = cbxwpbookmarks_load_svg( 'icon_save' );
                     <div class="wp-heading-wrap-right  pull-right">
 						<?php do_action( 'cbxwpbookmark_wpheading_wrap_right_before', 'settings' ); ?>
 						<?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                        <a href="<?php echo admin_url( 'admin.php?page=cbxwpbookmarkdash' ); ?>" class="button outline primary"><?php esc_html_e( 'Support & Docs', 'cbxwpbookmark' ); ?></a>
+                        <a href="<?php echo admin_url( 'admin.php?page=cbxwpbookmark-support' ); ?>" class="button outline primary"><?php esc_html_e( 'Support & Docs', 'cbxwpbookmark' ); ?></a>
                         <a role="button" href="#" id="save_settings" class="button primary icon icon-right  mr-5">
                             <i class="cbx-icon">
 								<?php

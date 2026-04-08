@@ -301,7 +301,7 @@ class CBXWPBookmarkPublic {
 		$settings = $this->settings;
 
 
-		$mybookmark_pageid = absint( $settings->get_field( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
+		$page = absint( $settings->get_field( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
 
 
 		$user_id = get_current_user_id();
@@ -314,7 +314,7 @@ class CBXWPBookmarkPublic {
 		$post_id = intval( $post->ID );
 
 
-		if ( $post_id > 0 && ( $post_id == $mybookmark_pageid ) ) {
+		if ( $post_id > 0 && ( $post_id == $page ) ) {
 			return $content;
 		}
 
@@ -325,6 +325,7 @@ class CBXWPBookmarkPublic {
 			'post',
 			'page'
 		] );
+
 		if ( ! is_array( $post_types_to_show_bookmark ) ) {
 			$post_types_to_show_bookmark = [];
 		}
@@ -537,7 +538,7 @@ class CBXWPBookmarkPublic {
 				$message['id']        = $cat_id;
 				$message['userid']    = $user_id;
 				$message['privacy']   = $cat_privacy;
-				$message['list_html'] = '<li class="cbxbookmark-category-list-item " data-id="' . absint( $cat_id ) . '" data-userid="' . absint( $user_id ) . '" data-privacy="' . intval( $cat_privacy ) . '" data-name="' . wp_strip_all_tags( $cat_name ) . '"> <a href="' . esc_url( $cat_permalink ) . '" class="cbxlbjs-item-widget" data-privacy="' . intval( $cat_privacy ) . '">' . wp_strip_all_tags( $cat_name ) . '</a><i>(0)</i><span title="' . esc_html__( 'Click to edit',
+				$message['list_html'] = '<li class="cbxbookmark-category-list-item " data-id="' . absint( $cat_id ) . '" data-userid="' . absint( $user_id ) . '" data-privacy="' . intval( $cat_privacy ) . '" data-name="' . wp_strip_all_tags( $cat_name ) . '"> <a role="button" href="' . esc_url( $cat_permalink ) . '" class="cbxlbjs-item-widget" data-privacy="' . intval( $cat_privacy ) . '">' . wp_strip_all_tags( $cat_name ) . '</a><i>(0)</i><span title="' . esc_html__( 'Click to edit',
 						'cbxwpbookmark' ) . '" class="cbxbookmark-edit-btn"></span> <span title="' . esc_html__( 'Click to delete', 'cbxwpbookmark' ) . '" class="cbxbookmark-delete-btn" data-id="' . intval( $cat_id ) . '"></span></li>';
 			} else {
 				$message['code'] = 0;
@@ -848,7 +849,6 @@ class CBXWPBookmarkPublic {
 	 * Delete Category
 	 */
 	public function delete_bookmark_category() {
-
 		check_ajax_referer( 'cbxbookmarknonce', 'security' );
 		$message = [];
 
@@ -1067,6 +1067,7 @@ class CBXWPBookmarkPublic {
 					$bookmark_id = $wpdb->insert_id;
 
 					do_action( 'cbxbookmark_bookmark_added', $bookmark_id, $user_id, $object_id, $object_type, $category_privacy );
+					//write_log('cbxbookmark_bookmark_added');
 
 				} else {
 					$message['code'] = 0; //db operation failed

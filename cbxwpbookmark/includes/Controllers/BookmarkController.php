@@ -39,7 +39,8 @@ class BookmarkController {
 			$filter['order_by'] = $data['order_by'] ?? 'id';
 			$filter['sort']     = $data['sort'] ?? 'desc';
 			$filter['search']   = $data['search'] ?? null;		
-
+			$filter['cat_id']   = $data['cat_id'] ?? null;	
+			$filter['type']     = $data['type'] ?? null;
 
 
 			$bookmarksData = \CBXWPBookmarkHelper::bookmarkListing( $filter );

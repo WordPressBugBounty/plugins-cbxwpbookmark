@@ -133,6 +133,8 @@
         $('.selecttwo-select-wrapper').each(function (index, element) {
             var $element = $(element);
 
+            var $select  = $element.find('.selecttwo-select');
+
             var $placeholder = $element.data('placeholder');
             var $allow_clear = $element.data('allow-clear');
 
@@ -165,7 +167,40 @@
                 .find('.select2-selection__rendered')
                 .find('.select2-search--inline .select2-search__field')
                 .attr('placeholder', $placeholder);
+
+            // ==================== CRITICAL FIX FOR EMPTY VALUE ====================
+            // Force proper empty value on change (single vs multi)
+            /*$select.on('change', function () {
+                var val = $(this).val();
+
+                if (val === null || val === undefined) {
+                    if ($(this).prop('multiple')) {
+                        console.log('hi 1');
+                        // Multi-select → force empty array so WordPress saves []
+                        $(this).val([]).trigger('change.select2');
+                    } else {
+                        // Single select → force empty string
+                        $(this).val('').trigger('change.select2');
+                    }
+                }
+            });
+
+            // Extra safety: before form is submitted
+            $select.closest('form').on('submit', function () {
+                if ($select.prop('multiple')) {
+                    if ($select.val() === null) {
+                        console.log('hi 2');
+                        $select.val([]);        // ensure empty array is sent
+                    }
+                } else {
+                    if ($select.val() === null) {
+                        $select.val('');        // ensure empty string is sent
+                    }
+                }
+            });*/
         });
+
+
 
 
         var $setting_page = $('#cbxwpbookmark-setting');

@@ -42,7 +42,7 @@ class CBXWPBookmarkAdmin {
 	 * @access   protected
 	 * @var      string $plugin_basename The plugin basename of the plugin.
 	 */
-	protected $plugin_basename;
+	//protected $plugin_basename;
 	/**
 	 * The ID of this plugin.
 	 *
@@ -97,7 +97,7 @@ class CBXWPBookmarkAdmin {
 			$this->version = current_time( 'timestamp' ); //for development time only
 		}
 
-		$this->plugin_basename = plugin_basename( plugin_dir_path( __DIR__ ) . $this->cbxwpbookmark . '.php' );
+		//$this->plugin_basename = plugin_basename( plugin_dir_path( __DIR__ ) . $this->cbxwpbookmark . '.php' );
 
 		$this->settings = new CBXWPBookmarkSettings();
 	}//end constructor
@@ -217,7 +217,7 @@ class CBXWPBookmarkAdmin {
 
 		
 		//only for setting page
-		if ( $page == 'cbxwpbookmark-settings' ) {
+		if ( $page === 'cbxwpbookmark-settings' ) {
 			wp_register_style( 'select2', $vendors_url_part . 'select2/select2.min.css', [], $version );
 
 			wp_register_style( 'pickr', $vendors_url_part . 'pickr/classic.min.css', [], $version );
@@ -236,17 +236,17 @@ class CBXWPBookmarkAdmin {
 			wp_enqueue_style( 'cbxwpbookmark-admin' );//common admin styles
 		}
 
-		if ( $page == 'cbxwpbookmark-tools' ) {
+		if ( $page === 'cbxwpbookmark-tools' ) {
 			wp_enqueue_style( 'cbxwpbookmark-admin' );
 			wp_enqueue_style( 'cbxwpbookmark-eventbuilder' );
 			wp_enqueue_style( 'cbxwpbookmark-settings' );
 		}
 
-		if ( $page == 'cbxwpbookmark-dashboard' ) {
+		if ( $page === 'cbxwpbookmark-dashboard' ) {
 			wp_enqueue_style( 'cbxwpbookmark-dashboard' );
 		}
 
-		if ( $page == 'cbxwpbookmark-support' ) {
+		if ( $page === 'cbxwpbookmark-support' ) {
 			wp_enqueue_style( 'cbxwpbookmark-admin' );
 		}
 	}//end enqueue_styles
@@ -362,7 +362,7 @@ class CBXWPBookmarkAdmin {
 					'min'         => esc_html__( 'Please enter a value greater than or equal to {0}.', 'cbxwpbookmark' ),
 					'recaptcha'   => esc_html__( 'Please check the captcha.', 'cbxwpbookmark' ),
 				],
-				'global_setting_link_html' => '<a href="' . admin_url( 'admin.php?page=cbxwpbookmark-settings' ) . '"  class="button outline primary pull-right">' . esc_html__( 'Global Settings', 'cbxwpbookmark' ) . '</a>',
+				'global_setting_link_html' => '<a role="button" href="' . admin_url( 'admin.php?page=cbxwpbookmark-settings' ) . '"  class="button outline primary pull-right">' . esc_html__( 'Global Settings', 'cbxwpbookmark' ) . '</a>',
 				'lang'                     => get_user_locale()
 			];
 
@@ -370,7 +370,7 @@ class CBXWPBookmarkAdmin {
 		$footer    = true;
 		$in_footer = [ 'in_footer' => $footer ];
 
-		if ( $page == 'cbxwpbookmark-settings' ) {
+		if ( $page === 'cbxwpbookmark-settings' ) {
 			wp_register_script( 'awesome-notifications', $vendors_url_part . 'awesome-notifications/script.js', [], $version, $in_footer );
 			wp_register_script( 'pickr', $vendors_url_part . 'pickr/pickr.min.js', [], $version, $in_footer );
 
@@ -399,10 +399,10 @@ class CBXWPBookmarkAdmin {
 		}
 
 		//vue js pages
-		if ( $page == 'cbxwpbookmark-logs' ) {
+		if ( $page === 'cbxwpbookmark-logs' ) {
 			$js_translations = \CBXWPBookmarkHelper::cbxwpbookmark_log_js_translation( $current_user, $blog_id );
 
-			if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE == true ) {
+			if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE === true ) {
 				//for development version
 				wp_register_script( 'cbxwpbookmark_vue_dev', 'http://localhost:8880/assets/vuejs/apps/admin/cbxbookmark.js', [], $version, true );
 				wp_localize_script( 'cbxwpbookmark_vue_dev', 'cbxwpbookmark_vue_var', $js_translations );
@@ -415,10 +415,10 @@ class CBXWPBookmarkAdmin {
 			}
 		}
 				//vue js pages
-		if ( $page == 'cbxwpbookmark-cats' ) {
+		if ( $page === 'cbxwpbookmark-cats' ) {
 			$js_translations = \CBXWPBookmarkHelper::cbxwpbookmark_category_js_translation( $current_user, $blog_id );
 
-			if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE == true ) {
+			if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE === true ) {
 				//for development version
 				wp_register_script( 'cbxwpbookmark_vue_dev', 'http://localhost:8880/assets/vuejs/apps/admin/bookmarkcategory.js', [], $version, true );
 				wp_localize_script( 'cbxwpbookmark_vue_dev', 'cbxwpbookmark_vue_var', $js_translations );
@@ -431,11 +431,11 @@ class CBXWPBookmarkAdmin {
 			}
 		}
 
-		if ( $page == 'cbxwpbookmark-tools' ) {
+		if ( $page === 'cbxwpbookmark-tools' ) {
 
 			$js_translations = \CBXWPBookmarkHelper::tools_js_translation( $current_user, $blog_id );
 
-			if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE == true ) {
+			if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE === true ) {
 				//for development version
 				wp_register_script( 'cbxwpbookmark_tools_vue_dev', 'http://localhost:8880/assets/vuejs/apps/admin/tools.js', [], $version, true );
 				wp_localize_script( 'cbxwpbookmark_tools_vue_dev', 'cbxwpbookmark_vue_var', $js_translations );
@@ -448,10 +448,10 @@ class CBXWPBookmarkAdmin {
 			}
 		}
 
-		if ( $page == 'cbxwpbookmark-dashboard' ) {
+		if ( $page === 'cbxwpbookmark-dashboard' ) {
 			$js_translations = \CBXWPBookmarkHelper::dashboard_js_translation( $current_user, $blog_id );
 
-			if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE == true ) {
+			if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE === true ) {
 				//for development version
 				wp_register_script( 'cbxwpbookmark_dashboard_vue_dev', 'http://localhost:8880/assets/vuejs/apps/admin/dashboard.js', [], $version, true );
 				wp_localize_script( 'cbxwpbookmark_dashboard_vue_dev', 'cbxwpbookmark_vue_var', $js_translations );
@@ -499,7 +499,7 @@ class CBXWPBookmarkAdmin {
 
 		//add screen save option for bookmark listing
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['page'] ) && $_GET['page'] == 'cbxwpbookmark' && ! isset( $_GET['view'] ) ) {
+		if ( isset( $_GET['page'] ) && $_GET['page'] === 'cbxwpbookmark' && ! isset( $_GET['view'] ) ) {
 			add_action( "load-$bookmark_list_page_hook", [ $this, 'cbxwpbookmark_bookmark_list_screen' ] );
 		}
 
@@ -604,7 +604,7 @@ class CBXWPBookmarkAdmin {
 	 * @return mixed
 	 */
 	public function cbxwpbookmark_bookmark_list_per_page( $new_status, $option, $value ) {
-		if ( 'cbxwpbookmark_list_per_page' == $option ) {
+		if ( 'cbxwpbookmark_list_per_page' === $option ) {
 			return $value;
 		}
 
@@ -638,7 +638,7 @@ class CBXWPBookmarkAdmin {
 
 		$view = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-		if ( $view == 'edit' ) {
+		if ( $view === 'edit' ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo cbxwpbookmark_get_template_html( 'admin/bookmark_category_edit.php', [
 				'settings' => $settings
@@ -828,7 +828,6 @@ class CBXWPBookmarkAdmin {
 
 	/**
 	 * If we need to do something in upgrader process is completed
-	 *
 	 */
 	public function plugin_upgrader_process_complete() {
 		$saved_version = get_option('cbxwpbookmark_version');
@@ -943,8 +942,7 @@ class CBXWPBookmarkAdmin {
 		$pro_addon_version = \CBXWPBookmarkHelper::get_any_plugin_version('cbxwpbookmarkaddon/cbxwpbookmarkaddon.php');
 		$pro_latest_version  = CBXWPBOOKMARK_PRO_VERSION;
 
-		if($pro_addon_version != '' && version_compare( $pro_addon_version, $pro_latest_version, '<' ) ){
-
+		if($pro_addon_version !== '' && version_compare( $pro_addon_version, $pro_latest_version, '<' ) ){
 			//$plugin_manual_update = 'https://codeboxr.com/manual-update-pro-addon/';
 			//$plugin_manual_update = admin_url( 'admin.php?page=cbxwpbookmark-settings#cbxwpbookmark_licences' );
 
@@ -1028,8 +1026,8 @@ class CBXWPBookmarkAdmin {
 	 *
 	 * @return mixed
 	 */
-	public function log_listing_screen_cols( $columns ) {
-		$columns = [
+	public function log_listing_screen_cols( $columns = [] ) {
+		$new_columns = [
 			'id'           => esc_html__( 'ID', 'cbxwpbookmark' ),
 			'object_id'    => esc_html__( 'Post', 'cbxwpbookmark' ),
 			'object_type'  => esc_html__( 'Post Type', 'cbxwpbookmark' ),
@@ -1038,18 +1036,18 @@ class CBXWPBookmarkAdmin {
 			'created_date' => esc_html__( 'Created', 'cbxwpbookmark' ),
 		];
 
-		return apply_filters( 'cbxwpbookmark_bookmarks_listing_screen_option_columns', $columns );
+		return apply_filters( 'cbxwpbookmark_bookmarks_listing_screen_option_columns', array_merge_recursive( $columns, $new_columns ) );
 	}//end log_listing_screen_cols
 
 	/**
 	 * User's bookmarks listing screen option columns
 	 *
-	 * @param $columns
+	 * @param array $columns
 	 *
 	 * @return mixed
 	 */
-	public function category_listing_screen_cols( $columns ) {
-		$columns = [
+	public function category_listing_screen_cols( $columns = [] ) {
+		$new_columns = [
 			'id'            => esc_html__( 'ID', 'cbxwpbookmark' ),
 			'cat_name'      => esc_html__( 'Title', 'cbxwpbookmark' ),
 			'user_id'       => esc_html__( 'User', 'cbxwpbookmark' ),
@@ -1058,7 +1056,7 @@ class CBXWPBookmarkAdmin {
 			'modyfied_date' => esc_html__( 'Modified', 'cbxwpbookmark' )
 		];
 
-		return apply_filters( 'cbxwpbookmark_category_listing_screen_option_columns', $columns );
+		return apply_filters( 'cbxwpbookmark_category_listing_screen_option_columns', array_merge_recursive($columns, $new_columns ) );
 	}//end category_listing_screen_cols
 
 	/**
@@ -1070,8 +1068,6 @@ class CBXWPBookmarkAdmin {
 	public function settings_reset_load() {
 		//security check
 		check_ajax_referer( 'settingsnonce', 'security' );
-
-
 
 		$msg            = [];
 		$msg['html']    = '';

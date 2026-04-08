@@ -34,7 +34,7 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                     <div class="wp-heading-wrap-right pull-right">
                         <?php do_action( 'cbxwpbookmark_wpheading_wrap_right_before', 'support' ); ?>
                         <?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                        <a href="<?php echo admin_url( 'admin.php?page=cbxwpbookmark-settings' ); ?>" class="button outline primary pull-right"><?php esc_html_e( 'Global Settings',
+                        <a role="button" href="<?php echo admin_url( 'admin.php?page=cbxwpbookmark-settings' ); ?>" class="button outline primary pull-right"><?php esc_html_e( 'Global Settings',
                                     'cbxwpbookmark' ); ?></a>
                         <?php do_action( 'cbxwpbookmark_wpheading_wrap_right_after', 'support' ); ?>
                     </div>
@@ -83,6 +83,15 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                     <div class="content">
                         <div class="cbx-backend-settings-row">
                             <p>
+                                Version - 2.0.7
+                            </p>
+                            <ul>
+                                <li>[improved] Improved accessibility</li>
+                                <li>[updated] Pro Addon 2.0.7 released</li>
+                            </ul>
+                        </div>
+                        <div class="cbx-backend-settings-row">
+                            <p>
                                 Version - 2.0.6
                             </p>
                             <ul>
@@ -100,43 +109,6 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                                 <li>[new] Pro addon now supports automatic update [check setting]</li>
                             </ul>
                         </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.4
-                            </p>
-                            <ul>
-                                <li>[fixed] Composer based custom scope/namespace for vendor to avoid conflict with other plugins</li>
-                                <li>[fixed] Composer based custom scope/namespace for vendor to avoid conflict with other plugins</li>
-                                <li>[fixed] Pro addon 2.0.4 released and needed to update to make it work with core 2.0.4</li>
-                                <li>[note] Pro addon note: deactivate, manually delete &amp; install new version or install the new version as replacement.</li>
-                                <li>[fixed] Astra theme hash base vue js route fixed</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.3
-                            </p>
-                            <ul>
-                                <li>[important] From core version 2.0.0 there is compatibility issues with php and pro addon. For safe deactivate Bookmark pro addon(s). Update core &amp; activate. the
-                                    update pro addon.
-                                </li>
-                                <li>[fixed] Fixed site crash or db connectivity error if not default mysql port</li>
-                                <li>[improved] Table names are now escape[security improvement]</li>
-                                <li>[improved] Pro Addon compatibility checking improved(2nd attempt)</li>
-                                <li>[fixed] Frontend Dashboard - bookmarks and category link fixed</li>
-                                <li>[updated] Pro addon 2.0.3 released</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.2
-                            </p>
-                            <ul>
-                                <li>[fixed] Pro Addon compatibility checking improved</li>
-                                <li>[updated] Pro addon 2.0.2 released</li>
-                                <li>[fixed] Auto page create security issue fixed(Reported by Nabil Irawan)</li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
                 <div class="cbx-backend-card dashboard-changelog">
@@ -146,6 +118,15 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                         </div>
                     </div>
                     <div class="content">
+                        <div class="cbx-backend-settings-row">
+                            <p>
+                                Version - 2.0.7
+                            </p>
+                            <ul>
+                                <li>[improved] Improved accessibility</li>
+                                <li>[updated] Core plugin 2.0.7 released</li>
+                            </ul>
+                        </div>
                         <div class="cbx-backend-settings-row">
                             <p>
                                 Version - 2.0.5
@@ -165,24 +146,6 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                                 <li>[note] Need core plugin 2.0.4</li>
                                 <li>[updated] Core plugin 2.0.4 released</li>
                                 <li>[fixed] Composer/PHP package Conflict issue solved</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.3
-                            </p>
-                            <ul>
-                                <li>[improved] Table names are now escape[security improvement]</li>
-                                <li>[updated] Core plugin 2.0.3 released</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.2
-                            </p>
-                            <ul>
-                                <li>[updated] Misc improvement</li>
-                                <li>[updated] Core plugin 2.0.2 released</li>
                             </ul>
                         </div>
                     </div>

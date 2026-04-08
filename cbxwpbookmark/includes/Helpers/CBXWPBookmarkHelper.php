@@ -57,9 +57,13 @@ class CBXWPBookmarkHelper {
 
         do_action( 'cbxwpbookmark_on_activation' );
 
+        set_transient( 'cbxwpbookmark_activated_notice', 1 );
+
         //set the current version
         update_option( 'cbxwpbookmark_version', CBXWPBOOKMARK_PLUGIN_VERSION );
-        //self::migration_and_defaults();
+
+        //hook for others
+        do_action( 'cbxwpbookmark_on_activation' );
     } // end activate method
 
     /**
@@ -84,7 +88,8 @@ class CBXWPBookmarkHelper {
      * @since 1.0.0
      */
     public static function deactivate() {
-
+        //hook for others
+        do_action( 'cbxwpbookmark_on_deactivation' );
     }//end method deactivate
 
     /**
@@ -507,13 +512,13 @@ class CBXWPBookmarkHelper {
 
         foreach ( $all_post_types as $key => $post_type_defination ) {
             foreach ( $post_type_defination as $post_type_type => $data ) {
-                if ( $post_type_type == 'label' ) {
-                    $opt_grouplabel = $data;
+                if ( $post_type_type === 'label' ) {
+                    $group_label = $data;
                 }
 
-                if ( $post_type_type == 'types' ) {
+                if ( $post_type_type === 'types' ) {
                     foreach ( $data as $opt_key => $opt_val ) {
-                        $posts_definition[ $opt_grouplabel ][ $opt_key ] = $opt_val;
+                        $posts_definition[ $group_label ][ $opt_key ] = $opt_val;
                     }
                 }
             }
@@ -604,7 +609,7 @@ class CBXWPBookmarkHelper {
 
 
         //format the post skip ids
-        if ( $skip_ids == '' ) {
+        if ( $skip_ids === '' ) {
             $skip_ids = [];
         } else {
             //$skip_ids = array_map( 'trim', explode( ',', $skip_ids ) );
@@ -619,7 +624,7 @@ class CBXWPBookmarkHelper {
         }
 
         //format user roles
-        if ( $skip_roles == '' ) {
+        if ( $skip_roles === '' ) {
             $skip_roles = [];
         } else {
             //$skip_roles = array_map( 'trim', explode( ',', $skip_roles ) );
@@ -666,14 +671,13 @@ class CBXWPBookmarkHelper {
             if ( sizeof( array_intersect( $skip_roles, $current_user_roles ) ) > 0 ) {
                 return '';
             }
-
         }
 
 
         //do_action( 'show_cbxbookmark_btn' );
         do_action_deprecated(
                 'show_cbxbookmark_btn', // Old hook name
-                array(),                // Hook arguments (if any)
+                [],                     // Hook arguments (if any)
                 '3.2.0',                // Version you deprecated it in
                 'cbxbookmark_show_btn', // New hook name (if any)
                 'The hook show_cbxbookmark_btn is deprecated. Use cbxbookmark_show_btn instead.'
@@ -687,11 +691,11 @@ class CBXWPBookmarkHelper {
 
         $bookmarked_by_user = CBXWPBookmarkHelper::isBookmarkedByUser( $object_id, $user_id );
 
-        $display_label    = intval( $settings->get_field( 'display_label', 'cbxwpbookmark_basics', 1 ) );
+        $display_label    = absint( $settings->get_field( 'display_label', 'cbxwpbookmark_basics', 1 ) );
         $bookmark_label   = $settings->get_field( 'bookmark_label', 'cbxwpbookmark_basics', '' );
         $bookmarked_label = $settings->get_field( 'bookmarked_label', 'cbxwpbookmark_basics', '' );
-        $bookmark_label   = ( $bookmark_label == '' ) ? esc_html__( 'Bookmark', 'cbxwpbookmark' ) : $bookmark_label;
-        $bookmarked_label = ( $bookmarked_label == '' ) ? esc_html__( 'Bookmarked', 'cbxwpbookmark' ) : $bookmarked_label;
+        $bookmark_label   = ( $bookmark_label === '' ) ? esc_html__( 'Bookmark', 'cbxwpbookmark' ) : $bookmark_label;
+        $bookmarked_label = ( $bookmarked_label === '' ) ? esc_html__( 'Bookmarked', 'cbxwpbookmark' ) : $bookmarked_label;
 
         $bookmark_text = $bookmark_label;
 
@@ -711,7 +715,7 @@ class CBXWPBookmarkHelper {
         }
 
         $nocat_loggedin_html = '';
-        if ( $bookmark_mode == 'no_cat' && $logged_in ) {
+        if ( $bookmark_mode === 'no_cat' && $logged_in ) {
             $nocat_loggedin_html = ' data-busy="0" ';
         }
 
@@ -739,7 +743,7 @@ class CBXWPBookmarkHelper {
         endif;
 
 
-        $output = '<a ' . $redirect_data_attr . ' data-display-label="' . intval( $display_label ) . '" data-show-count="' . intval( $show_count ) . '" data-bookmark-label="' . esc_attr( $bookmark_label ) . '"  data-bookmarked-label="' . esc_attr( $bookmarked_label ) . '" ' . $nocat_loggedin_html . ' data-loggedin="' . absint( $logged_in ) . '" data-type="' . $object_type . '" data-object_id="' . $object_id . '" class="cbxwpbkmarktrig ' . $bookmark_class . ' cbxwpbkmarktrig-button-addto ld-ext-left" title="' . esc_attr( $tooltip_title ) . '" href="#"><span class="cbxwpbkmarktrig-icon"></span><span class="ld ld-ring ld-spin"></span><span class="cbxwpbkmarktrig-label" ' . $display_label_style . '>' . esc_attr( $bookmark_text ) . $show_count_html . '</span></a>';
+        $output = '<a role="button" ' . $redirect_data_attr . ' data-display-label="' . absint( $display_label ) . '" data-show-count="' . absint( $show_count ) . '" data-bookmark-label="' . esc_attr( $bookmark_label ) . '"  data-bookmarked-label="' . esc_attr( $bookmarked_label ) . '" ' . $nocat_loggedin_html . ' data-loggedin="' . absint( $logged_in ) . '" data-type="' . $object_type . '" data-object_id="' . $object_id . '" class="cbxwpbkmarktrig ' . $bookmark_class . ' cbxwpbkmarktrig-button-addto ld-ext-left" title="' . esc_attr( $tooltip_title ) . '" href="#"><span class="cbxwpbkmarktrig-icon"></span><span class="ld ld-ring ld-spin"></span><span class="cbxwpbkmarktrig-label" ' . $display_label_style . '>' . esc_attr( $bookmark_text ) . $show_count_html . '</span></a>';
 
         if ( $user_id == 0 ):
 
@@ -756,51 +760,11 @@ class CBXWPBookmarkHelper {
 
 
             $show_login_form = esc_attr( $settings->get_field( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
-            if ( $show_login_form != 'none' ) {
+            if ( $show_login_form !== 'none' ) {
                 $output .= cbxwpbookmark_get_template_html( 'global/login_form.php', [ 'settings' => $settings, 'inline' => 0 ] );
             } else {
                 $output .= cbxwpbookmark_get_template_html( 'global/login_url.php', [ 'settings' => $settings, 'inline' => 0 ] );
             }
-
-
-            /*if ( is_singular() ) {
-				$login_url    = wp_login_url( get_permalink() );
-				$redirect_url = get_permalink();
-			} else {
-				global $wp;
-				//$login_url =  wp_login_url( home_url( $wp->request ) );
-				$login_url    = wp_login_url( home_url( add_query_arg( [], $wp->request ) ) );
-				$redirect_url = home_url( add_query_arg( [], $wp->request ) );
-			}
-
-			$guest_form_html = '';
-
-			$guest_login_form = esc_attr( $settings->get_field( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
-			if ( $guest_login_form == 'none' ) {
-				$guest_form_html .= '<a href="' . esc_url( $login_url ) . '">' . esc_html__( 'Please login', 'cbxwpbookmark' ) . '</a>';
-			} else {
-				$guest_form_html .= wp_login_form( [
-					'redirect' => $redirect_url,
-					'echo'     => false
-				] );
-			}
-
-
-			$output .= apply_filters( 'cbxwpbookmark_login_html', $guest_form_html, $login_url, $redirect_url );
-
-			$guest_register_html = '';
-			$guest_show_register = intval( $settings->get_field( 'guest_show_register', 'cbxwpbookmark_basics', 1 ) );
-			if ( $guest_show_register ) {
-				if ( get_option( 'users_can_register' ) ) {
-					$register_url = add_query_arg( 'redirect_to', urlencode( $redirect_url ), wp_registration_url() );
-					//translators: %s: register url
-					$guest_register_html .= '<p class="cbxwpbookmark-guest-register">' . sprintf( wp_kses( __( 'No account yet? <a href="%s">Register</a>', 'cbxwpbookmark' ), [ 'a' => [] ] ), $register_url ) . '</p>';
-				}
-
-				$output .= apply_filters( 'cbxwpbookmark_register_html', $guest_register_html, $redirect_url );
-
-			}*/
-
 
             $output .= '</div>'; //.cbxwpbkmarkguest-content
             $output .= '</div>'; //.cbxwpbkmarkguest-message
@@ -809,7 +773,7 @@ class CBXWPBookmarkHelper {
 
         else:
 
-            if ( $bookmark_mode != 'no_cat' ):
+            if ( $bookmark_mode !== 'no_cat' ):
                 $output .= ' <div style="z-index: ' . $pop_z_index . ';"  data-type="' . esc_attr( $object_type ) . '" data-object_id="' . absint( $object_id ) . '" class="cbxwpbkmarklistwrap" id="cbxwpbkmarklistwrap-' . $object_id . '">
                              <div class="addto-head">
                                 <span class="cbxwpbkmarktrig_label">' . esc_html__( 'Click Category to Bookmark', 'cbxwpbookmark' ) . '</span>
@@ -829,10 +793,10 @@ class CBXWPBookmarkHelper {
 								</div>
                             </div>';
 
-                if ( $bookmark_mode == 'user_cat' ) :
+                if ( $bookmark_mode === 'user_cat' ) :
 
-                    $category_default_status = intval( $settings->get_field( 'category_status', 'cbxwpbookmark_basics', 1 ) );
-                    $hide_cat_privacy        = intval( $settings->get_field( 'hide_cat_privacy', 'cbxwpbookmark_basics', 0 ) );
+                    $category_default_status = absint( $settings->get_field( 'category_status', 'cbxwpbookmark_basics', 1 ) );
+                    $hide_cat_privacy        = absint( $settings->get_field( 'hide_cat_privacy', 'cbxwpbookmark_basics', 0 ) );
 
                     $cat_hide_class = ( $hide_cat_privacy == 1 ) ? 'cbxwpbkmark_cat_hide' : '';
 
@@ -917,7 +881,7 @@ class CBXWPBookmarkHelper {
 
         endif;
 
-        return '<div data-object_id="' . intval( $object_id ) . '" class="cbxwpbkmarkwrap ' . esc_attr( $logged_in_class ) . ' cbxwpbkmarkwrap_' . esc_attr( $bookmark_mode ) . ' cbxwpbkmarkwrap-' . esc_attr( $object_type ) . ' ' . esc_attr( $extra_wrap_class ) . '">' . $output . '</div>';
+        return '<div data-object_id="' . absint( $object_id ) . '" class="cbxwpbkmarkwrap ' . esc_attr( $logged_in_class ) . ' cbxwpbkmarkwrap_' . esc_attr( $bookmark_mode ) . ' cbxwpbkmarkwrap-' . esc_attr( $object_type ) . ' ' . esc_attr( $extra_wrap_class ) . '">' . $output . '</div>';
     }//end show_cbxbookmark_btn
 
     /**
@@ -966,7 +930,7 @@ class CBXWPBookmarkHelper {
 
 
         //format the post skip ids
-        if ( $skip_ids == '' ) {
+        if ( $skip_ids === '' ) {
             $skip_ids = [];
         } else {
             //$skip_ids = array_map( 'trim', explode( ',', $skip_ids ) );
@@ -981,7 +945,7 @@ class CBXWPBookmarkHelper {
         }
 
         //format user roles
-        if ( $skip_roles == '' ) {
+        if ( $skip_roles === '' ) {
             $skip_roles = [];
         } else {
             //$skip_roles = array_map( 'trim', explode( ',', $skip_roles ) );
@@ -1035,7 +999,7 @@ class CBXWPBookmarkHelper {
         //do_action( 'show_cbxbookmark_btn' );
         do_action_deprecated(
                 'show_cbxbookmark_btn', // Old hook name
-                array(),                // Hook arguments (if any)
+                [],                     // Hook arguments (if any)
                 '3.2.0',                // Version you deprecated it in
                 'cbxbookmark_show_btn', // New hook name (if any)
                 'The hook show_cbxbookmark_btn is deprecated. Use cbxbookmark_show_btn instead.'
@@ -1101,7 +1065,7 @@ class CBXWPBookmarkHelper {
         endif;
 
 
-        $output = '<a ' . $redirect_data_attr . ' data-display-label="' . intval( $display_label ) . '" data-show-count="' . intval( $show_count ) . '" data-bookmark-label="' . esc_attr( $bookmark_label ) . '"  data-bookmarked-label="' . esc_attr( $bookmarked_label ) . '" ' . $nocat_loggedin_html . ' data-loggedin="' . absint( $logged_in ) . '" data-type="' . $object_type . '" data-object_id="' . $object_id . '" class="cbxwpbkmarktrig ' . $bookmark_class . ' cbxwpbkmarktrig-button-addto ld-ext-left" title="' . esc_attr( $tooltip_title ) . '" href="#"><span class="cbxwpbkmarktrig-icon"></span><span class="ld ld-ring ld-spin"></span><span class="cbxwpbkmarktrig-label" ' . $display_label_style . '>' . esc_attr( $bookmark_text ) . $show_count_html . '</span></a>';
+        $output = '<a role="button" ' . $redirect_data_attr . ' data-display-label="' . intval( $display_label ) . '" data-show-count="' . intval( $show_count ) . '" data-bookmark-label="' . esc_attr( $bookmark_label ) . '"  data-bookmarked-label="' . esc_attr( $bookmarked_label ) . '" ' . $nocat_loggedin_html . ' data-loggedin="' . absint( $logged_in ) . '" data-type="' . $object_type . '" data-object_id="' . $object_id . '" class="cbxwpbkmarktrig ' . $bookmark_class . ' cbxwpbkmarktrig-button-addto ld-ext-left" title="' . esc_attr( $tooltip_title ) . '" href="#"><span class="cbxwpbkmarktrig-icon"></span><span class="ld ld-ring ld-spin"></span><span class="cbxwpbkmarktrig-label" ' . $display_label_style . '>' . esc_attr( $bookmark_text ) . $show_count_html . '</span></a>';
 
         if ( $user_id == 0 ):
 
@@ -1124,46 +1088,6 @@ class CBXWPBookmarkHelper {
                 $output .= cbxwpbookmark_get_template_html( 'global/login_url.php', [ 'settings' => $settings, 'inline' => 0 ] );
             }
 
-
-            /*if ( is_singular() ) {
-                $login_url    = wp_login_url( get_permalink() );
-                $redirect_url = get_permalink();
-            } else {
-                global $wp;
-                //$login_url =  wp_login_url( home_url( $wp->request ) );
-                $login_url    = wp_login_url( home_url( add_query_arg( [], $wp->request ) ) );
-                $redirect_url = home_url( add_query_arg( [], $wp->request ) );
-            }
-
-            $guest_form_html = '';
-
-            $guest_login_form = esc_attr( $settings->get_field( 'guest_login_form', 'cbxwpbookmark_basics', 'wordpress' ) );
-            if ( $guest_login_form == 'none' ) {
-                $guest_form_html .= '<a href="' . esc_url( $login_url ) . '">' . esc_html__( 'Please login', 'cbxwpbookmark' ) . '</a>';
-            } else {
-                $guest_form_html .= wp_login_form( [
-                    'redirect' => $redirect_url,
-                    'echo'     => false
-                ] );
-            }
-
-
-            $output .= apply_filters( 'cbxwpbookmark_login_html', $guest_form_html, $login_url, $redirect_url );
-
-            $guest_register_html = '';
-            $guest_show_register = intval( $settings->get_field( 'guest_show_register', 'cbxwpbookmark_basics', 1 ) );
-            if ( $guest_show_register ) {
-                if ( get_option( 'users_can_register' ) ) {
-                    $register_url = add_query_arg( 'redirect_to', urlencode( $redirect_url ), wp_registration_url() );
-                    //translators: %s: register url
-                    $guest_register_html .= '<p class="cbxwpbookmark-guest-register">' . sprintf( wp_kses( __( 'No account yet? <a href="%s">Register</a>', 'cbxwpbookmark' ), [ 'a' => [] ] ), $register_url ) . '</p>';
-                }
-
-                $output .= apply_filters( 'cbxwpbookmark_register_html', $guest_register_html, $redirect_url );
-
-            }*/
-
-
             $output .= '</div>'; //.cbxwpbkmarkguest-content
             $output .= '</div>'; //.cbxwpbkmarkguest-message
             $output .= '</div>'; //.cbxwpbkmarkguestwrap
@@ -1171,7 +1095,7 @@ class CBXWPBookmarkHelper {
 
         else:
 
-            if ( $bookmark_mode != 'no_cat' ):
+            if ( $bookmark_mode !== 'no_cat' ):
                 $output .= ' <div style="z-index: ' . $pop_z_index . ';"  data-type="' . esc_attr( $object_type ) . '" data-object_id="' . absint( $object_id ) . '" class="cbxwpbkmarklistwrap" id="cbxwpbkmarklistwrap-' . $object_id . '">
                              <div class="addto-head">
                                 <span class="cbxwpbkmarktrig_label">' . esc_html__( 'Click Category to Bookmark', 'cbxwpbookmark' ) . '</span>
@@ -1191,7 +1115,7 @@ class CBXWPBookmarkHelper {
 								</div>
                             </div>';
 
-                if ( $bookmark_mode == 'user_cat' ) :
+                if ( $bookmark_mode === 'user_cat' ) :
 
                     $category_default_status = intval( $settings->get_field( 'category_status', 'cbxwpbookmark_basics', 1 ) );
                     $hide_cat_privacy        = intval( $settings->get_field( 'hide_cat_privacy', 'cbxwpbookmark_basics', 0 ) );
@@ -1304,17 +1228,17 @@ class CBXWPBookmarkHelper {
         $bookmark_mode = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
         $limit    = isset( $instance['limit'] ) ? absint( $instance['limit'] ) : 10;
-        $order_by = isset( $instance['orderby'] ) ? esc_attr( $instance['orderby'] ) : 'id';
-        $order    = isset( $instance['order'] ) ? esc_attr( $instance['order'] ) : 'DESC';
+        $order_by = isset( $instance['orderby'] ) ? esc_attr( wp_unslash( $instance['orderby'] ) ) : 'id';
+        $order    = isset( $instance['order'] ) ? esc_attr( wp_unslash( $instance['order'] ) ) : 'DESC';
         $type     = isset( $instance['type'] ) ? wp_unslash( $instance['type'] ) : []; //object type(post types), multiple as array
 
-        $order_arr = ['DESC', 'ASC'];
-        $order = strtoupper($order);
-        if(!in_array($order, $order_arr)) {
+        $order_arr = [ 'DESC', 'ASC' ];
+        $order     = strtoupper( $order );
+        if ( ! in_array( $order, $order_arr ) ) {
             $order = 'DESC';
         }
 
-        $order_by = trim($order_by);
+        $order_by = trim( $order_by );
         if ( ! in_array( $order_by, cbxwpbookmarks_bookmark_sortable_keys() ) ) {
             $order_by = 'id';
         }
@@ -1417,7 +1341,6 @@ class CBXWPBookmarkHelper {
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $items = $wpdb->get_results( $wpdb->prepare( $main_sql, $param ) );
-
 
 
         // checking If results are available
@@ -1934,7 +1857,7 @@ class CBXWPBookmarkHelper {
         // Trigger deprecated filter
         $value = apply_filters_deprecated(
                 'get_author_cbxwpbookmarks_url',  // Old filter name
-                array( $value ),                  // Arguments passed
+                [ $value ],                       // Arguments passed
                 '2.0.0',                          // Version where deprecated
                 'cbxwpbookmark_get_author_url',   // New filter name
                 'The filter get_author_cbxwpbookmarks_url is deprecated. Use cbxwpbookmark_get_author_url instead.'
@@ -1976,7 +1899,7 @@ class CBXWPBookmarkHelper {
 
         $value = apply_filters_deprecated(
                 'cbxwpbookmarks_mybookmark_page_url',
-                array( $value ),
+                [ $value ],
                 '2.0.0',
                 'cbxwpbookmark_mybookmark_page_url',
                 'The filter cbxwpbookmarks_mybookmark_page_url is deprecated. Use cbxwpbookmark_mybookmark_page_url instead.'
@@ -2919,7 +2842,7 @@ class CBXWPBookmarkHelper {
      * @return mixed|void
      */
     public static function themes() {
-        $thems = [
+        $themes = [
                 'cbxwpbookmark-default'   => esc_html__( 'Default', 'cbxwpbookmark' ),
                 'cbxwpbookmark-red'       => esc_html__( 'Red', 'cbxwpbookmark' ),
                 'cbxwpbookmark-purple'    => esc_html__( 'Purple', 'cbxwpbookmark' ),
@@ -2929,10 +2852,10 @@ class CBXWPBookmarkHelper {
                 'cbxwpbookmark-green'     => esc_html__( 'Green', 'cbxwpbookmark' ),
                 'cbxwpbookmark-orange'    => esc_html__( 'Orange', 'cbxwpbookmark' ),
                 'cbxwpbookmark-brown'     => esc_html__( 'Brown', 'cbxwpbookmark' ),
-                'cbxwpbookmark-blue-gray' => esc_html__( 'Blue Gray', 'cbxwpbookmark' ),
+                'cbxwpbookmark-blue-gray' => esc_html__( 'Blue Gray', 'cbxwpbookmark' )
         ];
 
-        return apply_filters( 'cbxwpbookmark_themes', $thems );
+        return apply_filters( 'cbxwpbookmark_themes', $themes );
     }//end themes
 
     /**
@@ -3172,16 +3095,16 @@ class CBXWPBookmarkHelper {
         $gust_login_forms = CBXWPBookmarkHelper::guest_login_forms();
         $bookmarks_themes = CBXWPBookmarkHelper::themes();
 
-        $settings_builtin_fields =
+        $fields =
                 [
                         'cbxwpbookmark_basics' => [
-                                'basics_heading'     => [
+                                'basics_heading'        => [
                                         'name'    => 'basics_heading',
                                         'label'   => esc_html__( 'General Settings', 'cbxwpbookmark' ),
                                         'type'    => 'heading',
                                         'default' => '',
                                 ],
-                                'display_theme'      => [
+                                'display_theme'         => [
                                         'name'    => 'display_theme',
                                         'label'   => esc_html__( 'Select Theme', 'cbxwpbookmark' ),
                                         'desc'    => esc_html__( 'Select predefine theme.', 'cbxwpbookmark' ),
@@ -3189,7 +3112,7 @@ class CBXWPBookmarkHelper {
                                         'default' => 'cbxwpbookmark-default',
                                         'options' => $bookmarks_themes,
                                 ],
-                                'display_label'      => [
+                                'display_label'         => [
                                         'name'              => 'display_label',
                                         'label'             => esc_html__( 'Display Bookmark Label', 'cbxwpbookmark' ),
                                         'desc'              => esc_html__( 'Display the label Bookmark or Bookmarked. This param has no shortcode method, if enabled works everywhere, if disabled then same.',
@@ -3203,21 +3126,21 @@ class CBXWPBookmarkHelper {
                                         ],
                                         'sanitize_callback' => 'absint'
                                 ],
-                                'bookmark_label'     => [
+                                'bookmark_label'        => [
                                         'name'    => 'bookmark_label',
                                         'label'   => esc_html__( 'Bookmark Label', 'cbxwpbookmark' ),
                                         'desc'    => esc_html__( 'Example: Bookmark. If empty then label will be used from translation', 'cbxwpbookmark' ),
                                         'type'    => 'text',
                                         'default' => '',
                                 ],
-                                'bookmarked_label'   => [
+                                'bookmarked_label'      => [
                                         'name'    => 'bookmarked_label',
                                         'label'   => esc_html__( 'Bookmarked Label', 'cbxwpbookmark' ),
                                         'desc'    => esc_html__( 'Example: Bookmarked. If empty then label will be used from translation', 'cbxwpbookmark' ),
                                         'type'    => 'text',
                                         'default' => '',
                                 ],
-                                'bookmark_mode'      => [
+                                'bookmark_mode'         => [
                                         'name'    => 'bookmark_mode',
                                         'label'   => esc_html__( 'Bookmark Mode', 'cbxwpbookmark' ),
                                         'desc'    => esc_html__( 'Default is category belongs to user, other two mode is global category and no category quick bookmark.', 'cbxwpbookmark' ),
@@ -3229,7 +3152,7 @@ class CBXWPBookmarkHelper {
                                                 'no_cat'     => esc_html__( 'No Category(Single Click Bookmark)', 'cbxwpbookmark' ),
                                         ],
                                 ],
-                                'category_status'    => [
+                                'category_status'       => [
                                         'name'              => 'category_status',
                                         'label'             => esc_html__( 'Category Default Status', 'cbxwpbookmark' ),
                                         'desc'              => esc_html__( 'Category Default Status If user category mode is selected', 'cbxwpbookmark' ),
@@ -3241,7 +3164,7 @@ class CBXWPBookmarkHelper {
                                         ],
                                         'sanitize_callback' => 'absint'
                                 ],
-                                'hide_cat_privacy'   => [
+                                'hide_cat_privacy'      => [
                                         'name'              => 'hide_cat_privacy',
                                         'label'             => esc_html__( 'Hide Category Privacy Field', 'cbxwpbookmark' ),
                                         'desc'              => esc_html__( 'Hide category privacy field if user category mode is selected. Default status will be used from above setting. This feature does\'t disable the category feature but hides from user interface.',
@@ -3254,7 +3177,7 @@ class CBXWPBookmarkHelper {
                                         ],
                                         'sanitize_callback' => 'absint'
                                 ],
-                                'cbxbookmarkpostion' => [
+                                'cbxbookmarkpostion'    => [
                                         'name'    => 'cbxbookmarkpostion',
                                         'label'   => esc_html__( 'Auto Integration', 'cbxwpbookmark' ),
                                         'desc'    => esc_html__( 'Bookmark button auto integration position', 'cbxwpbookmark' ),
@@ -3266,7 +3189,7 @@ class CBXWPBookmarkHelper {
                                                 'disable'        => esc_html__( 'Disable Auto Integration', 'cbxwpbookmark' ),
                                         ],
                                 ],
-                                'skip_ids'           => [
+                                'skip_ids'              => [
                                         'name'     => 'skip_ids',
                                         'label'    => esc_html__( 'Skip Post Id(s)', 'cbxwpbookmark' ),
                                         'desc'     => esc_html__( 'Skip to show bookmark button for post id, put post id as comma separated for multiple', 'cbxwpbookmark' ),
@@ -3274,11 +3197,10 @@ class CBXWPBookmarkHelper {
                                         'default'  => '',
                                         'desc_tip' => true,
                                 ],
-                                'skip_roles'         => [
+                                'skip_roles'            => [
                                         'name'     => 'skip_roles',
                                         'label'    => esc_html__( 'Skip for User Role', 'cbxwpbookmark' ),
                                         'desc'     => esc_html__( 'Skip to show bookmark button for user roles', 'cbxwpbookmark' ),
-                                    //'type'     => 'multiselect',
                                         'type'     => 'select',
                                         'multi'    => 1,
                                         'optgroup' => 1,
@@ -3286,7 +3208,7 @@ class CBXWPBookmarkHelper {
                                         'default'  => [],
                                         'desc_tip' => true,
                                 ],
-                                'showinarchive'      => [
+                                'showinarchive'         => [
                                         'name'              => 'showinarchive',
                                         'label'             => esc_html__( 'Show in Archive', 'cbxwpbookmark' ),
                                         'desc'              => esc_html__( 'Show in Archive', 'cbxwpbookmark' ),
@@ -3298,7 +3220,7 @@ class CBXWPBookmarkHelper {
                                         ],
                                         'sanitize_callback' => 'absint'
                                 ],
-                                'showinhome'         => [
+                                'showinhome'            => [
                                         'name'              => 'showinhome',
                                         'label'             => esc_html__( 'Show in Home', 'cbxwpbookmark' ),
                                         'desc'              => esc_html__( 'Show in Home', 'cbxwpbookmark' ),
@@ -3310,28 +3232,27 @@ class CBXWPBookmarkHelper {
                                         ],
                                         'sanitize_callback' => 'absint'
                                 ],
-
                                 'cbxbookmarkposttypes'  => [
-                                        'name'     => 'cbxbookmarkposttypes',
-                                        'label'    => esc_html__( 'Post Type Selection', 'cbxwpbookmark' ),
-                                        'desc'     => esc_html__( 'Bookmark will work for selected post types', 'cbxwpbookmark' ),
-                                    //'type'     => 'multiselect',
-                                        'type'     => 'select',
-                                        'multi'    => 1,
-                                        'optgroup' => 1,
-                                        'default'  => [ 'post', 'page' ],
-                                        'options'  => $posts_definition,
+                                        'name'        => 'cbxbookmarkposttypes',
+                                        'label'       => esc_html__( 'Post Type Selection', 'cbxwpbookmark' ),
+                                        'desc'        => esc_html__( 'Bookmark will work for selected post types', 'cbxwpbookmark' ),
+                                        'type'        => 'select',
+                                        'multi'       => 1,
+                                        'optgroup'    => 1,
+                                        'default'     => [ 'post', 'page' ],
+                                        'options'     => $posts_definition,
+                                        'placeholder' => esc_html__( 'Select post type', 'cbxwpbookmark' )
                                 ],
                                 'post_types_automation' => [
                                         'name'     => 'post_types_automation',
                                         'label'    => esc_html__( 'Post Type Auto Integration', 'cbxwpbookmark' ),
                                         'desc'     => esc_html__( 'For which post types auto integration will be used', 'cbxwpbookmark' ),
-                                    //'type'     => 'multiselect',
                                         'type'     => 'select',
                                         'multi'    => 1,
                                         'optgroup' => 0,
                                         'default'  => $post_types_automation_default,
                                         'options'  => $posts_definition_automation,
+                                        'placeholder' => esc_html__( 'Select post type', 'cbxwpbookmark' )
                                 ],
                                 'showcount'             => [
                                         'name'              => 'showcount',
@@ -3442,16 +3363,8 @@ class CBXWPBookmarkHelper {
                                         ],
                                         'default' => 'no',
                                 ],
-                        ],
-                    /*'cbxwpbookmark_licences' => [
-					'licence_heading' => [
-						'name'    => 'licence_heading',
-						'label'   => esc_html__( 'Pro Addon License Information', 'cbxwpbookmark' ),
-						'type'    => 'heading',
-						'default' => '',
-					],
+                        ]
 
-				]*/
                 ];
 
 
@@ -3460,13 +3373,13 @@ class CBXWPBookmarkHelper {
         $sections = self::cbxwpbookmark_setting_sections();
 
         foreach ( $sections as $section ) {
-            if ( ! isset( $settings_builtin_fields[ $section['id'] ] ) ) {
-                $settings_builtin_fields[ $section['id'] ] = [];
+            if ( ! isset( $fields[ $section['id'] ] ) ) {
+                $fields[ $section['id'] ] = [];
             }
         }
 
         foreach ( $sections as $section ) {
-            $settings_fields[ $section['id'] ] = apply_filters( 'cbxwpbookmark_global_' . $section['id'] . '_fields', $settings_builtin_fields[ $section['id'] ] );
+            $settings_fields[ $section['id'] ] = apply_filters( 'cbxwpbookmark_global_' . $section['id'] . '_fields', $fields[ $section['id'] ] );
         }
 
         return apply_filters( 'cbxwpbookmark_global_fields', $settings_fields ); //final filter if need
@@ -3812,10 +3725,10 @@ class CBXWPBookmarkHelper {
 
             $feed->init();
 
-            $feed->set_output_encoding( 'UTF-8' );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        // this is the encoding parameter, and can be left unchanged in almost every case
-            $feed->handle_content_type();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                // this double-checks the encoding type
-            $feed->set_cache_duration( 21600 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          // 21,600 seconds is six hours
-            $limit  = $feed->get_item_quantity( 10 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // fetches the 18 most recent RSS feed stories
+            $feed->set_output_encoding( 'UTF-8' );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              // this is the encoding parameter, and can be left unchanged in almost every case
+            $feed->handle_content_type();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // this double-checks the encoding type
+            $feed->set_cache_duration( 21600 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               // 21,600 seconds is six hours
+            $limit  = $feed->get_item_quantity( 10 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          // fetches the 18 most recent RSS feed stories
             $items  = $feed->get_items( 0, $limit );
             $blocks = array_slice( $items, 0, 10 );
 
@@ -3984,7 +3897,7 @@ class CBXWPBookmarkHelper {
         $common_js_translations = self::common_js_translation( $current_user, $blog_id );
 
         $admin_js_translations = [
-                'translation'    => [
+                'translation'         => [
                         'bookmark_list_heading' => esc_html__( 'Bookmark Listing', 'cbxwpbookmark' ),
 
                         'noBookmarkList' => esc_html__( 'No bookmark found, please add one', 'cbxwpbookmark' ),
@@ -4014,10 +3927,19 @@ class CBXWPBookmarkHelper {
                         'sort_order'      => esc_html__( 'Sort Order', 'cbxwpbookmark' ),
 
                 ],
-                'cbx_table_lite' => self::table_light_translation(),
+                'cbx_table_lite'      => self::table_light_translation(),
+                'allowed_object_type' => \CBXWPBookmarkHelper::allowed_object_type(),
         ];
 
         $js_translations = array_merge_recursive( $common_js_translations, $admin_js_translations );
+
+        $settings = new CBXWPBookmarkSettings();
+
+        $bookmark_mode = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
+
+        if ( $bookmark_mode != 'no_cat' ) {
+            $js_translations['category_list'] = Category::pluck( 'cat_name', 'id' );
+        }
 
         return apply_filters( 'cbxwpbookmark_js_translation', $js_translations );
     } //end of method cbxwpbookmark_log_js_translation
@@ -4129,11 +4051,11 @@ class CBXWPBookmarkHelper {
     public static function dashboard_js_translation( $current_user, $blog_id ) {
         $common_js_translations = self::common_js_translation( $current_user, $blog_id );
 
-        $settings = new CBXWPBookmarkSettings();
-        $user_dashboard_page = absint($settings->get_field('user_dashboard_page', 'cbxwpbookmark_basics', 0));
-        $user_dashboard_url = ($user_dashboard_page > 0)? get_the_permalink($user_dashboard_page) : '';
-        $dashboard_log_url = ($user_dashboard_url != '')? add_query_arg('component', 'bookmark_manager', $user_dashboard_url) : '';
-        $dashboard_cat_url = ($user_dashboard_url != '')? add_query_arg('component', 'category_manager', $user_dashboard_url) : '';
+        $settings            = new CBXWPBookmarkSettings();
+        $user_dashboard_page = absint( $settings->get_field( 'user_dashboard_page', 'cbxwpbookmark_basics', 0 ) );
+        $user_dashboard_url  = ( $user_dashboard_page > 0 ) ? get_the_permalink( $user_dashboard_page ) : '';
+        $dashboard_log_url   = ( $user_dashboard_url != '' ) ? add_query_arg( 'component', 'bookmark_manager', $user_dashboard_url ) : '';
+        $dashboard_cat_url   = ( $user_dashboard_url != '' ) ? add_query_arg( 'component', 'category_manager', $user_dashboard_url ) : '';
 
         $tools_js_translations = [
                 'translation'          => [
@@ -4171,8 +4093,8 @@ class CBXWPBookmarkHelper {
                 'front_dashboard_data' => self::getBookmarkFrontDashboardData(),
                 'front_dashboard_urls' => [
                         'dash_url' => $user_dashboard_url,
-                        'log_url' => $dashboard_log_url,
-                        'cat_url' => $dashboard_cat_url,
+                        'log_url'  => $dashboard_log_url,
+                        'cat_url'  => $dashboard_cat_url,
                 ],
         ];
 
@@ -4187,13 +4109,13 @@ class CBXWPBookmarkHelper {
      */
     public static function getBookmarkAdminDashboardData() {
         try {
-           return [
+            return [
                     'bookmark_count' => self::getTotalBookmarkCount(),
                     'cats_count'     => self::getTotalCategoryCount(),
             ];
 
 
-        } catch ( Exception $e) {
+        } catch ( Exception $e ) {
             //write_log('exception');
             return [];
         }
@@ -4221,7 +4143,7 @@ class CBXWPBookmarkHelper {
             }
 
             return $data;
-        } catch ( Exception $e) {
+        } catch ( Exception $e ) {
             return [];
         }
     }//end function getBookmarkFrontDashboardData
@@ -4371,7 +4293,9 @@ class CBXWPBookmarkHelper {
 
             if ( $search ) {
                 $search    = $wpdb->esc_like( $search );
-                $bookmarks = $bookmarks->where( 'title', 'like', '%' . $search . '%' );
+                $bookmarks = $bookmarks->whereHas( 'post', function ( $query ) use ( $search ) {
+                    $query->where( 'post_title', 'LIKE', '%' . $search . '%' );
+                } );
             }
 
             if ( $order_by && $order ) {
@@ -4567,7 +4491,7 @@ class CBXWPBookmarkHelper {
                         'bookmark_count' => $bookmarkCount
                 ];
             } )->toArray();
-        } catch ( Exception $e) {
+        } catch ( Exception $e ) {
             return [];
         }
 
