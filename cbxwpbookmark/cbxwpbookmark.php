@@ -15,7 +15,7 @@
  * Plugin Name:       CBX Bookmark & Favorite
  * Plugin URI:        https://codeboxr.com/product/cbx-wordpress-bookmark
  * Description:       List/category based bookmark for WordPress, create your own private or public list of favorite posts, page, custom object
- * Version:           2.0.7
+ * Version:           2.0.8
  * Author:            Codeboxr Team
  * Author URI:        https://codeboxr.com
  * License:           GPL-2.0+
@@ -31,7 +31,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 
 defined( 'CBXWPBOOKMARK_PLUGIN_NAME' ) or define( 'CBXWPBOOKMARK_PLUGIN_NAME', 'cbxwpbookmark' );
-defined( 'CBXWPBOOKMARK_PLUGIN_VERSION' ) or define( 'CBXWPBOOKMARK_PLUGIN_VERSION', '2.0.7' );
+defined( 'CBXWPBOOKMARK_PLUGIN_VERSION' ) or define( 'CBXWPBOOKMARK_PLUGIN_VERSION', '2.0.8' );
 defined( 'CBXWPBOOKMARK_BASE_NAME' ) or define( 'CBXWPBOOKMARK_BASE_NAME', plugin_basename( __FILE__ ) );
 defined( 'CBXWPBOOKMARK_ROOT_PATH' ) or define( 'CBXWPBOOKMARK_ROOT_PATH', plugin_dir_path( __FILE__ ) );
 defined( 'CBXWPBOOKMARK_ROOT_URL' ) or define( 'CBXWPBOOKMARK_ROOT_URL', plugin_dir_url( __FILE__ ) );
@@ -40,8 +40,8 @@ defined( 'CBXWPBOOKMARK_ROOT_URL' ) or define( 'CBXWPBOOKMARK_ROOT_URL', plugin_
 defined( 'CBXWPBOOKMARK_DEV_MODE' ) or define( 'CBXWPBOOKMARK_DEV_MODE', false );
 
 defined( 'CBXWPBOOKMARK_PHP_MIN_VERSION' ) or define( 'CBXWPBOOKMARK_PHP_MIN_VERSION', '7.4' );
-defined( 'CBXWPBOOKMARK_WP_MIN_VERSION' ) or define( 'CBXWPBOOKMARK_WP_MIN_VERSION', '5.3' );
-defined( 'CBXWPBOOKMARK_PRO_VERSION' ) or define( 'CBXWPBOOKMARK_PRO_VERSION', '2.0.7' );
+defined( 'CBXWPBOOKMARK_WP_MIN_VERSION' ) or define( 'CBXWPBOOKMARK_WP_MIN_VERSION', '5.9' );
+defined( 'CBXWPBOOKMARK_PRO_VERSION' ) or define( 'CBXWPBOOKMARK_PRO_VERSION', '2.0.8' );
 
 
 // Include the main Bookmark class.
@@ -57,30 +57,53 @@ register_deactivation_hook( __FILE__, 'cbxwpbookmark_deactivate' );
  * This action is documented in includes/class-cbxwpbookmark-activator.php
  */
 function cbxwpbookmark_activate() {
-	$wp_version  = CBXWPBOOKMARK_WP_MIN_VERSION;
-	$php_version = CBXWPBOOKMARK_PHP_MIN_VERSION;
+	try {
+		$wp_version  = CBXWPBOOKMARK_WP_MIN_VERSION;
+		$php_version = CBXWPBOOKMARK_PHP_MIN_VERSION;
 
-	if ( ! cbxwpbookmark_compatible_wp_version( $wp_version ) ) {
-		deactivate_plugins( plugin_basename( __FILE__ ) );
-		/* translators: %s: wordpress version  */
-		wp_die( sprintf( esc_html__( 'CBX Bookmark plugin requires WordPress %s or higher!', 'cbxwpbookmark' ), esc_attr($wp_version) ) );
+		if ( ! cbxwpbookmark_compatible_wp_version( $wp_version ) ) {
+			deactivate_plugins( plugin_basename( __FILE__ ) );
+			/* translators: %s: wordpress version  */
+			wp_die( sprintf( esc_html__( 'CBX Bookmark plugin requires WordPress %s or higher!', 'cbxwpbookmark' ), esc_attr($wp_version) ) );
+		}
+
+		if ( ! cbxwpbookmark_compatible_php_version( $php_version ) ) {
+			deactivate_plugins( plugin_basename( __FILE__ ) );
+			/* translators: %s: php version  */
+			wp_die( sprintf( esc_html__( 'CBX Bookmark plugin requires PHP %s or higher!', 'cbxwpbookmark' ), esc_attr($php_version) ) );
+		}
+
+		cbxwpbookmark_core();
+
+		//load orm
+		CBXWPBookmarkHelper::load_orm();
+
+		//do some extra on plugin activation
+		CBXWPBookmarkHelper::activate();
+
+		CBXWPBookmarkHelper::customizer_default_adjust( true );
+
+	} catch (Throwable $e) {
+
+		if(defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG){
+			error_log(print_r([
+				'message' => $e->getMessage(),
+				'file'    => $e->getFile(),
+				'line'    => $e->getLine(),
+				'trace'   => $e->getTraceAsString(),
+			], true));
+		}
+
+
+		deactivate_plugins(plugin_basename(__FILE__));
+
+		wp_die(
+			sprintf(
+				'Activation error: %s',
+				esc_html($e->getMessage())
+			)
+		);
 	}
-
-	if ( ! cbxwpbookmark_compatible_php_version( $php_version ) ) {
-		deactivate_plugins( plugin_basename( __FILE__ ) );
-		/* translators: %s: php version  */
-		wp_die( sprintf( esc_html__( 'CBX Bookmark plugin requires PHP %s or higher!', 'cbxwpbookmark' ), esc_attr($php_version) ) );
-	}
-
-	cbxwpbookmark_core();
-
-	//load orm
-	CBXWPBookmarkHelper::load_orm();
-
-	//do some extra on plugin activation
-	CBXWPBookmarkHelper::activate();
-
-	CBXWPBookmarkHelper::customizer_default_adjust( true );
 }//end memthod cbxwpbookmark_activate
 
 /**

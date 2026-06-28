@@ -2,6 +2,7 @@
 namespace CBXWPBookmark;
 
 use CBXWPBookmark\CBXWPBookmarkSettings;
+use CBXWPBookmark\MigrationManage;
 use Exception;
 
 
@@ -833,7 +834,8 @@ class CBXWPBookmarkAdmin {
 		$saved_version = get_option('cbxwpbookmark_version');
 
 		if ($saved_version === false || version_compare($saved_version , CBXWPBOOKMARK_PLUGIN_VERSION, '<')) {
-			\CBXWPBookmarkHelper::create_tables();
+			\CBXWPBookmarkHelper::load_orm();
+			MigrationManage::run();
 
 			add_action('init', [$this, 'plugin_upgrader_process_complete_partial']);
 
@@ -1146,7 +1148,7 @@ class CBXWPBookmarkAdmin {
 			}
 
 			do_action( 'cbxwpbookmark_plugin_tables_deleted_after', $table_names );
-			do_action( 'cbxwpbookmark_plugin_tables_deleted' );
+			// do_action( 'cbxwpbookmark_plugin_tables_deleted' );
 		}
 		//end delete tables
 
@@ -1166,8 +1168,9 @@ class CBXWPBookmarkAdmin {
 	 * @return void
 	 */
 	public function plugin_reset_extend() {
-		//need to create the tables again
-		\CBXWPBookmarkHelper::create_tables();
+		// no need to create the tables again
+		// \CBXWPBookmarkHelper::create_tables();
+
 		//create pages
 		\CBXWPBookmarkHelper::cbxbookmark_create_pages(); //create the shortcode page
 	}//end method plugin_reset_extend

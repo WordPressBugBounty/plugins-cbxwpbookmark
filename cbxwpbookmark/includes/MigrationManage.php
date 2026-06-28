@@ -124,7 +124,10 @@ class MigrationManage {
 			'2023_05_07_01_create_migrations_table',
 			'2025_10_05_00_cbxwpbookmark_create',
 			'2025_10_05_01_cbxwpbookmarkcat_create',
-			'2025_16_10_00_add_sort_order_bookmark'
+			'2025_16_10_00_add_sort_order_bookmark',
+			'2026_06_04_00_add_unique_user_bookmark',
+			'2026_06_16_01_add_indexes_to_bookmark',
+			'2026_06_17_01_add_indexes_to_bookmarkcat'
 		];
 
 		return $migrations_dev + $migrations_released;

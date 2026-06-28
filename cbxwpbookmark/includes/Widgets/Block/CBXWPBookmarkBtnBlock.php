@@ -52,6 +52,7 @@ class CBXWPBookmarkBtnBlock {
 		$css_url_path = CBXWPBOOKMARK_ROOT_PATH . 'assets/css/';
 		$js_url_path  = CBXWPBOOKMARK_ROOT_PATH . 'assets/js/';
 
+
 		// phpcs:disable
 		wp_register_style( 'cbxwpbookmark-block', $css_url_part . 'cbxwpbookmark-block.css', [], filemtime( $css_url_path . 'cbxwpbookmark-block.css' ) );
 		wp_register_script( 'cbxwpbookmark-btn-block',

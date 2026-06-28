@@ -56,28 +56,28 @@ final class ParserTest extends TestCase
     public function files()
     {
         $sDirectory = __DIR__ . '/fixtures';
-        if ($rHandle = \opendir($sDirectory)) {
+        if ($rHandle = opendir($sDirectory)) {
             /* This is the correct way to loop over the directory. */
-            while (\false !== ($sFileName = \readdir($rHandle))) {
-                if (\strpos($sFileName, '.') === 0) {
+            while (\false !== $sFileName = readdir($rHandle)) {
+                if (strpos($sFileName, '.') === 0) {
                     continue;
                 }
-                if (\strrpos($sFileName, '.css') !== \strlen($sFileName) - \strlen('.css')) {
+                if (strrpos($sFileName, '.css') !== strlen($sFileName) - strlen('.css')) {
                     continue;
                 }
-                if (\strpos($sFileName, '-') === 0) {
+                if (strpos($sFileName, '-') === 0) {
                     // Either a file which SHOULD fail (at least in strict mode)
                     // or a future test of a as-of-now missing feature
                     continue;
                 }
-                $oParser = new Parser(\file_get_contents($sDirectory . '/' . $sFileName));
+                $oParser = new Parser(file_get_contents($sDirectory . '/' . $sFileName));
                 try {
                     self::assertNotEquals('', $oParser->parse()->render());
                 } catch (\Exception $e) {
                     self::fail($e);
                 }
             }
-            \closedir($rHandle);
+            closedir($rHandle);
         }
     }
     /**
@@ -133,7 +133,7 @@ final class ParserTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oRuleSet) {
             $sSelector = $oRuleSet->getSelectors();
             $sSelector = $sSelector[0]->getSelector();
-            if (\substr($sSelector, 0, \strlen('.test-')) !== '.test-') {
+            if (substr($sSelector, 0, strlen('.test-')) !== '.test-') {
                 continue;
             }
             $aContentRules = $oRuleSet->getRules('content');
@@ -158,13 +158,13 @@ final class ParserTest extends TestCase
                 self::assertSame('"¥"', $sString);
             }
             if ($sSelector == '.test-7') {
-                self::assertSame('"\\A"', $sString);
+                self::assertSame('"\A"', $sString);
             }
             if ($sSelector == '.test-8') {
-                self::assertSame('"\\"\\""', $sString);
+                self::assertSame('"\"\""', $sString);
             }
             if ($sSelector == '.test-9') {
-                self::assertSame('"\\"\\\'"', $sString);
+                self::assertSame('"\"\\\'"', $sString);
             }
             if ($sSelector == '.test-10') {
                 self::assertSame('"\\\'\\\\"', $sString);
@@ -319,14 +319,14 @@ body {color: green;}', $oDoc->render());
                 $mValue->setSize($mValue->getSize() * 3);
             }
         }
-        $sExpected = \str_replace(['1.2em', '.2em', '60%'], ['3.6em', '.6em', '180%'], $sExpected);
+        $sExpected = str_replace(['1.2em', '.2em', '60%'], ['3.6em', '.6em', '180%'], $sExpected);
         self::assertSame($sExpected, $oDoc->render());
         foreach ($oDoc->getAllValues(null, \true) as $mValue) {
             if ($mValue instanceof Size && !$mValue->isRelative() && !$mValue->isColorComponent()) {
                 $mValue->setSize($mValue->getSize() * 2);
             }
         }
-        $sExpected = \str_replace(['.2s', '.3s', '90deg'], ['.4s', '.6s', '180deg'], $sExpected);
+        $sExpected = str_replace(['.2s', '.3s', '90deg'], ['.4s', '.6s', '180deg'], $sExpected);
         self::assertSame($sExpected, $oDoc->render());
     }
     /**
@@ -585,8 +585,8 @@ body {background-color: red;}';
     public function selectorEscapesInFile()
     {
         $oDoc = self::parsedStructureForFile('selector-escapes', Settings::create()->withMultibyteSupport(\true));
-        $sExpected = '#\\# {color: red;}
-.col-sm-1\\/5 {width: 20%;}';
+        $sExpected = '#\# {color: red;}
+.col-sm-1\/5 {width: 20%;}';
         self::assertSame($sExpected, $oDoc->render());
         $oDoc = self::parsedStructureForFile('invalid-selectors-2', Settings::create()->withMultibyteSupport(\true));
         $sExpected = '@media only screen and (max-width: 1215px) {.breadcrumb {padding-left: 10px;}
@@ -603,7 +603,7 @@ body {background-color: red;}';
     public function identifierEscapesInFile()
     {
         $oDoc = self::parsedStructureForFile('identifier-escapes', Settings::create()->withMultibyteSupport(\true));
-        $sExpected = 'div {font: 14px Font Awesome\\ 5 Pro;font: 14px Font Awesome\\} 5 Pro;' . 'font: 14px Font Awesome\\; 5 Pro;f\\;ont: 14px Font Awesome\\; 5 Pro;}';
+        $sExpected = 'div {font: 14px Font Awesome\ 5 Pro;font: 14px Font Awesome\} 5 Pro;' . 'font: 14px Font Awesome\; 5 Pro;f\;ont: 14px Font Awesome\; 5 Pro;}';
         self::assertSame($sExpected, $oDoc->render());
     }
     /**
@@ -762,7 +762,7 @@ body {background-color: red;}';
     public static function parsedStructureForFile($sFileName, $oSettings = null)
     {
         $sFile = __DIR__ . "/fixtures/{$sFileName}.css";
-        $oParser = new Parser(\file_get_contents($sFile), $oSettings);
+        $oParser = new Parser(file_get_contents($sFile), $oSettings);
         return $oParser->parse();
     }
     /**
@@ -786,7 +786,7 @@ body {background-color: red;}';
         ];
         $aActual = [];
         foreach ($oDoc->getContents() as $oContent) {
-            $aActual[$oContent->getLineNo()] = [\get_class($oContent)];
+            $aActual[$oContent->getLineNo()] = [get_class($oContent)];
             if ($oContent instanceof KeyFrame) {
                 foreach ($oContent->getContents() as $block) {
                     $aActual[$oContent->getLineNo()][] = $block->getLineNo();
@@ -847,7 +847,7 @@ body {background-color: red;}';
     public function ieHacksParsing()
     {
         $oDoc = self::parsedStructureForFile('ie-hacks', Settings::create()->withLenientParsing(\true));
-        $sExpected = 'p {padding-right: .75rem \\9;background-image: none \\9;color: red \\9\\0;' . 'background-color: red \\9\\0;background-color: red \\9\\0 !important;content: "red 	\\0";content: "red઼";}';
+        $sExpected = 'p {padding-right: .75rem \9;background-image: none \9;color: red \9\0;' . 'background-color: red \9\0;background-color: red \9\0 !important;content: "red 	\0";content: "red઼";}';
         self::assertSame($sExpected, $oDoc->render());
     }
     /**
@@ -1011,7 +1011,7 @@ body {background-color: red;}';
         $rules = $contents[0]->getRules();
         $urlRule = $rules[0];
         $calcRule = $rules[1];
-        self::assertTrue(\is_a($urlRule->getValue(), 'CBXWPBookmarkScoped\\Sabberworm\\CSS\\Value\\URL'));
-        self::assertTrue(\is_a($calcRule->getValue(), 'CBXWPBookmarkScoped\\Sabberworm\\CSS\\Value\\CalcFunction'));
+        self::assertTrue(is_a($urlRule->getValue(), 'CBXWPBookmarkScoped\Sabberworm\CSS\Value\URL'));
+        self::assertTrue(is_a($calcRule->getValue(), 'CBXWPBookmarkScoped\Sabberworm\CSS\Value\CalcFunction'));
     }
 }

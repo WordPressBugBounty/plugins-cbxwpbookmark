@@ -152,6 +152,9 @@ class CBXWPBookmark {
 		add_action( 'cbxwpbookmark_on_activation', [ $helper, 'plugin_on_activate_action' ] );
 
 		add_action( 'cbxbookmark_category_deleted', [ $helper, 'category_delete_after' ], 10 , 2 );
+
+		//add_action( 'delete_user', [ $helper, 'user_delete_after' ] );
+		add_action( 'deleted_user', [ $helper, 'user_delete_after' ] );
 	}//end method define_common_hooks
 
 	/**
@@ -212,7 +215,7 @@ class CBXWPBookmark {
 		//ajax plugin reset
 		add_action( 'wp_ajax_cbxwpbookmark_settings_reset_load', [ $plugin_admin, 'settings_reset_load' ] );
 		add_action( 'wp_ajax_cbxwpbookmark_settings_reset', [ $plugin_admin, 'plugin_reset' ] );
-		add_action( 'cbxwpbookmark_plugin_reset', [ $plugin_admin, 'plugin_reset_extend' ] );
+		// add_action( 'cbxwpbookmark_plugin_reset', [ $plugin_admin, 'plugin_reset_extend' ] );
 
 		add_action( 'activated_plugin', [ $plugin_admin, 'check_pro_addon' ] );
 		add_action( 'init', [ $plugin_admin, 'check_pro_addon' ] );

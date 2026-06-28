@@ -33,7 +33,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileCreateDatabase($name, $connection)
     {
-        return \sprintf('create database %s', $this->wrapValue($name));
+        return sprintf('create database %s', $this->wrapValue($name));
     }
     /**
      * Compile a drop database if exists command.
@@ -43,7 +43,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileDropDatabaseIfExists($name)
     {
-        return \sprintf('drop database if exists %s', $this->wrapValue($name));
+        return sprintf('drop database if exists %s', $this->wrapValue($name));
     }
     /**
      * Compile the query to determine if a table exists.
@@ -73,7 +73,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command)
     {
-        $columns = \implode(', ', $this->getColumns($blueprint));
+        $columns = implode(', ', $this->getColumns($blueprint));
         return 'create table ' . $this->wrapTable($blueprint) . " ({$columns})";
     }
     /**
@@ -85,7 +85,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command)
     {
-        return \sprintf('alter table %s add %s', $this->wrapTable($blueprint), \implode(', ', $this->getColumns($blueprint)));
+        return sprintf('alter table %s add %s', $this->wrapTable($blueprint), implode(', ', $this->getColumns($blueprint)));
     }
     /**
      * Compile a primary key command.
@@ -96,7 +96,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command)
     {
-        return \sprintf('alter table %s add constraint %s primary key (%s)', $this->wrapTable($blueprint), $this->wrap($command->index), $this->columnize($command->columns));
+        return sprintf('alter table %s add constraint %s primary key (%s)', $this->wrapTable($blueprint), $this->wrap($command->index), $this->columnize($command->columns));
     }
     /**
      * Compile a unique key command.
@@ -107,7 +107,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
     {
-        return \sprintf('create unique index %s on %s (%s)', $this->wrap($command->index), $this->wrapTable($blueprint), $this->columnize($command->columns));
+        return sprintf('create unique index %s on %s (%s)', $this->wrap($command->index), $this->wrapTable($blueprint), $this->columnize($command->columns));
     }
     /**
      * Compile a plain index key command.
@@ -118,7 +118,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command)
     {
-        return \sprintf('create index %s on %s (%s)', $this->wrap($command->index), $this->wrapTable($blueprint), $this->columnize($command->columns));
+        return sprintf('create index %s on %s (%s)', $this->wrap($command->index), $this->wrapTable($blueprint), $this->columnize($command->columns));
     }
     /**
      * Compile a spatial index key command.
@@ -129,7 +129,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
     {
-        return \sprintf('create spatial index %s on %s (%s)', $this->wrap($command->index), $this->wrapTable($blueprint), $this->columnize($command->columns));
+        return sprintf('create spatial index %s on %s (%s)', $this->wrap($command->index), $this->wrapTable($blueprint), $this->columnize($command->columns));
     }
     /**
      * Compile a drop table command.
@@ -151,7 +151,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileDropIfExists(Blueprint $blueprint, Fluent $command)
     {
-        return \sprintf('if exists (select * from sys.sysobjects where id = object_id(%s, \'U\')) drop table %s', "'" . \str_replace("'", "''", $this->getTablePrefix() . $blueprint->getTable()) . "'", $this->wrapTable($blueprint));
+        return sprintf('if exists (select * from sys.sysobjects where id = object_id(%s, \'U\')) drop table %s', "'" . str_replace("'", "''", $this->getTablePrefix() . $blueprint->getTable()) . "'", $this->wrapTable($blueprint));
     }
     /**
      * Compile the SQL needed to drop all tables.
@@ -173,7 +173,7 @@ class SqlServerGrammar extends Grammar
     {
         $columns = $this->wrapArray($command->columns);
         $dropExistingConstraintsSql = $this->compileDropDefaultConstraint($blueprint, $command) . ';';
-        return $dropExistingConstraintsSql . 'alter table ' . $this->wrapTable($blueprint) . ' drop column ' . \implode(', ', $columns);
+        return $dropExistingConstraintsSql . 'alter table ' . $this->wrapTable($blueprint) . ' drop column ' . implode(', ', $columns);
     }
     /**
      * Compile a drop default constraint command.
@@ -184,7 +184,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileDropDefaultConstraint(Blueprint $blueprint, Fluent $command)
     {
-        $columns = "'" . \implode("','", $command->columns) . "'";
+        $columns = "'" . implode("','", $command->columns) . "'";
         $tableName = $this->getTablePrefix() . $blueprint->getTable();
         $sql = "DECLARE @sql NVARCHAR(MAX) = '';";
         $sql .= "SELECT @sql += 'ALTER TABLE [dbo].[{$tableName}] DROP CONSTRAINT ' + OBJECT_NAME([default_object_id]) + ';' ";
@@ -273,7 +273,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command)
     {
-        return \sprintf("sp_rename N'%s', %s, N'INDEX'", $this->wrap($blueprint->getTable() . '.' . $command->from), $this->wrap($command->to));
+        return sprintf("sp_rename N'%s', %s, N'INDEX'", $this->wrap($blueprint->getTable() . '.' . $command->from), $this->wrap($command->to));
     }
     /**
      * Compile the command to enable foreign key constraints.
@@ -300,7 +300,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileDropAllForeignKeys()
     {
-        return "DECLARE @sql NVARCHAR(MAX) = N'';\r\n            SELECT @sql += 'ALTER TABLE '\r\n                + QUOTENAME(OBJECT_SCHEMA_NAME(parent_object_id)) + '.' + + QUOTENAME(OBJECT_NAME(parent_object_id))\r\n                + ' DROP CONSTRAINT ' + QUOTENAME(name) + ';'\r\n            FROM sys.foreign_keys;\r\n\r\n            EXEC sp_executesql @sql;";
+        return "DECLARE @sql NVARCHAR(MAX) = N'';\n            SELECT @sql += 'ALTER TABLE '\n                + QUOTENAME(OBJECT_SCHEMA_NAME(parent_object_id)) + '.' + + QUOTENAME(OBJECT_NAME(parent_object_id))\n                + ' DROP CONSTRAINT ' + QUOTENAME(name) + ';'\n            FROM sys.foreign_keys;\n\n            EXEC sp_executesql @sql;";
     }
     /**
      * Compile the command to drop all views.
@@ -309,7 +309,7 @@ class SqlServerGrammar extends Grammar
      */
     public function compileDropAllViews()
     {
-        return "DECLARE @sql NVARCHAR(MAX) = N'';\r\n            SELECT @sql += 'DROP VIEW ' + QUOTENAME(OBJECT_SCHEMA_NAME(object_id)) + '.' + QUOTENAME(name) + ';'\r\n            FROM sys.views;\r\n\r\n            EXEC sp_executesql @sql;";
+        return "DECLARE @sql NVARCHAR(MAX) = N'';\n            SELECT @sql += 'DROP VIEW ' + QUOTENAME(OBJECT_SCHEMA_NAME(object_id)) + '.' + QUOTENAME(name) + ';'\n            FROM sys.views;\n\n            EXEC sp_executesql @sql;";
     }
     /**
      * Create the column definition for a char type.
@@ -469,7 +469,7 @@ class SqlServerGrammar extends Grammar
      */
     protected function typeEnum(Fluent $column)
     {
-        return \sprintf('nvarchar(255) check ("%s" in (%s))', $column->name, $this->quoteString($column->allowed));
+        return sprintf('nvarchar(255) check ("%s" in (%s))', $column->name, $this->quoteString($column->allowed));
     }
     /**
      * Create the column definition for a json type.
@@ -714,7 +714,7 @@ class SqlServerGrammar extends Grammar
      */
     protected function modifyCollate(Blueprint $blueprint, Fluent $column)
     {
-        if (!\is_null($column->collation)) {
+        if (!is_null($column->collation)) {
             return ' collate ' . $column->collation;
         }
     }
@@ -740,7 +740,7 @@ class SqlServerGrammar extends Grammar
      */
     protected function modifyDefault(Blueprint $blueprint, Fluent $column)
     {
-        if (!\is_null($column->default)) {
+        if (!is_null($column->default)) {
             return ' default ' . $this->getDefaultValue($column->default);
         }
     }
@@ -753,7 +753,7 @@ class SqlServerGrammar extends Grammar
      */
     protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
     {
-        if (\in_array($column->type, $this->serials) && $column->autoIncrement) {
+        if (in_array($column->type, $this->serials) && $column->autoIncrement) {
             return ' identity primary key';
         }
     }
@@ -791,8 +791,8 @@ class SqlServerGrammar extends Grammar
      */
     public function quoteString($value)
     {
-        if (\is_array($value)) {
-            return \implode(', ', \array_map([$this, __FUNCTION__], $value));
+        if (is_array($value)) {
+            return implode(', ', array_map([$this, __FUNCTION__], $value));
         }
         return "N'{$value}'";
     }

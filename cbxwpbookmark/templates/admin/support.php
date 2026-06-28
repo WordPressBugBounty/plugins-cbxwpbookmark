@@ -83,6 +83,17 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                     <div class="content">
                         <div class="cbx-backend-settings-row">
                             <p>
+                                Version - 2.0.8
+                            </p>
+                            <ul>
+                                <li>[new] On user delete, bookmark delete added</li>
+                                <li>[improved] bookmark unique constraint added</li>
+                                <li>[updated] WordPress 7.0 compatible</li>
+                                <li>[updated] Pro Addon 2.0.8 released</li>
+                            </ul>
+                        </div>
+                        <div class="cbx-backend-settings-row">
+                            <p>
                                 Version - 2.0.7
                             </p>
                             <ul>
@@ -118,6 +129,15 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                         </div>
                     </div>
                     <div class="content">
+                        <div class="cbx-backend-settings-row">
+                            <p>
+                                Version - 2.0.8
+                            </p>
+                            <ul>
+                                <li>[updated] Core plugin 2.0.8 released</li>
+                                <li>[updated] WordPress 7.0 compatible</li>
+                            </ul>
+                        </div>
                         <div class="cbx-backend-settings-row">
                             <p>
                                 Version - 2.0.7

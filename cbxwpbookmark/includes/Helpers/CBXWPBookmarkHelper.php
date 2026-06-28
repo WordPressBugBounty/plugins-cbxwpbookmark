@@ -358,31 +358,34 @@ class CBXWPBookmarkHelper {
 
 
         //Bookmark table
-        $sql = "CREATE TABLE $bookmark_table (
+        $sql_bookmark = "CREATE TABLE $bookmark_table (
           `id` bigint(20) NOT NULL AUTO_INCREMENT,
           `object_id` bigint(20) NOT NULL DEFAULT 0,
           `object_type` varchar(60) NOT NULL DEFAULT 'post',
           `cat_id` int(11) NOT NULL DEFAULT 0,
           `user_id` bigint(20) NOT NULL DEFAULT 0,
-          `created_date`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          `modyfied_date` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-          PRIMARY KEY (`id`)) $charset_collate;";
+          `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          `modyfied_date` TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:01',
+          PRIMARY KEY (`id`),
+          UNIQUE KEY `unique_user_bookmark` (`user_id`, `object_id`, `object_type`, `cat_id`)
+        ) $charset_collate;";
 
-
-        //Category table
-        $sql .= "CREATE TABLE $category_table (
+        // 2. Category table
+        $sql_category = "CREATE TABLE $category_table (
           `id` mediumint(9) NOT NULL AUTO_INCREMENT,
-           `cat_name` text COLLATE utf8mb4_unicode_ci NOT NULL,
-           `user_id` bigint(20) NOT NULL DEFAULT 0,
-           `privacy` tinyint(2) NOT NULL DEFAULT '1',
-           `locked` tinyint(2) NOT NULL DEFAULT '0',
-           `created_date`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-           `modyfied_date` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-           PRIMARY KEY (`id`))  $charset_collate;";
-
+          `cat_name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+          `user_id` bigint(20) NOT NULL DEFAULT 0,
+          `privacy` tinyint(2) NOT NULL DEFAULT '1',
+          `locked` tinyint(2) NOT NULL DEFAULT '0',
+          `created_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          `modyfied_date` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+          PRIMARY KEY (`id`)
+        ) $charset_collate;";
 
         require_once( ABSPATH . "wp-admin/includes/upgrade.php" );
-        dbDelta( $sql );
+        
+        dbDelta( $sql_bookmark );
+        dbDelta( $sql_category );
     }//end create_tables
 
     /**
@@ -4532,4 +4535,47 @@ class CBXWPBookmarkHelper {
             Bookmark::where( 'cat_id', $cat_id )->delete();
         }
     }//end method category_delete_after
+
+    /**
+     * After user delete
+     *
+     */
+    public function user_delete_after( $user_id ) {
+        $user_id = intval( $user_id );
+
+        if ( $user_id > 0 ) {
+            Bookmark::where( 'user_id', $user_id )->delete();
+        }
+    }//end method user_delete_after
+
+    /**
+     * Check if any array is associtive or has index based
+     *
+     * @param  array  $array
+     *
+     * @return bool
+     */
+    public static function is_associative_array(array $array): bool
+    {
+        if ($array === []) {
+            return false;
+        }
+
+        return array_keys($array) !== range(0, count($array) - 1);
+    }//end method is_associative_array
+
+    /**
+     * Convert non associative array into associative array
+     *
+     * @param  array  $options
+     *
+     * @return array
+     */
+    public static function convert_to_associative_array(array $options)
+    {
+        return array_combine(
+                $options,
+                array_map('ucfirst', $options)
+        );
+    }//end method convert_to_associative_array
 }//end CBXWPBookmarkHelper

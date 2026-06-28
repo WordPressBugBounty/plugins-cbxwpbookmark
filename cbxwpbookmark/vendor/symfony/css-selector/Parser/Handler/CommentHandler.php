@@ -24,7 +24,7 @@ use CBXWPBookmarkScoped\Symfony\Component\CssSelector\Parser\TokenStream;
  */
 class CommentHandler implements HandlerInterface
 {
-    public function handle(Reader $reader, TokenStream $stream) : bool
+    public function handle(Reader $reader, TokenStream $stream): bool
     {
         if ('/*' !== $reader->getSubstring(2)) {
             return \false;

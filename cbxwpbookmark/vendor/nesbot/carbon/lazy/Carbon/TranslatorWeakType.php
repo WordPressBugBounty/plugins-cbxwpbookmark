@@ -10,7 +10,7 @@
  */
 namespace CBXWPBookmarkScoped\Carbon;
 
-if (!\class_exists(LazyTranslator::class, \false)) {
+if (!class_exists(LazyTranslator::class, \false)) {
     class LazyTranslator extends AbstractTranslator
     {
         /**

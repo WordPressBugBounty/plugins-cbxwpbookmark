@@ -25,6 +25,6 @@ class RateLimiter extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'CBXWPBookmarkScoped\\Illuminate\\Cache\\RateLimiter';
+        return 'CBXWPBookmarkScoped\Illuminate\Cache\RateLimiter';
     }
 }

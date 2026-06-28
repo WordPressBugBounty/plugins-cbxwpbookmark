@@ -1,9 +1,9 @@
 === CBX Bookmark & Favorite ===
 Contributors: codeboxr, manchumahara
 Tags: bookmark,favorite,collection,user collection,user bookmark
-Requires at least: 5.3
-Tested up to: 6.9
-Stable tag: 2.0.7
+Requires at least: 5.9
+Tested up to: 7.0
+Stable tag: 2.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -169,6 +169,12 @@ How to install the plugin and get it working.
 == Screenshots ==
 
 == Changelog ==
+= 2.0.8 =
+* [new] On user delete, bookmark delete added
+* [improved] bookmark unique constraint added
+* [updated] Added better error handler while activating plugin
+* [updated] Pro Addon 2.0.8 released
+
 = 2.0.7 =
 * [improved] Improved accessibility
 * [updated] Pro Addon 2.0.7 released
