@@ -18,7 +18,7 @@ return array(
     'CBXWPBookmarkScoped\\Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'CBXWPBookmarkScoped\\Psr\\Clock\\' => array($vendorDir . '/psr/clock/src'),
     'CBXWPBookmarkScoped\\Pelago\\Emogrifier\\' => array($vendorDir . '/pelago/emogrifier/src'),
-    'CBXWPBookmarkScoped\\Illuminate\\Support\\' => array($vendorDir . '/illuminate/support', $vendorDir . '/illuminate/collections', $vendorDir . '/illuminate/macroable'),
+    'CBXWPBookmarkScoped\\Illuminate\\Support\\' => array($vendorDir . '/illuminate/collections', $vendorDir . '/illuminate/macroable', $vendorDir . '/illuminate/support'),
     'CBXWPBookmarkScoped\\Illuminate\\Pagination\\' => array($vendorDir . '/illuminate/pagination'),
     'CBXWPBookmarkScoped\\Illuminate\\Database\\' => array($vendorDir . '/illuminate/database'),
     'CBXWPBookmarkScoped\\Illuminate\\Contracts\\' => array($vendorDir . '/illuminate/contracts'),

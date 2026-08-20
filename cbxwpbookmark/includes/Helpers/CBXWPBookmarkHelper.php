@@ -4476,6 +4476,48 @@ class CBXWPBookmarkHelper {
             // Fetch all bookmark catrgories
             $bookmarkCats = Category::all();
 
+            if ( $user_id ) {
+                $bookmarkCats = $bookmarkCats->where( 'user_id', $user_id );
+            }
+
+            return $bookmarkCats->map( function ( $cat ) use ( $year, $month, $user_id ) {
+                // Count bookmarks for the current type using the Taxable model and join with Comfortbookmark
+                $bookmarkCount = Bookmark::where( 'cat_id', $cat->id )
+                                         ->whereYear( 'created_date', $year )
+                                         ->whereMonth( 'created_date', $month );
+
+                $bookmarkCount = $bookmarkCount->count();
+                return [
+                        'id'             => $cat->id,
+                        'title'          => $cat->cat_name,
+                        'bookmark_count' => $bookmarkCount
+                ];
+            } )->toArray();
+        } catch ( Exception $e ) {
+            return [];
+        }
+
+    }// end function getBookmarkCategoriesWithCount
+
+    /**
+     * get Bookmark Global Categories With Count
+     *
+     * @param  mixed  $year
+     * @param  mixed  $month
+     * @param  mixed  $user_id
+     *
+     * @return mixed
+     */
+    public static function getBookmarkGlobalCategoriesWithCount( $year = null, $month = null, $user_id = 0 ) {
+        $month = $month ? intval( $month ) : gmdate( 'm' );
+        $year  = $year ? intval( $year ) : gmdate( 'Y' );
+
+        try {
+
+            // Fetch all bookmark catrgories
+            $bookmarkCats = Category::all();
+
+
             return $bookmarkCats->map( function ( $cat ) use ( $year, $month, $user_id ) {
                 // Count bookmarks for the current type using the Taxable model and join with Comfortbookmark
                 $bookmarkCount = Bookmark::where( 'cat_id', $cat->id )
@@ -4486,8 +4528,8 @@ class CBXWPBookmarkHelper {
                     $bookmarkCount = $bookmarkCount->where( 'user_id', $user_id );
                 }
 
-                $bookmarkCount = $bookmarkCount->count();
 
+                $bookmarkCount = $bookmarkCount->count();
                 return [
                         'id'             => $cat->id,
                         'title'          => $cat->cat_name,

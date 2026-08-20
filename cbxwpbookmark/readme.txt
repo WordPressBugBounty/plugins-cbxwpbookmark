@@ -2,8 +2,8 @@
 Contributors: codeboxr, manchumahara
 Tags: bookmark,favorite,collection,user collection,user bookmark
 Requires at least: 5.9
-Tested up to: 7.0
-Stable tag: 2.0.8
+Tested up to: 7.1
+Stable tag: 2.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,7 +11,7 @@ Bookmark and  Favorite plugin for WordPress with category/list support.
 
 == Description ==
 
-This plugin is inspired from youtube's bookmark or favorite feature. User can create their own bookmark category public or private and save articles inside different folders/list/category. Later we extended the plugin so that category can be global created by admin or single click bookmark without any category as pro features. There are lots of practical use for this simple but useful(we like to call it 'powerful') plugin. This plugin can help you create a bookmark site or user generated list site.
+This plugin is inspired from YouTube's bookmark or favorite feature. User can create their own bookmark category public or private and save articles inside different folders/list/category. Later we extended the plugin so that category can be global created by admin or single click bookmark without any category as pro features. There are lots of practical use for this simple but useful(we like to call it 'powerful') plugin. This plugin can help you create a bookmark site or user generated list site.
 
 
 
@@ -169,6 +169,12 @@ How to install the plugin and get it working.
 == Screenshots ==
 
 == Changelog ==
+= 2.0.9 =
+* [updated] Compatible with WordPress 7.1
+* [fixed] Frontend dashboard - Bookmark Manager listing id col removed
+* [fixed] Frontend dashboard - Bookmarks Overview Category stat sync with user data and settings
+* [updated] Pro Addon 2.0.9 released
+
 = 2.0.8 =
 * [new] On user delete, bookmark delete added
 * [improved] bookmark unique constraint added

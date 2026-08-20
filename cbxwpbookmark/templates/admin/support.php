@@ -1,4 +1,5 @@
 <?php
+//phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 /**
  * This template provides the Dashboard view of the plugin
  *
@@ -14,8 +15,8 @@ if ( ! defined( 'WPINC' ) ) {
 }
 ?>
 <?php
-$cbxwpbookmark_plugin_url = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/product/cbx-wordpress-bookmark/' );
-$cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbookmark-doc/' );
+$plugin_url = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/product/cbx-wordpress-bookmark/' );
+$doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbookmark-doc/' );
 ?>
 <div class="wrap cbx-chota cbxwpbookmark-page-wrapper cbxwpbookmark-support-wrapper" id="cbxwpbookmark-support">
     <div class="container">
@@ -45,11 +46,11 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
         <div class="row">
             <div class="col-6">
                 <div class="cbx-backend-card">
-                    <div class="header">
+<!--                    <div class="header">
                         <div class="text">
                             <h2><?php esc_html_e( 'Get Free & Pro Addons', 'cbxwpbookmark' ); ?></h2>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="content">
                         <div class="row">
                             <div class="col-12">
@@ -65,8 +66,9 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                                         <div class="feature-card-description">
                                             <h3>
                                                 <a href="https://codeboxr.com/product/cbx-wordpress-bookmark/?utm_source=plgsidebarinfo&utm_medium=plgsidebar&utm_campaign=wpfreemium"
-                                                   target="_blank">CBX Bookmark Pro Addon</a></h3>
-                                            <p>Pro features for CBX Bookmark plugin.</p>
+                                                   target="_blank">CBX Bookmark & Favorite for WordPress</a></h3>
+                                            <p>CBX Bookmark for WordPress is an innovative WordPress plugin that helps create public and private bookmarks for logged-in users. Inspired by YouTube playlists, it introduces global categories and single-click last bookmarking. With shortcodes, widgets, and pro addons, this plugin can play an important role.</p>
+                                            <p>CBX Bookmark for WordPress also supports popular integrations like BuddyPress, bbPress, myCred, and GamiPress.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -81,44 +83,57 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                         </div>
                     </div>
                     <div class="content">
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.8
-                            </p>
-                            <ul>
-                                <li>[new] On user delete, bookmark delete added</li>
-                                <li>[improved] bookmark unique constraint added</li>
-                                <li>[updated] WordPress 7.0 compatible</li>
-                                <li>[updated] Pro Addon 2.0.8 released</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.7
-                            </p>
-                            <ul>
-                                <li>[improved] Improved accessibility</li>
-                                <li>[updated] Pro Addon 2.0.7 released</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.6
-                            </p>
-                            <ul>
-                                <li>[fixed] Dashboard and frontend bookmark listing js error fixed if single click category mode</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.5
-                            </p>
-                            <ul>
-                                <li>[fixed] VC widget error fixed</li>
-                                <li>[updated] WordPress 6.9 compatible</li>
-                                <li>[updated] Pro Addon 2.0.5 released</li>
-                                <li>[new] Pro addon now supports automatic update [check setting]</li>
-                            </ul>
+                        <div class="releases">
+                            <div class="release">
+                                <h3>Version 2.0.9</h3>
+
+                                <ul>
+                                    <li class="updated">Compatible with WordPress 7.1.</li>
+                                    <li class="fixed">Frontend dashboard - Bookmark Manager listing id col removed.</li>
+                                    <li class="fixed">Frontend dashboard - Bookmarks Overview Category stat sync with user data and settings.</li>
+                                    <li class="updated">Pro Addon 2.0.9 released.</li>
+                                </ul>
+                            </div>
+
+                            <div class="release">
+                                <h3>Version 2.0.8</h3>
+
+                                <ul>
+                                    <li class="new">On user delete, bookmark delete added.</li>
+                                    <li class="new">[improved] bookmark unique constraint added.</li>
+                                    <li class="updated">Added better error handler while activating plugin.</li>
+                                    <li class="updated">Pro Addon 2.0.8 released.</li>
+                                </ul>
+                            </div>
+
+                            <div class="release">
+                                <h3>Version 2.0.7</h3>
+
+                                <ul>
+                                    <li class="improvements">[improved] Improved accessibility.</li>
+                                    <li class="updated">Pro Addon 2.0.7 released.</li>
+                                </ul>
+                            </div>
+
+                            <div class="release">
+                                <h3>Version 2.0.6</h3>
+
+                                <ul>
+                                    <li class="fixed">Dashboard and frontend bookmark listing js error fixed if single click category mode.</li>
+                                </ul>
+                            </div>
+
+                            <div class="release">
+                                <h3>Version 2.0.5</h3>
+
+                                <ul>
+                                    <li class="fixed">VC widget error fixed.</li>
+                                    <li class="updated">WordPress 6.9 compatible.</li>
+                                    <li class="updated">Pro Addon 2.0.5 released.</li>
+                                    <li class="new">Pro addon now supports automatic update [check setting].</li>
+                                </ul>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -129,77 +144,36 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                         </div>
                     </div>
                     <div class="content">
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.8
-                            </p>
-                            <ul>
-                                <li>[updated] Core plugin 2.0.8 released</li>
-                                <li>[updated] WordPress 7.0 compatible</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.7
-                            </p>
-                            <ul>
-                                <li>[improved] Improved accessibility</li>
-                                <li>[updated] Core plugin 2.0.7 released</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.5
-                            </p>
-                            <ul>
-                                <li>[fixed] VC widget error fixed</li>
-                                <li>[updated] WordPress 6.9 compatible</li>
-                                <li>[updated] Core plugin 2.0.5 released</li>
-                                <li>[new] Pro addon now supports automatic update [check setting]</li>
-                            </ul>
-                        </div>
-                        <div class="cbx-backend-settings-row">
-                            <p>
-                                Version - 2.0.4
-                            </p>
-                            <ul>
-                                <li>[note] Need core plugin 2.0.4</li>
-                                <li>[updated] Core plugin 2.0.4 released</li>
-                                <li>[fixed] Composer/PHP package Conflict issue solved</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="cbx-backend-card dashboard-wp-plugin">
-                    <div class="header">
-                        <div class="text">
-                            <h2><?php esc_html_e( 'Codeboxr News Updates', 'cbxwpbookmark' ); ?></h2>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <?php
-                        $cbxwpbookmark_items = CBXWPBookmarkHelper::codeboxr_news_feed();
-                        if ( $cbxwpbookmark_items !== false && count( $cbxwpbookmark_items ) > 0 ) {
-                            //phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-                            foreach ( $cbxwpbookmark_items as $item ) {
-                                $url   = $item['url']; //phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-                                $title = $item['title'];//phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+                        <div class="releases">
+                            <div class="release">
+                                <h3>Version 2.0.9</h3>
 
-                                echo '<div class="cbx-backend-settings-row">';
-                                echo '<a href="' . esc_url( $url ) . '" target="_blank">';
-                                echo '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                                <defs/>
-                                                <path d="M16.4 9.1L12.2 5c-.3-.3-.7-.3-1-.2s-.6.5-.6.9v1.7H4.2c-.5 0-.9.4-.9.9v3.4c0 .2.1.5.3.7.2.2.4.3.7.3h6.4v1.7c0 .4.2.7.6.9.4.1.8.1 1-.2l4.1-4.2c.4-.5.4-1.3 0-1.8z"
-                                                      fill="currentColor"/>
-                                            </svg>';
+                                <ul>
+                                    <li class="updated">WordPress 7.1 compatible.</li>
+                                    <li class="updated">Core plugin 2.0.9 released.</li>
+                                </ul>
+                            </div>
 
-                                //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-                                echo $title;
-                                echo '</a>';
-                                echo '</div>';
-                            }//end for loop
-                        }//if data found
-                        ?>
+                            <div class="release">
+                                <h3>Version 2.0.8</h3>
+
+                                <ul>
+                                    <li class="updated">Core plugin 2.0.8 released.</li>
+                                    <li class="updated">WordPress 7.0 compatible.</li>
+                                </ul>
+                            </div>
+
+                            <div class="release">
+                                <h3>Version 2.0.7</h3>
+
+                                <ul>
+                                    <li class="improvements">[improved] Improved accessibility.</li>
+                                    <li class="updated">Core plugin 2.0.7 released.</li>
+                                    <li class="fixed">Few links in dashboard fixed [url pattern changed in previous release in core].</li>
+                                </ul>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -212,7 +186,7 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                     </div>
                     <div class="content">
                         <div class="cbx-backend-settings-row">
-                            <a href="<?php echo esc_url( $cbxwpbookmark_plugin_url ); ?>" target="_blank">
+                            <a href="<?php echo esc_url( $plugin_url ); ?>" target="_blank">
                                 <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <defs/>
                                     <path d="M10 2.6c-4.4 0-7.9 3.6-7.9 7.9s3.6 7.9 7.9 7.9 7.9-3.6 7.9-7.9-3.5-7.9-7.9-7.9zm1.7 12.3c-.4.2-.7.3-1 .4-.2.1-.5.1-.8.1-.5 0-.9-.1-1.2-.4-.3-.2-.4-.5-.4-.9v-.4c0-.2.1-.3.1-.5l.5-1.8c0-.2.1-.4.1-.5v-.4c0-.2 0-.4-.1-.5-.1-.1-.3-.2-.5-.2-.1 0-.3 0-.4.1-.2 0-.3.1-.4.1l.1-.6c.3-.1.7-.3 1-.3.3-.1.6-.2.9-.2.5 0 .9.1 1.1.4.3.2.4.5.4.9v.4c0 .2-.1.4-.1.5l-.5 1.9c0 .1-.1.3-.1.5v.4c0 .2.1.4.2.5.1.1.3.1.6.1.1 0 .3 0 .4-.1.2 0 .3-.1.3-.1l-.2.6zm-.1-7.3c-.2.2-.5.3-.9.3-.3 0-.6-.1-.9-.3-.2-.2-.3-.5-.3-.8 0-.3.1-.6.4-.8.2-.2.5-.3.9-.3.3 0 .6.1.9.3.2.2.4.5.4.8-.2.3-.3.6-.5.8z"
@@ -221,7 +195,7 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                                 <?php esc_html_e( 'CBX Bookmark Plugin Details', 'cbxwpbookmark' ); ?> </a>
                         </div>
                         <div class="cbx-backend-settings-row">
-                            <a href="<?php echo esc_url( $cbxwpbookmark_doc_url ); ?>" target="_blank">
+                            <a href="<?php echo esc_url( $doc_url ); ?>" target="_blank">
                                 <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M14.5834 3.75C12.9584 3.75 11.2084 4.08333 10 5C8.79171 4.08333 7.04171 3.75 5.41671 3.75C4.20837 3.75 2.92504 3.93333 1.85004 4.40833C1.24171 4.68333 0.833374 5.275 0.833374 5.95V15.35C0.833374 16.4333 1.85004 17.2333 2.90004 16.9667C3.71671 16.7583 4.58337 16.6667 5.41671 16.6667C6.71671 16.6667 8.10004 16.8833 9.21671 17.4333C9.71671 17.6833 10.2834 17.6833 10.775 17.4333C11.8917 16.875 13.275 16.6667 14.575 16.6667C15.4084 16.6667 16.275 16.7583 17.0917 16.9667C18.1417 17.2417 19.1584 16.4417 19.1584 15.35V5.95C19.1584 5.275 18.75 4.68333 18.1417 4.40833C17.075 3.93333 15.7917 3.75 14.5834 3.75ZM17.5 14.3583C17.5 14.8833 17.0167 15.2667 16.5 15.175C15.875 15.0583 15.225 15.0083 14.5834 15.0083C13.1667 15.0083 11.125 15.55 10 16.2583V6.66667C11.125 5.95833 13.1667 5.41667 14.5834 5.41667C15.35 5.41667 16.1084 5.49167 16.8334 5.65C17.2167 5.73333 17.5 6.075 17.5 6.46667V14.3583Z"
                                           fill="currentColor"></path>
@@ -268,22 +242,23 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                     </div>
                     <div class="content">
                         <?php
-                        $cbxwpbookmark_top_plugins = [
+
+                        $top_plugins = [
                                 'https://codeboxr.com/product/cbx-petition-for-wordpress/'                            => 'CBX Petition',
                                 'https://codeboxr.com/product/cbx-multi-criteria-rating-review-for-wordpress/'        => 'CBX Multi Criteria Rating & Review',
                                 'https://codeboxr.com/product/comfort-restaurant-booking-for-wordpress/'              => 'Comfort Restaurant Booking',
-                                'https://codeboxr.com/product/cbx-changelog-for-wordpress/'                           => 'CBX Changelog',
-                                'https://codeboxr.com/product/cbx-tour-user-walkthroughs-guided-tours-for-wordpress/' => 'CBX Tour – User Walkthroughs/Guided Tours',
                                 'https://codeboxr.com/product/cbx-email-logger-for-wordpress/'                        => 'CBX Email SMTP & Logger',
-                                'https://codeboxr.com/product/cbx-poll-for-wordpress/'                                => 'CBX Poll',
-                                'https://codeboxr.com/product/cbx-user-online-for-wordpress/'                         => 'CBX User Online & Last Login',
+                                'https://codeboxr.com/product/cbx-google-map-for-wordpress/'                          => 'CBX Map for Google Map & OpenStreetMap',
+                                'https://codeboxr.com/product/cbx-changelog-for-wordpress/'                           => 'CBX Changelog',
                                 'https://codeboxr.com/product/cbx-single-criteria-rating-review-for-wordpress/'       => 'CBX 5 Star Rating & Review',
-                                'https://codeboxr.com/product/cbx-google-map-for-wordpress/'                          => 'CBX Map for Google Map & OpenStreetMap'
+                                'https://codeboxr.com/product/cbx-user-online-for-wordpress/'                         => 'CBX User Online & Last Login',
+                                'https://codeboxr.com/product/cbx-poll-for-wordpress/'                                => 'CBX Poll',
+                                'https://codeboxr.com/product/cbx-tour-user-walkthroughs-guided-tours-for-wordpress/' => 'CBX Tour – User Walkthroughs/Guided Tours',
                         ];
 
-                        foreach ( $cbxwpbookmark_top_plugins as $link => $title ) {
+                        foreach ( $top_plugins as $top_plugin => $title ) {
                             echo '<div class="cbx-backend-settings-row">
-                            <a href="' . esc_url( $link ) . '" target="_blank">
+                            <a href="' . esc_url( $top_plugin ) . '" target="_blank">
                                 <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <defs/>
                                     <path d="M16.4 9.1L12.2 5c-.3-.3-.7-.3-1-.2s-.6.5-.6.9v1.7H4.2c-.5 0-.9.4-.9.9v3.4c0 .2.1.5.3.7.2.2.4.3.7.3h6.4v1.7c0 .4.2.7.6.9.4.1.8.1 1-.2l4.1-4.2c.4-.5.4-1.3 0-1.8z"
@@ -305,19 +280,98 @@ $cbxwpbookmark_doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com
                         <div class="cbx-backend-settings-row">
                             <ul>
                                 <li>
-                                    <a rel="external" target="_blank" href="https://comforterp.com/product/comfort-accounting-accounting-solution-for-wordpress">Comfort
-                                        Accounting</a></li>
+                                    <a rel="external" target="_blank"
+                                       href="https://comforterp.com/product/comfort-accounting-accounting-solution-for-wordpress">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M5 3h14v18H5zM8 7h8M8 11h8M8 15h5"
+                                                  fill="none" stroke="currentColor" stroke-width="1.8"
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Comfort Accounting
+                                    </a>
+                                </li>
+
                                 <li>
-                                    <a rel="external" target="_blank" href="https://comforterp.com/product/comfort-inventory-and-invoice-complete-invoice-plugin-for-wordpress">Comfort
-                                        Inventory & Invoice</a></li>
-                                <li><a rel="external" target="_blank" href="https://comforthrm.com/product/comfort-resume-wordpress-resume-builder-plugin">Comfort
-                                        Resume</a></li>
-                                <li><a rel="external" target="_blank" href="https://comforthrm.com/product/comfort-job-wordpress-job-board-plugin">Comfort
-                                        Job Board</a></li>
-                                <li><a rel="external" target="_blank" href="https://comforthrm.com/product/comfort-job-application-plugin-for-wordpress">Comfort
-                                        Job Application</a></li>
+                                    <a rel="external" target="_blank"
+                                       href="https://comforterp.com/product/comfort-inventory-and-invoice-complete-invoice-plugin-for-wordpress">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M4 5h16v14H4zM4 9h16M8 5v4M12 13h5M8 13h1M8 17h1"
+                                                  fill="none" stroke="currentColor" stroke-width="1.8"
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Comfort Inventory &amp; Invoice
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a rel="external" target="_blank"
+                                       href="https://comforthrm.com/product/comfort-resume-wordpress-resume-builder-plugin">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"
+                                                  fill="none" stroke="currentColor" stroke-width="1.8"
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Comfort Resume
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a rel="external" target="_blank"
+                                       href="https://comforthrm.com/product/comfort-job-wordpress-job-board-plugin">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M4 7h16v13H4zM9 7V5h6v2M4 11h16M10 11v3h4v-3"
+                                                  fill="none" stroke="currentColor" stroke-width="1.8"
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Comfort Job Board
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a rel="external" target="_blank"
+                                       href="https://comforthrm.com/product/comfort-job-application-plugin-for-wordpress">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h6M9 16h4"
+                                                  fill="none" stroke="currentColor" stroke-width="1.8"
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Comfort Job Application
+                                    </a>
+                                </li>
                             </ul>
                         </div>
+                    </div>
+                </div>
+                <div class="cbx-backend-card dashboard-wp-plugin">
+                    <div class="header">
+                        <div class="text">
+                            <h2><?php esc_html_e( 'Codeboxr News Updates', 'cbxwpbookmark' ); ?></h2>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <?php
+                        $news_items = CBXWPBookmarkHelper::codeboxr_news_feed();
+                        if ( $news_items !== false && count( $news_items ) > 0 ) {
+                            //phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+                            foreach ( $news_items as $news_item ) {
+                                $url   = $news_item['url']; //phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+                                $title = $news_item['title'];//phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
+                                echo '<div class="cbx-backend-settings-row">';
+                                echo '<a href="' . esc_url( $url ) . '" target="_blank">';
+                                echo '<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <defs/>
+                                                <path d="M16.4 9.1L12.2 5c-.3-.3-.7-.3-1-.2s-.6.5-.6.9v1.7H4.2c-.5 0-.9.4-.9.9v3.4c0 .2.1.5.3.7.2.2.4.3.7.3h6.4v1.7c0 .4.2.7.6.9.4.1.8.1 1-.2l4.1-4.2c.4-.5.4-1.3 0-1.8z"
+                                                      fill="currentColor"/>
+                                            </svg>';
+
+                                //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+                                echo $title;
+                                echo '</a>';
+                                echo '</div>';
+                            }//end for loop
+                        }//if data found
+                        ?>
                     </div>
                 </div>
             </div>

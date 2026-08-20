@@ -1,4 +1,5 @@
 <?php
+
 namespace CBXWPBookmark;
 
 use CBXWPBookmark\CBXWPBookmarkSettings;
@@ -90,10 +91,10 @@ class CBXWPBookmarkPublic {
 		register_widget( "CBXWPBookmarkCategoryWidget" );
 
 		//my bookmark widget
-		register_widget( "CBXWPBookmarkMyBookmarkWidget" );		
+		register_widget( "CBXWPBookmarkMyBookmarkWidget" );
 
 		//Most bookmark widget
-		register_widget( "CBXWPBookmarkMostWidget" );		
+		register_widget( "CBXWPBookmarkMostWidget" );
 	}//end init_widgets
 
 	/**
@@ -110,8 +111,8 @@ class CBXWPBookmarkPublic {
 		$bookmark_mode = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
 
-		$category_table = esc_sql($wpdb->prefix . 'cbxwpbookmarkcat');
-		$bookmark_table = esc_sql($wpdb->prefix . 'cbxwpbookmark');
+		$category_table = esc_sql( $wpdb->prefix . 'cbxwpbookmarkcat' );
+		$bookmark_table = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 
 		$user_id     = absint( get_current_user_id() ); //get the current logged in user id
 		$object_id   = isset( $_POST['object_id'] ) ? absint( $_POST['object_id'] ) : 0;
@@ -122,7 +123,7 @@ class CBXWPBookmarkPublic {
 
 		$cats_by_user_orderby = apply_filters( 'cbxwpbookmark_cats_by_user_orderby', $cats_by_user_orderby );
 
-		$cats_by_user_order   = apply_filters( 'cbxwpbookmark_cats_by_user_order', $cats_by_user_order );
+		$cats_by_user_order = apply_filters( 'cbxwpbookmark_cats_by_user_order', $cats_by_user_order );
 
 		//phpcs:disable
 		if ( $bookmark_mode == 'user_cat' ) {
@@ -301,7 +302,8 @@ class CBXWPBookmarkPublic {
 		$settings = $this->settings;
 
 
-		$page = absint( $settings->get_field( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
+		$mybookmark_page     = absint( $settings->get_field( 'mybookmark_pageid', 'cbxwpbookmark_basics', 0 ) );
+		$user_dashboard_page = absint( $settings->get_field( 'user_dashboard_page', 'cbxwpbookmark_basics', 0 ) );
 
 
 		$user_id = get_current_user_id();
@@ -313,11 +315,15 @@ class CBXWPBookmarkPublic {
 
 		$post_id = intval( $post->ID );
 
-
-		if ( $post_id > 0 && ( $post_id == $page ) ) {
+		//ignore my bookmark page
+		if ( $post_id > 0 && ( $post_id == $mybookmark_page ) ) {
 			return $content;
 		}
 
+		//ignore user dashboard page
+		if ( $post_id > 0 && ( $post_id == $user_dashboard_page ) ) {
+			return $content;
+		}
 
 		$post_type = $post->post_type;
 
@@ -491,8 +497,8 @@ class CBXWPBookmarkPublic {
 		}
 
 		global $wpdb;
-		$category_table = esc_sql($wpdb->prefix . 'cbxwpbookmarkcat');
-		$bookmark_table = esc_sql($wpdb->prefix . 'cbxwpbookmark');
+		$category_table = esc_sql( $wpdb->prefix . 'cbxwpbookmarkcat' );
+		$bookmark_table = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 
 		$cat_name    = isset( $_POST['cat_name'] ) ? sanitize_text_field( wp_unslash( $_POST['cat_name'] ) ) : '';
 		$cat_privacy = isset( $_POST['privacy'] ) ? absint( $_POST['privacy'] ) : 1;
@@ -559,8 +565,8 @@ class CBXWPBookmarkPublic {
 		check_ajax_referer( 'cbxbookmarknonce', 'security' );
 
 		global $wpdb;
-		$category_table = esc_sql($wpdb->prefix . 'cbxwpbookmarkcat');
-		$bookmark_table = esc_sql($wpdb->prefix . 'cbxwpbookmark');
+		$category_table = esc_sql( $wpdb->prefix . 'cbxwpbookmarkcat' );
+		$bookmark_table = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 
 		$cat_id      = isset( $_POST['cat_id'] ) ? intval( $_POST['cat_id'] ) : 0;
 		$cat_name    = isset( $_POST['cat_name'] ) ? sanitize_text_field( wp_unslash( $_POST['cat_name'] ) ) : '';
@@ -689,8 +695,8 @@ class CBXWPBookmarkPublic {
 		check_ajax_referer( 'cbxbookmarknonce', 'security' );
 
 		global $wpdb;
-		$category_table = esc_sql($wpdb->prefix . 'cbxwpbookmarkcat');
-		$bookmark_table = esc_sql($wpdb->prefix . 'cbxwpbookmark');
+		$category_table = esc_sql( $wpdb->prefix . 'cbxwpbookmarkcat' );
+		$bookmark_table = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 
 
 		$cat_id      = isset( $_POST['cat_id'] ) ? intval( $_POST['cat_id'] ) : 0;
@@ -805,7 +811,7 @@ class CBXWPBookmarkPublic {
 			$user_id  = get_current_user_id();
 
 			// Category Table with database Prefix
-			$category_table = esc_sql($wpdb->prefix . 'cbxwpbookmarkcat');
+			$category_table = esc_sql( $wpdb->prefix . 'cbxwpbookmarkcat' );
 
 			// Update Query
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -862,8 +868,8 @@ class CBXWPBookmarkPublic {
 			$cat_id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 
 
-			$category_table = esc_sql($wpdb->prefix . 'cbxwpbookmarkcat');
-			$bookmark_table = esc_sql($wpdb->prefix . 'cbxwpbookmark');
+			$category_table = esc_sql( $wpdb->prefix . 'cbxwpbookmarkcat' );
+			$bookmark_table = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 
 			$user_id = get_current_user_id();
 
@@ -967,7 +973,7 @@ class CBXWPBookmarkPublic {
 
 		$object_type = isset( $_POST['object_type'] ) ? sanitize_text_field( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page or any custom post and later any object type
 
-		$bookmark_table       = esc_sql($wpdb->prefix . 'cbxwpbookmark');
+		$bookmark_table       = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 		$user_bookmarks_count = cbxwpbookmarks_getTotalBookmarkByUser( $user_id );
 		$category_privacy     = 1;
 
@@ -1106,7 +1112,6 @@ class CBXWPBookmarkPublic {
 			$bookmark_id = isset( $_POST['bookmark_id'] ) ? absint( $_POST['bookmark_id'] ) : 0;
 			$object_id   = isset( $_POST['object_id'] ) ? absint( $_POST['object_id'] ) : 0;
 			$object_type = isset( $_POST['object_type'] ) ? sanitize_text_field( wp_unslash( $_POST['object_type'] ) ) : 'post'; //post, page or any custom post and later any object type
-
 
 
 			$user_id = get_current_user_id();
@@ -1298,8 +1303,8 @@ class CBXWPBookmarkPublic {
 		$bookmark_mode = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
 
-		$category_table = esc_sql($wpdb->prefix . 'cbxwpbookmarkcat');
-		$bookmark_table = esc_sql($wpdb->prefix . 'cbxwpbookmark');
+		$category_table = esc_sql( $wpdb->prefix . 'cbxwpbookmarkcat' );
+		$bookmark_table = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 
 		$user_id = absint( get_current_user_id() ); //get the current logged in user id
 
@@ -1530,7 +1535,7 @@ class CBXWPBookmarkPublic {
 
 		if ( is_array( $bookmarks ) && sizeof( $bookmarks ) > 0 ) {
 			global $wpdb;
-			$bookmark_table = esc_sql($wpdb->prefix . 'cbxwpbookmark');
+			$bookmark_table = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 
 			foreach ( $bookmarks as $single_bookmark ) {
 				$id = absint( $single_bookmark['id'] );
@@ -1800,17 +1805,17 @@ class CBXWPBookmarkPublic {
 	 * User Dashboard overview dashboard render
 	 */
 	public function user_dashboard_menu_page() {
-		$version = $this->version;
-		$css_url_part     = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
+		$version      = $this->version;
+		$css_url_part = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
 		wp_register_style( 'cbxwpbookmark-dashboard', $css_url_part . 'cbxwpbookmark-dashboard.css', [], $version, 'all' );
 		wp_enqueue_style( 'cbxwpbookmark-dashboard' );
 
-		$js_url_part_build  = CBXWPBOOKMARK_ROOT_URL . 'assets/js/build/';
-		$ver = $this->version;
-		$t   = true;
-		$current_user    = wp_get_current_user();
-		$blog_id         = is_multisite() ? get_current_blog_id() : null;
-		$js_translations = \CBXWPBookmarkHelper::dashboard_js_translation( $current_user , $blog_id );
+		$js_url_part_build = CBXWPBOOKMARK_ROOT_URL . 'assets/js/build/';
+		$ver               = $this->version;
+		$t                 = true;
+		$current_user      = wp_get_current_user();
+		$blog_id           = is_multisite() ? get_current_blog_id() : null;
+		$js_translations   = \CBXWPBookmarkHelper::dashboard_js_translation( $current_user, $blog_id );
 
 		if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE == true ) {
 			//for development version
@@ -1855,18 +1860,18 @@ class CBXWPBookmarkPublic {
 	 * User Dashboard Category list render
 	 */
 	public function category_dashboard_page() {
-		$settings      = $this->settings;
-		$version = $this->version;
-		$css_url_part     = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
+		$settings     = $this->settings;
+		$version      = $this->version;
+		$css_url_part = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
 		wp_register_style( 'cbxwpbookmark-builder', $css_url_part . 'cbxwpbookmark-builder.css', [], $version, 'all' );
 		wp_enqueue_style( 'cbxwpbookmark-builder' );
 
-		$js_url_part_build  = CBXWPBOOKMARK_ROOT_URL . 'assets/js/build/';
-		$ver = $this->version;
-		$t   = true;
-		$current_user    = wp_get_current_user();
-		$blog_id         = is_multisite() ? get_current_blog_id() : null;
-		$js_translations = \CBXWPBookmarkHelper::cbxwpbookmark_category_js_translation( $current_user , $blog_id );		
+		$js_url_part_build = CBXWPBOOKMARK_ROOT_URL . 'assets/js/build/';
+		$ver               = $this->version;
+		$t                 = true;
+		$current_user      = wp_get_current_user();
+		$blog_id           = is_multisite() ? get_current_blog_id() : null;
+		$js_translations   = \CBXWPBookmarkHelper::cbxwpbookmark_category_js_translation( $current_user, $blog_id );
 
 		if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE == true ) {
 			//for development version
@@ -1907,30 +1912,50 @@ class CBXWPBookmarkPublic {
 	 * User Dashboard Bookmark list render
 	 */
 	public function bookmark_dashboard_page() {
-		$settings      = $this->settings;
-		$version = $this->version;
-		$css_url_part     = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
+		$settings     = $this->settings;
+		$version      = $this->version;
+		$css_url_part = CBXWPBOOKMARK_ROOT_URL . 'assets/css/';
 		wp_register_style( 'cbxwpbookmark-builder', $css_url_part . 'cbxwpbookmark-builder.css', [], $version, 'all' );
 		wp_enqueue_style( 'cbxwpbookmark-builder' );
 
-		$js_url_part_build  = CBXWPBOOKMARK_ROOT_URL . 'assets/js/build/';
-		$ver = $this->version;
-		$t   = true;
-		$current_user    = wp_get_current_user();
-		$blog_id         = is_multisite() ? get_current_blog_id() : null;
-		$js_translations = \CBXWPBookmarkHelper::cbxwpbookmark_log_js_translation( $current_user , $blog_id );
+		$js_url_part_build = CBXWPBOOKMARK_ROOT_URL . 'assets/js/build/';
+		$ver               = $this->version;
+		$t                 = true;
+		$current_user      = wp_get_current_user();
+		$blog_id           = is_multisite() ? get_current_blog_id() : null;
+		$js_translations   = \CBXWPBookmarkHelper::cbxwpbookmark_log_js_translation( $current_user, $blog_id );
 
 		$bookmark_mode = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
 		$user_id = get_current_user_id();
-		if( $bookmark_mode == 'user_cat' ){
-			$js_translations['category_list'] = Category::where( 'user_id',  $user_id)->pluck('cat_name', 'id');
-		}elseif($bookmark_mode == 'global_cat'){
-			$js_translations['category_list'] = Category::pluck('cat_name', 'id');
+		if ( $bookmark_mode == 'user_cat' ) {
+			$js_translations['category_list'] = Category::where( 'user_id', $user_id )->pluck( 'cat_name', 'id' );
+		} elseif ( $bookmark_mode == 'global_cat' ) {
+			$js_translations['category_list'] = Category::pluck( 'cat_name', 'id' );
 		}
 
 		$js_translations['allowed_object_type'] = \CBXWPBookmarkHelper::allowed_object_type();
-		
+
+		$posts_definition = \CBXWPBookmarkHelper::post_types_multiselect( \CBXWPBookmarkHelper::post_types() );
+
+		$post_types_automation_default = $settings->get_field( 'cbxbookmarkposttypes', 'cbxwpbookmark_basics', [] );
+
+		if ( ! is_array( $post_types_automation_default ) ) {
+			$post_types_automation_default = [];
+		}
+
+		$posts_definition_automation = [];
+
+		foreach ( $posts_definition as $group_name => $post_types ) {
+			foreach ( $post_types as $post_type_key => $post_type_name ) {
+				if ( in_array( $post_type_key, $post_types_automation_default ) ) {
+					$posts_definition_automation[ $post_type_key ] = $post_type_name;
+				}
+			}
+		}
+
+		$js_translations['object_types'] = $posts_definition_automation;
+
 
 		if ( defined( 'CBXWPBOOKMARK_DEV_MODE' ) && CBXWPBOOKMARK_DEV_MODE == true ) {
 			//for development version

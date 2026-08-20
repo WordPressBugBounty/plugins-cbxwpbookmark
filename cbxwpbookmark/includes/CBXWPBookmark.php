@@ -265,7 +265,7 @@ class CBXWPBookmark {
 		add_action( 'wp_ajax_cbx_delete_bookmark_post', [ $plugin_public, 'delete_bookmark_post' ] );
 
 
-		//find all bookmark category by loggedin user ajax hook
+		//find all bookmark category by logged-in user ajax hook
 		add_action( 'wp_ajax_cbx_find_category', [ $plugin_public, 'find_category' ] );
 
 

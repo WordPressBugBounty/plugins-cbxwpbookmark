@@ -29,6 +29,7 @@ class Bookmark extends Eloquent {
 	protected $appends = [	
 		'permalink', 
 		'object_link',
+		'object',
 		'user_link',
 		'formatted_created_date',
 		// 'formatted_mod_date',
@@ -146,6 +147,63 @@ class Bookmark extends Eloquent {
 			return $post_id . ' - ' . esc_html__( 'Untitled article', 'cbxwpbookmark' );
 		} else {
 			return $post_id . ' - ' . $edit_link;
+		}
+	}
+
+	/**
+	 * get post edit link
+	 *
+	 */
+	public function getObjectAttribute() {
+		if ( ! isset( $this->attributes['object_id'] ) ) {
+			return '';
+		}
+
+		$post_id     = $object_id = intval( $this->attributes['object_id'] );
+		$object_type = esc_attr( $this->attributes['object_type'] );
+		$settings     = new CBXWPBookmarkSettings();;
+		$enable_buddypress_bookmark = intval( $settings->get_field( 'enable_buddypress_bookmark', 'cbxwpbookmark_proaddon', 0 ) );
+
+		$object_types = \CBXWPBookmarkHelper::object_types( true ); //get plain post type as array
+
+		$edit_link = '';
+
+		if ( in_array( $object_type, $object_types ) ) {
+			$post_title = wp_strip_all_tags( get_the_title( intval( $post_id ) ) );
+			$post_title = ( $post_title == '' ) ? esc_html__( 'Untitled article', 'cbxwpbookmark' ) : $post_title;
+			$edit_link  = '<a target="_blank" href="' . get_permalink( $post_id ) . '">' . esc_html( $post_title ) . '</a>';
+
+			return $edit_link;
+		} elseif ( $enable_buddypress_bookmark && $object_type == 'buddypress_activity' && function_exists( 'bp_activity_get' ) ) {
+
+			//$activity_get = bp_activity_get_specific( array( 'activity_ids' => array($object_id) ) );
+			$args = [
+				//'ids' => $object_id,
+				'in'       => $post_id,
+				'per_page' => 1
+			];
+
+			$activity_get = bp_activity_get( $args );
+
+
+			if ( isset( $activity_get['activities'][0] ) ) {
+				$activity = $activity_get['activities'][0];
+
+				$content = wp_strip_all_tags( $activity->content );
+				$content = ( $content != '' ) ? $content : esc_html__( 'buddyPress Activity', 'cbxwpbookmark' );
+
+				$edit_link = '<a target="_blank" href="' . bp_activity_get_permalink( $post_id ) . '">' . $content . '</a>';
+
+				return $edit_link;
+			}
+		}
+
+		$edit_link = apply_filters( 'cbxwpbookmark_dashboard_listing_editlink', $edit_link, $object_id, $object_type );
+
+		if ( $edit_link == '' ) {
+			return  esc_html__( 'Untitled article', 'cbxwpbookmark' );
+		} else {
+			return  $edit_link;
 		}
 	}
 

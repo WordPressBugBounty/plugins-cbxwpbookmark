@@ -54,7 +54,7 @@ class FrontDashboardController {
 			if( $category_mode == 'user_cat'){
 				$bookmarkCategoriesDataTemp = \CBXWPBookmarkHelper::getBookmarkCategoriesWithCount( $year, $month, $user_id );
 			}elseif(  $category_mode == 'global_cat' ){
-				$bookmarkCategoriesDataTemp = \CBXWPBookmarkHelper::getBookmarkCategoriesWithCount( $year, $month );
+				$bookmarkCategoriesDataTemp = \CBXWPBookmarkHelper::getBookmarkGlobalCategoriesWithCount( $year, $month, $user_id );
 			}
 			
 
