@@ -1,4 +1,5 @@
 <?php
+
 namespace CBXWPBookmark\Models;
 
 // If this file is called directly, abort.
@@ -26,8 +27,8 @@ class Bookmark extends Eloquent {
 	/**
 	 * @var string[]
 	 */
-	protected $appends = [	
-		'permalink', 
+	protected $appends = [
+		'permalink',
 		'object_link',
 		'object',
 		'user_link',
@@ -89,7 +90,7 @@ class Bookmark extends Eloquent {
 	}
 
 	/**
-	 * get post edit link
+	 * get post edit link(backend))
 	 *
 	 */
 	public function getObjectLinkAttribute() {
@@ -99,8 +100,12 @@ class Bookmark extends Eloquent {
 
 		$post_id     = $object_id = intval( $this->attributes['object_id'] );
 		$object_type = esc_attr( $this->attributes['object_type'] );
-		$settings     = new CBXWPBookmarkSettings();;
+		$settings    = new CBXWPBookmarkSettings();;
 		$enable_buddypress_bookmark = intval( $settings->get_field( 'enable_buddypress_bookmark', 'cbxwpbookmark_proaddon', 0 ) );
+		$open_newtab                = absint( $settings->get_field( 'bookmark_open_newtab', 'cbxwpbookmark_basics', 0 ) );
+		$target = ($open_newtab) ? ' target="_blank"' : '';
+
+
 
 		$object_types = \CBXWPBookmarkHelper::object_types( true ); //get plain post type as array
 
@@ -141,17 +146,17 @@ class Bookmark extends Eloquent {
 			}
 		}
 
-		$edit_link = apply_filters( 'cbxwpbookmark_dashboard_listing_editlink', $edit_link, $object_id, $object_type );
+		$edit_link = apply_filters( 'cbxwpbookmark_dashboard_listing_editlink', 'admin', $edit_link, $object_id, $object_type, $open_newtab );
 
 		if ( $edit_link == '' ) {
 			return $post_id . ' - ' . esc_html__( 'Untitled article', 'cbxwpbookmark' );
 		} else {
 			return $post_id . ' - ' . $edit_link;
 		}
-	}
+	}//end method getObjectLinkAttribute
 
 	/**
-	 * get post edit link
+	 * Get post edit link(frontend)
 	 *
 	 */
 	public function getObjectAttribute() {
@@ -161,8 +166,10 @@ class Bookmark extends Eloquent {
 
 		$post_id     = $object_id = intval( $this->attributes['object_id'] );
 		$object_type = esc_attr( $this->attributes['object_type'] );
-		$settings     = new CBXWPBookmarkSettings();;
+		$settings    = new CBXWPBookmarkSettings();;
 		$enable_buddypress_bookmark = intval( $settings->get_field( 'enable_buddypress_bookmark', 'cbxwpbookmark_proaddon', 0 ) );
+		$open_newtab                = absint( $settings->get_field( 'bookmark_open_newtab', 'cbxwpbookmark_basics', 0 ) );
+		$target = ($open_newtab) ? ' target="_blank"' : '';
 
 		$object_types = \CBXWPBookmarkHelper::object_types( true ); //get plain post type as array
 
@@ -171,7 +178,7 @@ class Bookmark extends Eloquent {
 		if ( in_array( $object_type, $object_types ) ) {
 			$post_title = wp_strip_all_tags( get_the_title( intval( $post_id ) ) );
 			$post_title = ( $post_title == '' ) ? esc_html__( 'Untitled article', 'cbxwpbookmark' ) : $post_title;
-			$edit_link  = '<a target="_blank" href="' . get_permalink( $post_id ) . '">' . esc_html( $post_title ) . '</a>';
+			$edit_link  = '<a '.$target.'  href="' . get_permalink( $post_id ) . '">' . esc_html( $post_title ) . '</a>';
 
 			return $edit_link;
 		} elseif ( $enable_buddypress_bookmark && $object_type == 'buddypress_activity' && function_exists( 'bp_activity_get' ) ) {
@@ -192,20 +199,20 @@ class Bookmark extends Eloquent {
 				$content = wp_strip_all_tags( $activity->content );
 				$content = ( $content != '' ) ? $content : esc_html__( 'buddyPress Activity', 'cbxwpbookmark' );
 
-				$edit_link = '<a target="_blank" href="' . bp_activity_get_permalink( $post_id ) . '">' . $content . '</a>';
+				$edit_link = '<a '.$target.' href="' . bp_activity_get_permalink( $post_id ) . '">' . $content . '</a>';
 
 				return $edit_link;
 			}
 		}
 
-		$edit_link = apply_filters( 'cbxwpbookmark_dashboard_listing_editlink', $edit_link, $object_id, $object_type );
+		$edit_link = apply_filters( 'cbxwpbookmark_dashboard_listing_editlink', 'frontend', $edit_link, $object_id, $object_type, $open_newtab );
 
 		if ( $edit_link == '' ) {
-			return  esc_html__( 'Untitled article', 'cbxwpbookmark' );
+			return esc_html__( 'Untitled article', 'cbxwpbookmark' );
 		} else {
-			return  $edit_link;
+			return $edit_link;
 		}
-	}
+	}//end method getObjectAttribute
 
 	/**
 	 * get post edit link
@@ -225,7 +232,7 @@ class Bookmark extends Eloquent {
 		}
 
 		return $user_html;
-	}
+	}//end method getUserLinkAttribute
 
 	/**
 	 * get permalink
@@ -256,4 +263,4 @@ class Bookmark extends Eloquent {
 
 		return date_i18n( $format, strtotime( $this->attributes['created_date'] ) );
 	}//end method getFormattedCreatedDateAttribute
-}//end class Event
+}//end class Bookmark

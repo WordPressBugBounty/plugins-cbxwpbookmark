@@ -49,7 +49,7 @@ class CssSelectorConverter
      * Optionally, a prefix can be added to the resulting XPath
      * expression with the $prefix parameter.
      */
-    public function toXPath(string $cssExpr, string $prefix = 'descendant-or-self::'): string
+    public function toXPath(string $cssExpr, string $prefix = 'descendant-or-self::') : string
     {
         $cacheKey = $prefix . "\x00" . $cssExpr;
         if (isset($this->cache[$cacheKey])) {
@@ -60,7 +60,7 @@ class CssSelectorConverter
         }
         if (\count($this->cache) >= self::$maxCachedItems) {
             // Evict the oldest entry
-            unset($this->cache[array_key_first($this->cache)]);
+            unset($this->cache[\array_key_first($this->cache)]);
         }
         return $this->cache[$cacheKey] = $this->translator->cssToXPath($cssExpr, $prefix);
     }

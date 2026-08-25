@@ -28,7 +28,7 @@ final class DeclarationBlockTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oDeclaration) {
             $oDeclaration->expandBorderShorthand();
         }
-        self::assertDeclarationBlockEquals(trim((string) $oDoc), $sExpected);
+        self::assertDeclarationBlockEquals(\trim((string) $oDoc), $sExpected);
     }
     /**
      * @return array<int, array<int, string>>
@@ -52,7 +52,7 @@ final class DeclarationBlockTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oDeclaration) {
             $oDeclaration->expandFontShorthand();
         }
-        self::assertDeclarationBlockEquals(trim((string) $oDoc), $sExpected);
+        self::assertDeclarationBlockEquals(\trim((string) $oDoc), $sExpected);
     }
     /**
      * @return array<int, array<int, string>>
@@ -76,7 +76,7 @@ final class DeclarationBlockTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oDeclaration) {
             $oDeclaration->expandBackgroundShorthand();
         }
-        self::assertDeclarationBlockEquals(trim((string) $oDoc), $sExpected);
+        self::assertDeclarationBlockEquals(\trim((string) $oDoc), $sExpected);
     }
     /**
      * @return array<int, array<int, string>>
@@ -100,7 +100,7 @@ final class DeclarationBlockTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oDeclaration) {
             $oDeclaration->expandDimensionsShorthand();
         }
-        self::assertDeclarationBlockEquals(trim((string) $oDoc), $sExpected);
+        self::assertDeclarationBlockEquals(\trim((string) $oDoc), $sExpected);
     }
     /**
      * @return array<int, array<int, string>>
@@ -124,7 +124,7 @@ final class DeclarationBlockTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oDeclaration) {
             $oDeclaration->createBorderShorthand();
         }
-        self::assertSame(trim((string) $oDoc), $sExpected);
+        self::assertSame(\trim((string) $oDoc), $sExpected);
     }
     /**
      * @return array<int, array<int, string>>
@@ -148,7 +148,7 @@ final class DeclarationBlockTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oDeclaration) {
             $oDeclaration->createFontShorthand();
         }
-        self::assertSame(trim((string) $oDoc), $sExpected);
+        self::assertSame(\trim((string) $oDoc), $sExpected);
     }
     /**
      * @return array<int, array<int, string>>
@@ -172,7 +172,7 @@ final class DeclarationBlockTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oDeclaration) {
             $oDeclaration->createDimensionsShorthand();
         }
-        self::assertSame(trim((string) $oDoc), $sExpected);
+        self::assertSame(\trim((string) $oDoc), $sExpected);
     }
     /**
      * @return array<int, array<int, string>>
@@ -196,7 +196,7 @@ final class DeclarationBlockTest extends TestCase
         foreach ($oDoc->getAllDeclarationBlocks() as $oDeclaration) {
             $oDeclaration->createBackgroundShorthand();
         }
-        self::assertSame(trim((string) $oDoc), $sExpected);
+        self::assertSame(\trim((string) $oDoc), $sExpected);
     }
     /**
      * @return array<int, array<int, string>>
@@ -269,9 +269,9 @@ final class DeclarationBlockTest extends TestCase
         $oDoc = $oParser->parse();
         $aDocs = $oDoc->getAllDeclarationBlocks();
         self::assertCount(1, $aDocs);
-        $oDeclaration = array_pop($aDocs);
+        $oDeclaration = \array_pop($aDocs);
         $oDeclaration->expandShorthands();
-        self::assertEquals(['padding-top' => 'padding-top: 20px;', 'padding-right' => 'padding-right: 5px;', 'padding-bottom' => 'padding-bottom: 5px;', 'padding-left' => 'padding-left: 5px;'], array_map('strval', $oDeclaration->getRulesAssoc()));
+        self::assertEquals(['padding-top' => 'padding-top: 20px;', 'padding-right' => 'padding-right: 5px;', 'padding-bottom' => 'padding-bottom: 5px;', 'padding-left' => 'padding-left: 5px;'], \array_map('strval', $oDeclaration->getRulesAssoc()));
     }
     /**
      * @return array<string, array{0: non-empty-string, 1: non-empty-string}>
@@ -334,7 +334,7 @@ final class DeclarationBlockTest extends TestCase
     private static function sortRulesInDeclarationBlock($declarationBlock)
     {
         // Match everything between `{` and `}`.
-        return \preg_replace_callback('/(?<=\{)[^\}]*+(?=\})/', [self::class, 'sortDeclarationBlockRules'], $declarationBlock);
+        return \preg_replace_callback('/(?<=\\{)[^\\}]*+(?=\\})/', [self::class, 'sortDeclarationBlockRules'], $declarationBlock);
     }
     /**
      * Sorts rules from within a declaration block by property name.

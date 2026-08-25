@@ -132,7 +132,7 @@ final class ASCII
      *
      * @phpstan-return array<string, string>
      */
-    public static function getAllLanguages(): array
+    public static function getAllLanguages() : array
     {
         // init
         static $LANGUAGES = [];
@@ -166,7 +166,7 @@ final class ASCII
      *
      * @phpstan-return array<string, array<string , string>>
      */
-    public static function charsArray(bool $replace_extra_symbols = \false): array
+    public static function charsArray(bool $replace_extra_symbols = \false) : array
     {
         if ($replace_extra_symbols) {
             self::prepareAsciiAndExtrasMaps();
@@ -192,7 +192,7 @@ final class ASCII
      *
      * @phpstan-return array<string, array<int, string>>
      */
-    public static function charsArrayWithMultiLanguageValues(bool $replace_extra_symbols = \false): array
+    public static function charsArrayWithMultiLanguageValues(bool $replace_extra_symbols = \false) : array
     {
         /**
          * @var array<string, array>
@@ -243,7 +243,7 @@ final class ASCII
      *
      * @phpstan-return array{orig: string[], replace: string[]}|array<string, string>
      */
-    public static function charsArrayWithOneLanguage(string $language = self::ENGLISH_LANGUAGE_CODE, bool $replace_extra_symbols = \false, bool $asOrigReplaceArray = \true): array
+    public static function charsArrayWithOneLanguage(string $language = self::ENGLISH_LANGUAGE_CODE, bool $replace_extra_symbols = \false, bool $asOrigReplaceArray = \true) : array
     {
         $language = self::get_language($language);
         // init
@@ -266,10 +266,13 @@ final class ASCII
                 } else {
                     $CHARS_ARRAY[$cacheKey][$language] = $tmpArray;
                 }
-            } else if ($asOrigReplaceArray) {
-                $CHARS_ARRAY[$cacheKey][$language] = ['orig' => [], 'replace' => []];
             } else {
-                $CHARS_ARRAY[$cacheKey][$language] = [];
+                /** @noinspection NestedPositiveIfStatementsInspection */
+                if ($asOrigReplaceArray) {
+                    $CHARS_ARRAY[$cacheKey][$language] = ['orig' => [], 'replace' => []];
+                } else {
+                    $CHARS_ARRAY[$cacheKey][$language] = [];
+                }
             }
         } else {
             self::prepareAsciiMaps();
@@ -281,10 +284,13 @@ final class ASCII
                 } else {
                     $CHARS_ARRAY[$cacheKey][$language] = $tmpArray;
                 }
-            } else if ($asOrigReplaceArray) {
-                $CHARS_ARRAY[$cacheKey][$language] = ['orig' => [], 'replace' => []];
             } else {
-                $CHARS_ARRAY[$cacheKey][$language] = [];
+                /** @noinspection NestedPositiveIfStatementsInspection */
+                if ($asOrigReplaceArray) {
+                    $CHARS_ARRAY[$cacheKey][$language] = ['orig' => [], 'replace' => []];
+                } else {
+                    $CHARS_ARRAY[$cacheKey][$language] = [];
+                }
             }
         }
         return $CHARS_ARRAY[$cacheKey][$language] ?? ['orig' => [], 'replace' => []];
@@ -309,7 +315,7 @@ final class ASCII
      *
      * @phpstan-return array{orig: string[], replace: string[]}|array<string, string>
      */
-    public static function charsArrayWithSingleLanguageValues(bool $replace_extra_symbols = \false, bool $asOrigReplaceArray = \true): array
+    public static function charsArrayWithSingleLanguageValues(bool $replace_extra_symbols = \false, bool $asOrigReplaceArray = \true) : array
     {
         // init
         /**
@@ -361,20 +367,20 @@ final class ASCII
      * @return string
      *                <p>A clean UTF-8 string.</p>
      */
-    public static function clean(string $str, bool $normalize_whitespace = \true, bool $keep_non_breaking_space = \false, bool $normalize_msword = \true, bool $remove_invisible_characters = \true): string
+    public static function clean(string $str, bool $normalize_whitespace = \true, bool $keep_non_breaking_space = \false, bool $normalize_msword = \true, bool $remove_invisible_characters = \true) : string
     {
         // http://stackoverflow.com/questions/1401317/remove-non-utf8-characters-from-string
         // caused connection reset problem on larger strings
         $regex = '/
           (
-            (?: [\x00-\x7F]               # single-byte sequences   0xxxxxxx
-            |   [\xC0-\xDF][\x80-\xBF]    # double-byte sequences   110xxxxx 10xxxxxx
-            |   [\xE0-\xEF][\x80-\xBF]{2} # triple-byte sequences   1110xxxx 10xxxxxx * 2
-            |   [\xF0-\xF7][\x80-\xBF]{3} # quadruple-byte sequence 11110xxx 10xxxxxx * 3
+            (?: [\\x00-\\x7F]               # single-byte sequences   0xxxxxxx
+            |   [\\xC0-\\xDF][\\x80-\\xBF]    # double-byte sequences   110xxxxx 10xxxxxx
+            |   [\\xE0-\\xEF][\\x80-\\xBF]{2} # triple-byte sequences   1110xxxx 10xxxxxx * 2
+            |   [\\xF0-\\xF7][\\x80-\\xBF]{3} # quadruple-byte sequence 11110xxx 10xxxxxx * 3
             ){1,100}                      # ...one or more times
           )
-        | ( [\x80-\xBF] )                 # invalid byte in range 10000000 - 10111111
-        | ( [\xC0-\xFF] )                 # invalid byte in range 11000000 - 11111111
+        | ( [\\x80-\\xBF] )                 # invalid byte in range 10000000 - 10111111
+        | ( [\\xC0-\\xFF] )                 # invalid byte in range 11000000 - 11111111
         /x';
         $str = (string) \preg_replace($regex, '$1', $str);
         if ($normalize_whitespace) {
@@ -405,7 +411,7 @@ final class ASCII
      *              <strong>false</strong> otherwise
      *              </p>
      */
-    public static function is_ascii(string $str): bool
+    public static function is_ascii(string $str) : bool
     {
         if ($str === '') {
             return \true;
@@ -428,7 +434,7 @@ final class ASCII
      * @return string
      *                <p>A string with normalized characters for commonly used chars in Word documents.</p>
      */
-    public static function normalize_msword(string $str): string
+    public static function normalize_msword(string $str) : string
     {
         if ($str === '') {
             return '';
@@ -467,7 +473,7 @@ final class ASCII
      * @return string
      *                <p>A string with normalized whitespace.</p>
      */
-    public static function normalize_whitespace(string $str, bool $keepNonBreakingSpace = \false, bool $keepBidiUnicodeControls = \false, bool $normalize_control_characters = \false): string
+    public static function normalize_whitespace(string $str, bool $keepNonBreakingSpace = \false, bool $keepBidiUnicodeControls = \false, bool $normalize_control_characters = \false) : string
     {
         if ($str === '') {
             return '';
@@ -526,7 +532,7 @@ final class ASCII
      *
      * @return string
      */
-    public static function remove_invisible_characters(string $str, bool $url_encoded = \false, string $replacement = '', bool $keep_basic_control_characters = \true): string
+    public static function remove_invisible_characters(string $str, bool $url_encoded = \false, string $replacement = '', bool $keep_basic_control_characters = \true) : string
     {
         // init
         $non_displayables = [];
@@ -541,11 +547,11 @@ final class ASCII
             // url encoded 16-31
         }
         if ($keep_basic_control_characters) {
-            $non_displayables[] = '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S';
+            $non_displayables[] = '/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]+/S';
             // 00-08, 11, 12, 14-31, 127
         } else {
             $str = self::normalize_whitespace($str, \false, \false, \true);
-            $non_displayables[] = '/[^\P{C}\s]/u';
+            $non_displayables[] = '/[^\\P{C}\\s]/u';
         }
         do {
             $str = (string) \preg_replace($non_displayables, $replacement, $str, -1, $count);
@@ -569,7 +575,7 @@ final class ASCII
      *
      * @phpstan-return array{0: string, 1: string}
      */
-    public static function to_ascii_remap(string $str1, string $str2): array
+    public static function to_ascii_remap(string $str1, string $str2) : array
     {
         $charMap = [];
         $str1 = self::to_ascii_remap_intern($str1, $charMap);
@@ -594,11 +600,11 @@ final class ASCII
      * @param  string $str UTF-8 string to be converted to extended ASCII.
      * @return string Mapped borken string.
      */
-    private static function to_ascii_remap_intern(string $str, array &$map): string
+    private static function to_ascii_remap_intern(string $str, array &$map) : string
     {
         // find all utf-8 characters
         $matches = [];
-        if (!\preg_match_all('/[\xC0-\xF7][\x80-\xBF]+/', $str, $matches)) {
+        if (!\preg_match_all('/[\\xC0-\\xF7][\\x80-\\xBF]+/', $str, $matches)) {
             return $str;
             // plain ascii string
         }
@@ -643,7 +649,7 @@ final class ASCII
      * @return string
      *                <p>A string that contains only ASCII characters.</p>
      */
-    public static function to_ascii(string $str, string $language = self::ENGLISH_LANGUAGE_CODE, bool $remove_unsupported_chars = \true, bool $replace_extra_symbols = \false, bool $use_transliterate = \false, bool $replace_single_chars_only = null): string
+    public static function to_ascii(string $str, string $language = self::ENGLISH_LANGUAGE_CODE, bool $remove_unsupported_chars = \true, bool $replace_extra_symbols = \false, bool $use_transliterate = \false, bool $replace_single_chars_only = null) : string
     {
         if ($str === '') {
             return '';
@@ -787,16 +793,16 @@ final class ASCII
      * @return string
      *                <p>A string that contains only safe characters for a filename.</p>
      */
-    public static function to_filename(string $str, bool $use_transliterate = \true, string $fallback_char = '-'): string
+    public static function to_filename(string $str, bool $use_transliterate = \true, string $fallback_char = '-') : string
     {
         if ($use_transliterate) {
             $str = self::to_transliterate($str, $fallback_char);
         }
         $fallback_char_escaped = \preg_quote($fallback_char, '/');
         $str = (string) \preg_replace([
-            '/[^' . $fallback_char_escaped . '.\-a-zA-Z0-9\s]/',
+            '/[^' . $fallback_char_escaped . '.\\-a-zA-Z0-9\\s]/',
             // 1) remove un-needed chars
-            '/[\s]+/u',
+            '/[\\s]+/u',
             // 2) convert spaces to $fallback_char
             '/[' . $fallback_char_escaped . ']+/u',
         ], ['', $fallback_char, $fallback_char], $str);
@@ -825,7 +831,7 @@ final class ASCII
      * @return string
      *                <p>A string that has been converted to an URL slug.</p>
      */
-    public static function to_slugify(string $str, string $separator = '-', string $language = self::ENGLISH_LANGUAGE_CODE, array $replacements = [], bool $replace_extra_symbols = \false, bool $use_str_to_lower = \true, bool $use_transliterate = \false): string
+    public static function to_slugify(string $str, string $separator = '-', string $language = self::ENGLISH_LANGUAGE_CODE, array $replacements = [], bool $replace_extra_symbols = \false, bool $use_str_to_lower = \true, bool $use_transliterate = \false) : string
     {
         if ($str === '') {
             return '';
@@ -835,13 +841,13 @@ final class ASCII
         }
         $str = self::to_ascii($str, $language, \false, $replace_extra_symbols, $use_transliterate);
         $str = \str_replace('@', $separator, $str);
-        $str = (string) \preg_replace('/[^a-zA-Z\d\s\-_' . \preg_quote($separator, '/') . ']/', '', $str);
+        $str = (string) \preg_replace('/[^a-zA-Z\\d\\s\\-_' . \preg_quote($separator, '/') . ']/', '', $str);
         if ($use_str_to_lower) {
             $str = \strtolower($str);
         }
-        $str = (string) \preg_replace('/^[\'\s]+|[\'\s]+$/', '', $str);
-        $str = (string) \preg_replace('/\B([A-Z])/', '-\1', $str);
-        $str = (string) \preg_replace('/[\-_\s]+/', $separator, $str);
+        $str = (string) \preg_replace('/^[\'\\s]+|[\'\\s]+$/', '', $str);
+        $str = (string) \preg_replace('/\\B([A-Z])/', '-\\1', $str);
+        $str = (string) \preg_replace('/[\\-_\\s]+/', $separator, $str);
         $l = \strlen($separator);
         if ($l && \strpos($str, $separator) === 0) {
             $str = (string) \substr($str, $l);
@@ -872,7 +878,7 @@ final class ASCII
      *
      * @noinspection ParameterDefaultValueIsNotNullInspection
      */
-    public static function to_transliterate(string $str, $unknown = '?', bool $strict = \false): string
+    public static function to_transliterate(string $str, $unknown = '?', bool $strict = \false) : string
     {
         /**
          * @var array<int,string>|null
@@ -923,7 +929,7 @@ final class ASCII
         if (self::$ORD === null) {
             self::$ORD = self::getData('ascii_ord');
         }
-        \preg_match_all('/.|[^\x00]$/us', $str, $array_tmp);
+        \preg_match_all('/.|[^\\x00]$/us', $str, $array_tmp);
         $chars = $array_tmp[0];
         $ord = null;
         $str_tmp = '';
@@ -1039,7 +1045,7 @@ final class ASCII
             return \strtolower($language);
         }
         $language = \str_replace('-', '_', \strtolower($language));
-        $regex = '/(?<first>[a-z]+)_\g{first}/';
+        $regex = '/(?<first>[a-z]+)_\\g{first}/';
         return (string) \preg_replace($regex, '$1', $language);
     }
     /**
@@ -1069,7 +1075,7 @@ final class ASCII
      *
      * @return array<mixed>
      */
-    private static function getDataIfExists(string $file): array
+    private static function getDataIfExists(string $file) : array
     {
         $file = __DIR__ . '/data/' . $file . '.php';
         /** @psalm-suppress ImpureFunctionCall */

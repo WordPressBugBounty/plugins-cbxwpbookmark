@@ -59,8 +59,8 @@ class CBXWPBookmarkPublic {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @param string $plugin_name The name of the plugin.
-	 * @param string $version The version of this plugin.
+	 * @param  string  $plugin_name  The name of the plugin.
+	 * @param  string  $version  The version of this plugin.
 	 *
 	 * @since    1.0.0
 	 *
@@ -1073,7 +1073,6 @@ class CBXWPBookmarkPublic {
 					$bookmark_id = $wpdb->insert_id;
 
 					do_action( 'cbxbookmark_bookmark_added', $bookmark_id, $user_id, $object_id, $object_type, $category_privacy );
-					//write_log('cbxbookmark_bookmark_added');
 
 				} else {
 					$message['code'] = 0; //db operation failed
@@ -1091,7 +1090,7 @@ class CBXWPBookmarkPublic {
 		$message['bookmark_count']  = $bookmark_total;
 		$message['bookmark_byuser'] = ( $bookmark_by_user ) ? 1 : 0;
 
-		if ( $alert_msg != '' ) {
+		if ( $alert_msg !== '' ) {
 			$message['alert_msg'] = $alert_msg;
 		}
 
@@ -1303,27 +1302,28 @@ class CBXWPBookmarkPublic {
 		$bookmark_mode = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
 
 
+
 		$category_table = esc_sql( $wpdb->prefix . 'cbxwpbookmarkcat' );
 		$bookmark_table = esc_sql( $wpdb->prefix . 'cbxwpbookmark' );
 
 		$user_id = absint( get_current_user_id() ); //get the current logged in user id
 
-		$cat_id    = isset( $_POST['cat_id'] ) ? absint( $_POST['cat_id'] ) : 0;
-		$cat_total = isset( $_POST['cat_total'] ) ? absint( $_POST['cat_total'] ) : 0;
-		$privacy   = isset( $_POST['privacy'] ) ? absint( $_POST['privacy'] ) : 1;
-		$userid    = isset( $_POST['userid'] ) ? absint( $_POST['userid'] ) : 0;
-		$totalpage = isset( $_POST['totalpage'] ) ? absint( $_POST['totalpage'] ) : 0;
-		$page      = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 0;
+		$cat_id     = isset( $_POST['cat_id'] ) ? absint( $_POST['cat_id'] ) : 0;
+		$cat_total  = isset( $_POST['cat_total'] ) ? absint( $_POST['cat_total'] ) : 0;
+		$privacy    = isset( $_POST['privacy'] ) ? absint( $_POST['privacy'] ) : 1;
+		$user_id    = isset( $_POST['userid'] ) ? absint( $_POST['userid'] ) : 0;
+		$total_page = isset( $_POST['totalpage'] ) ? absint( $_POST['totalpage'] ) : 0;
+		$page       = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 0;
 
 
 		$per_page   = apply_filters( 'cbxwpbookmark_sublist_perpage', 10 );
 		$total_page = ceil( $cat_total / $per_page );
 
-		if ( $userid == 0 ) {
-			$userid = get_current_user_id();
+		if ( $user_id == 0 ) {
+			$user_id = get_current_user_id();
 		}
 
-		if ( $userid == 0 ) {
+		if ( $user_id == 0 ) {
 			$privacy = 1; //only public
 		}
 
@@ -1343,8 +1343,8 @@ class CBXWPBookmarkPublic {
 		$order_by = 'object_id';
 		$order    = 'DESC';
 
-		if ( $bookmark_mode == 'user_cat' ) {
-			$param    = [ $userid, $cat_id ];
+		if ( $bookmark_mode === 'user_cat' ) {
+			$param    = [ $user_id, $cat_id ];
 			$main_sql .= "SELECT *  FROM $bookmark_table  WHERE user_id=%d AND cat_id = %d group by object_id  ORDER BY $order_by $order $limit_sql";
 
 		} else {
@@ -1374,7 +1374,8 @@ class CBXWPBookmarkPublic {
 					$li_output = cbxwpbookmark_get_template_html( 'bookmarkpost/single.php', [
 						'item'           => $item,
 						'action_html'    => $action_html,
-						'sub_item_class' => $sub_item_class
+						'sub_item_class' => $sub_item_class,
+						'settings'       => $settings,
 					] );
 
 					$output .= $li_output;
@@ -1395,17 +1396,17 @@ class CBXWPBookmarkPublic {
 		//code 1 = bookmarks found
 		//code 0 = bookmarks not found
 
-		if ( $output != '' ) {
+		if ( $output !== '' ) {
 			$message['page']      = $page;
-			$message['totalpage'] = $totalpage;
-			$message['show_more'] = ( $page < $totalpage ) ? 1 : 0;
+			$message['totalpage'] = $total_page;
+			$message['show_more'] = ( $page < $total_page ) ? 1 : 0;
 			$message['code']      = 1;
 			$message['msg']       = esc_html__( 'Bookmarks loaded', 'cbxwpbookmark' );
 			$message['output']    = wp_json_encode( $output );
 		} else {
 			$message['page']      = $page;
-			$message['totalpage'] = $totalpage;
-			$message['show_more'] = ( $page < $totalpage ) ? 1 : 0;
+			$message['totalpage'] = $total_page;
+			$message['show_more'] = ( $page < $total_page ) ? 1 : 0;
 			$message['code']      = 0;
 			$message['msg']       = esc_html__( 'Bookmark not found', 'cbxwpbookmark' );
 		}
@@ -1926,6 +1927,7 @@ class CBXWPBookmarkPublic {
 		$js_translations   = \CBXWPBookmarkHelper::cbxwpbookmark_log_js_translation( $current_user, $blog_id );
 
 		$bookmark_mode = $settings->get_field( 'bookmark_mode', 'cbxwpbookmark_basics', 'user_cat' );
+		$open_newtab   = absint( $settings->get_field( 'bookmark_open_newtab', 'cbxwpbookmark_basics', 0 ) );
 
 		$user_id = get_current_user_id();
 		if ( $bookmark_mode == 'user_cat' ) {
@@ -1935,6 +1937,7 @@ class CBXWPBookmarkPublic {
 		}
 
 		$js_translations['allowed_object_type'] = \CBXWPBookmarkHelper::allowed_object_type();
+		$js_translations['open_newtab']         = $open_newtab;
 
 		$posts_definition = \CBXWPBookmarkHelper::post_types_multiselect( \CBXWPBookmarkHelper::post_types() );
 

@@ -3,7 +3,7 @@ Contributors: codeboxr, manchumahara
 Tags: bookmark,favorite,collection,user collection,user bookmark
 Requires at least: 5.9
 Tested up to: 7.1
-Stable tag: 2.0.9
+Stable tag: 2.0.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -169,6 +169,11 @@ How to install the plugin and get it working.
 == Screenshots ==
 
 == Changelog ==
+= 2.0.10 =
+* [new] New option in setting to open bookmark url in new tab
+* [update] Bookmark display related templates updated for bookmark open in new tab option
+* [updated] Pro Addon 2.0.10 released
+
 = 2.0.9 =
 * [updated] Compatible with WordPress 7.1
 * [fixed] Frontend dashboard - Bookmark Manager listing id col removed
@@ -184,76 +189,3 @@ How to install the plugin and get it working.
 = 2.0.7 =
 * [improved] Improved accessibility
 * [updated] Pro Addon 2.0.7 released
-
-= 2.0.6 =
-* [fixed] Dashboard and frontend bookmark listing js error fixed if single click category mode
-
-= 2.0.5 =
-* [fixed] VC widget error fixed
-* [updated] WordPress 6.9 compatible
-* [updated] Pro Addon 2.0.5 released
-* [new] Pro addon now supports automatic update [check setting]
-
-= 2.0.4 =
-* [fixed] Composer based custom scope/namespace for vendor to avoid conflict with other plugins
-* [fixed] Composer based custom scope/namespace for vendor to avoid conflict with other plugins
-* [fixed] Pro addon 2.0.4 released and needed to update to make it work with core 2.0.4
-* [note] Pro addon note: deactivate, manually delete & install new version or install the new version as replacement.
-* [fixed] Astra theme hash base vue js route fixed
-
-= 2.0.3 =
-* [important] From core version 2.0.0 there is compatibility issues with php and pro addon. For safe deactivate Bookmark pro addon(s). Update core & activate. the update pro addon.
-* [fixed] Fixed site crash or db connectivity error if not default mysql port
-* [improved] Table names are now escape[security improvement]
-* [improved] Pro Addon compatibility checking improved(2nd attempt)
-* [fixed] Frontend Dashboard - bookmarks and category link fixed
-* [updated] Pro addon 2.0.3 released
-
-= 2.0.2 =
-* [fixed] Pro Addon compatibility checking improved
-* [updated] Pro addon 2.0.2 released
-* [fixed] Auto page create security issue fixed(Reported by Nabil Irawan)
-
-= 2.0.1 =
-* [fixed] Composer loading issue solved
-
-= 2.0.0 =
-* [updated] PHP version compatibility check updated
-* [fixed] PHP file direct access check issue checked for all files
-* [updated] Admin dashboard design/views updated.
-* [updated] Admin dashboard pages implemented with js views
-* [improved] Helps and support and dashboard page separated
-* [updated] Pro Addon plugin V2.0.0 released
-
-= 1.9.11 =
-* [fixed] Deleting one category was deleting bookmarks from other category if bookmarks were in both category.
-* [updated] Pro addon plugin 1.5.4 released and compatible with latest Core Plugin 1.9.11
-* [improved] Minor improvements for style
-
-= 1.9.10 =
-* [updated] Pro addon plugin 1.5.3 released
-* [improved] Minor improvements
-
-
-= 1.9.9 =
-* [improved] WordPress version 6.8 compatibility checked
-* [updated] Pro addon plugin 1.5.2 released
-
-= 1.9.8 =
-* [improved] Bookmark button tooltip improved based on bookmarked or not https://wordpress.org/support/topic/return-to-page-message/
-
-= 1.9.7 =
-* [fixed] Frontend delete all bookmarks was not clearing the bookmarks display but was deleting properly. https://wordpress.org/support/topic/delete-all-bug/
-
-= 1.9.6 =
-* [updated] Category order and order by display changed for bookmark modal screen, new hooks
-
-= 1.9.5 =
-* [updated] Misc changes
-* [updated] Pro addon plugin 1.5.1 released
-
-= 1.9.4 =
-* [fixed] Setting variable related issues fixed
-
-= 1.9.3 =
-* [fixed] Setting variable related issues fixed

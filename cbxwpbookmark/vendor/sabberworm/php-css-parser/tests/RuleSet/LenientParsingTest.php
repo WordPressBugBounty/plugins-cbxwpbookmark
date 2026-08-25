@@ -27,7 +27,7 @@ final class LenientParsingTest extends TestCase
     {
         $this->expectException(UnexpectedTokenException::class);
         $sFile = __DIR__ . '/../fixtures/-fault-tolerance.css';
-        $oParser = new Parser(file_get_contents($sFile), Settings::create()->beStrict());
+        $oParser = new Parser(\file_get_contents($sFile), Settings::create()->beStrict());
         $oParser->parse();
     }
     /**
@@ -36,7 +36,7 @@ final class LenientParsingTest extends TestCase
     public function faultToleranceOn()
     {
         $sFile = __DIR__ . '/../fixtures/-fault-tolerance.css';
-        $oParser = new Parser(file_get_contents($sFile), Settings::create()->withLenientParsing(\true));
+        $oParser = new Parser(\file_get_contents($sFile), Settings::create()->withLenientParsing(\true));
         $oResult = $oParser->parse();
         self::assertSame('.test1 {}' . "\n" . '.test2 {hello: 2.2;hello: 2000000000000.2;}' . "\n" . '#test {}' . "\n" . '#test2 {help: none;}', $oResult->render());
     }
@@ -47,7 +47,7 @@ final class LenientParsingTest extends TestCase
     {
         $this->expectException(UnexpectedTokenException::class);
         $sFile = __DIR__ . '/../fixtures/-end-token.css';
-        $oParser = new Parser(file_get_contents($sFile), Settings::create()->beStrict());
+        $oParser = new Parser(\file_get_contents($sFile), Settings::create()->beStrict());
         $oParser->parse();
     }
     /**
@@ -57,7 +57,7 @@ final class LenientParsingTest extends TestCase
     {
         $this->expectException(UnexpectedTokenException::class);
         $sFile = __DIR__ . '/../fixtures/-end-token-2.css';
-        $oParser = new Parser(file_get_contents($sFile), Settings::create()->beStrict());
+        $oParser = new Parser(\file_get_contents($sFile), Settings::create()->beStrict());
         $oParser->parse();
     }
     /**
@@ -66,7 +66,7 @@ final class LenientParsingTest extends TestCase
     public function endTokenPositive()
     {
         $sFile = __DIR__ . '/../fixtures/-end-token.css';
-        $oParser = new Parser(file_get_contents($sFile), Settings::create()->withLenientParsing(\true));
+        $oParser = new Parser(\file_get_contents($sFile), Settings::create()->withLenientParsing(\true));
         $oResult = $oParser->parse();
         self::assertSame("", $oResult->render());
     }
@@ -76,7 +76,7 @@ final class LenientParsingTest extends TestCase
     public function endToken2Positive()
     {
         $sFile = __DIR__ . '/../fixtures/-end-token-2.css';
-        $oParser = new Parser(file_get_contents($sFile), Settings::create()->withLenientParsing(\true));
+        $oParser = new Parser(\file_get_contents($sFile), Settings::create()->withLenientParsing(\true));
         $oResult = $oParser->parse();
         self::assertSame('#home .bg-layout {background-image: url("/bundles/main/img/bg1.png?5");}', $oResult->render());
     }
@@ -85,9 +85,9 @@ final class LenientParsingTest extends TestCase
      */
     public function localeTrap()
     {
-        setlocale(\LC_ALL, "pt_PT", "no");
+        \setlocale(\LC_ALL, "pt_PT", "no");
         $sFile = __DIR__ . '/../fixtures/-fault-tolerance.css';
-        $oParser = new Parser(file_get_contents($sFile), Settings::create()->withLenientParsing(\true));
+        $oParser = new Parser(\file_get_contents($sFile), Settings::create()->withLenientParsing(\true));
         $oResult = $oParser->parse();
         self::assertSame('.test1 {}' . "\n" . '.test2 {hello: 2.2;hello: 2000000000000.2;}' . "\n" . '#test {}' . "\n" . '#test2 {help: none;}', $oResult->render());
     }
@@ -97,7 +97,7 @@ final class LenientParsingTest extends TestCase
     public function caseInsensitivity()
     {
         $sFile = __DIR__ . '/../fixtures/case-insensitivity.css';
-        $oParser = new Parser(file_get_contents($sFile));
+        $oParser = new Parser(\file_get_contents($sFile));
         $oResult = $oParser->parse();
         self::assertSame('@charset "utf-8";' . "\n" . '@import url("test.css");' . "\n@media screen {}" . "\n#myid {case: insensitive !important;frequency: 30Hz;font-size: 1em;color: #ff0;" . 'color: hsl(40,40%,30%);font-family: Arial;}', $oResult->render());
     }

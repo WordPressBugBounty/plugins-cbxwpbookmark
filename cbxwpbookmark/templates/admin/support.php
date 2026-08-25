@@ -85,8 +85,15 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                     <div class="content">
                         <div class="releases">
                             <div class="release">
+                                <h3>Version 2.0.10</h3>
+                                <ul>
+                                    <li class="new">New option in setting to open bookmark url in new tab.</li>
+                                    <li class="updated">Bookmark display related templates updated for bookmark open in new tab option.</li>
+                                    <li class="updated">Pro Addon 2.0.10 released.</li>
+                                </ul>
+                            </div>
+                            <div class="release">
                                 <h3>Version 2.0.9</h3>
-
                                 <ul>
                                     <li class="updated">Compatible with WordPress 7.1.</li>
                                     <li class="fixed">Frontend dashboard - Bookmark Manager listing id col removed.</li>
@@ -94,10 +101,8 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                                     <li class="updated">Pro Addon 2.0.9 released.</li>
                                 </ul>
                             </div>
-
                             <div class="release">
                                 <h3>Version 2.0.8</h3>
-
                                 <ul>
                                     <li class="new">On user delete, bookmark delete added.</li>
                                     <li class="new">[improved] bookmark unique constraint added.</li>
@@ -105,35 +110,6 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                                     <li class="updated">Pro Addon 2.0.8 released.</li>
                                 </ul>
                             </div>
-
-                            <div class="release">
-                                <h3>Version 2.0.7</h3>
-
-                                <ul>
-                                    <li class="improvements">[improved] Improved accessibility.</li>
-                                    <li class="updated">Pro Addon 2.0.7 released.</li>
-                                </ul>
-                            </div>
-
-                            <div class="release">
-                                <h3>Version 2.0.6</h3>
-
-                                <ul>
-                                    <li class="fixed">Dashboard and frontend bookmark listing js error fixed if single click category mode.</li>
-                                </ul>
-                            </div>
-
-                            <div class="release">
-                                <h3>Version 2.0.5</h3>
-
-                                <ul>
-                                    <li class="fixed">VC widget error fixed.</li>
-                                    <li class="updated">WordPress 6.9 compatible.</li>
-                                    <li class="updated">Pro Addon 2.0.5 released.</li>
-                                    <li class="new">Pro addon now supports automatic update [check setting].</li>
-                                </ul>
-                            </div>
-
                         </div>
                     </div>
                 </div>
@@ -146,33 +122,31 @@ $doc_url    = CBXWPBookmarkHelper::url_utmy( 'https://codeboxr.com/doc/cbxwpbook
                     <div class="content">
                         <div class="releases">
                             <div class="release">
-                                <h3>Version 2.0.9</h3>
-
+                                <h3>Version 2.0.10</h3>
                                 <ul>
-                                    <li class="updated">WordPress 7.1 compatible.</li>
-                                    <li class="updated">Core plugin 2.0.9 released.</li>
+                                    <li class="new">New option in setting to open bookmark url in new tab.</li>
+                                    <li class="updated">Bookmark display related templates updated for bookmark open in new tab option.</li>
+                                    <li class="updated">Pro Addon 2.0.10 released.</li>
                                 </ul>
                             </div>
-
+                            <div class="release">
+                                <h3>Version 2.0.9</h3>
+                                <ul>
+                                    <li class="updated">Compatible with WordPress 7.1.</li>
+                                    <li class="fixed">Frontend dashboard - Bookmark Manager listing id col removed.</li>
+                                    <li class="fixed">Frontend dashboard - Bookmarks Overview Category stat sync with user data and settings.</li>
+                                    <li class="updated">Pro Addon 2.0.9 released.</li>
+                                </ul>
+                            </div>
                             <div class="release">
                                 <h3>Version 2.0.8</h3>
-
                                 <ul>
-                                    <li class="updated">Core plugin 2.0.8 released.</li>
-                                    <li class="updated">WordPress 7.0 compatible.</li>
+                                    <li class="new">On user delete, bookmark delete added.</li>
+                                    <li class="new">[improved] bookmark unique constraint added.</li>
+                                    <li class="updated">Added better error handler while activating plugin.</li>
+                                    <li class="updated">Pro Addon 2.0.8 released.</li>
                                 </ul>
                             </div>
-
-                            <div class="release">
-                                <h3>Version 2.0.7</h3>
-
-                                <ul>
-                                    <li class="improvements">[improved] Improved accessibility.</li>
-                                    <li class="updated">Core plugin 2.0.7 released.</li>
-                                    <li class="fixed">Few links in dashboard fixed [url pattern changed in previous release in core].</li>
-                                </ul>
-                            </div>
-
                         </div>
                     </div>
                 </div>

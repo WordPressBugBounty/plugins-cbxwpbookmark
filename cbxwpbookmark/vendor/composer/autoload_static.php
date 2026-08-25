@@ -96,9 +96,9 @@ class ComposerStaticInitd1038caf1c0b6c0533316bb9100dbe1c
         ),
         'CBXWPBookmarkScoped\\Illuminate\\Support\\' => 
         array (
-            0 => __DIR__ . '/..' . '/illuminate/collections',
-            1 => __DIR__ . '/..' . '/illuminate/macroable',
-            2 => __DIR__ . '/..' . '/illuminate/support',
+            0 => __DIR__ . '/..' . '/illuminate/support',
+            1 => __DIR__ . '/..' . '/illuminate/collections',
+            2 => __DIR__ . '/..' . '/illuminate/macroable',
         ),
         'CBXWPBookmarkScoped\\Illuminate\\Pagination\\' => 
         array (

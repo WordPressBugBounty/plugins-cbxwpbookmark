@@ -1,9 +1,13 @@
 <?php
+//phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+$open_newtab   = absint( $settings->get_field( 'bookmark_open_newtab', 'cbxwpbookmark_basics', 0 ) );
+$target = ($open_newtab) ? ' target="_blank"' : '';
 
 $object_id    = $item->object_id;//phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 $object_type  = $item->object_type;//phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
@@ -21,7 +25,7 @@ echo '<li class="cbxwpbookmark-mostlist-item' . esc_attr( $li_class ) . '" >';
 
 do_action( 'cbxwpbookmark_bookmarkmost_single_item_start', $object_id, $item );
 
-echo '<a title="' . esc_attr( $object_title ) . '" href="' . esc_url( $object_link ) . '">';
+echo '<a '.esc_html($target).' title="' . esc_attr( $object_title ) . '" href="' . esc_url( $object_link ) . '">';
 
 $thumb_html = '';//phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
